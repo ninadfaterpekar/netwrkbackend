@@ -1,0 +1,83 @@
+<% if flash[:notice].present? %>
+  <p class="notice">
+    <%= flash[:notice] %>
+  </p>
+<% end %>
+<div class="modal fade" id="modal-contact">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <%= form_for @subscriber, url: create_subscriber_home_index_path,
+            method: :post do |f| %>
+            <%= f.email_field :email, required: true, placeholder: "Email",
+            class: "field email"%>
+            <%= f.text_field :description, placeholder: "Tell me more",
+            class: "field description" %>
+            <%= f.submit "Send", class: "submit" %>
+          <% end %>
+          <span>
+            <a href="/privacy">Privacy policy</a>
+            |
+            <a href="/terms_of_use">Terms of Use</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-download">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <a href="https://itunes.apple.com/us/app/netwrk/id1216109944&ls=1&mt=8"
+            target="_blank"
+            class="appstore-link"><%= image_tag 'download/appstore.svg' %></a>
+          <a href='https://play.google.com/store/apps/details?id=com.netwrk.android&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'
+            target="_blank"
+            class="playmarket-link">
+            <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row main-row">
+  <a href="#" class="left top-link run_download">Download<br class="res-nl"> the app</a>
+  <a href="#" class="run_contactModal right top-link">Contact us</a>
+
+  <div class="col-lg-2 col-md-2 col-sm-1 col-xs-12 left col"></div>
+  <div class="col-lg-8 col-md-8 col-sm-10 col-xs-12 center col">
+    <div class="center-container">
+      <p>The story of netwrk</p>
+      <button type="button" name="stories"></button>
+    </div>
+    <div id="stories">
+      <%= form_for @subscriber, url: create_subscriber_home_index_path,
+        method: :post do |f| %>
+        <%= f.email_field :email, required: true, placeholder: "Email to subscribe",
+        class: "field email"%>
+        <%= f.submit "SEND", class: "submit" %>
+      <% end %>
+      <div class="stories-list">
+        <%= raw ApplicationSetting.instance.home_page %>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-2 col-md-2 col-sm-1 col-xs-12 right col"></div>
+</div>

@@ -1,0 +1,7 @@
+development:
+  access_key_id: AKIAJEJRVZI2Q2FXD47A
+  secret_access_key: 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
+
+production:
+  access_key_id: AKIAJEJRVZI2Q2FXD47A
+  secret_access_key: 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

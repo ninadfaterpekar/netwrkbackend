@@ -1,0 +1,349 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+input[type="submit"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+ /* Notice animation */
+@-webkit-keyframes noticeSlide {
+  0% { top: -45px; }
+  5% { top: 15px; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@-moz-keyframes noticeSlide {
+  0% { top: -45px; }
+  5% { top: 15px; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@-o-keyframes noticeSlide {
+  0% { top: -45px; }
+  5% { top: 15px; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes noticeSlide {
+  0% { top: -45px; }
+  5% { top: 15px; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+* {
+  padding: 0;
+  margin: 0;
+}
+html,
+body {
+  height: 100%;
+  min-height: 415px;
+}
+body {
+  background: asset_url('website-bg.png') no-repeat center,
+              asset_url('waves.gif');
+  background-size: cover, 120px;
+}
+
+@-moz-keyframes spin {
+  100% { -moz-transform: rotate(360deg); }
+}
+@-webkit-keyframes spin {
+  100% { -webkit-transform: rotate(360deg); }
+}
+@keyframes spin {
+  100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); }
+}
+
+.placeholder-loader {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  img {
+    width: 64px;
+    height: 64px;
+    -webkit-animation:spin 2s ease-out infinite;
+    -moz-animation:spin 2s ease-out infinite;
+    animation:spin 2s ease-out infinite;
+  }
+  h3 {
+    color: #5b87aa;
+  }
+}
+
+.policy {
+  padding: 30px;
+  background: #fff;
+}
+.modal-body .container {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  padding: 0 15px;
+  max-width: 400px;
+  box-sizing: border-box;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-wrap: wrap;
+}
+.res-nl {
+  display: none;
+}
+.container .logo {
+  display: block;
+  margin: auto;
+  max-width: 200px;
+}
+.container form {
+  display: block;
+  margin: 20px auto;
+  max-width: 400px;
+}
+.container form .field,
+.container form input {
+  height: 42px;
+  border-radius: 17px;
+  width: 100%;
+  outline: none;
+  box-sizing: border-box;
+}
+.container form .field {
+  border: 1px solid #5b87aa;
+  padding: 0 13px;
+  margin-bottom: 13px;
+}
+.container form .submit {
+  display: block;
+  max-width: 300px;
+  background: #5b87aa;
+  color: #fff;
+  margin: auto;
+  border: none;
+  transition: 0.3s ease-out;
+  text-transform: uppercase;
+}
+.container form .submit:hover {
+  cursor: pointer;
+  background: #5da5d8;
+}
+
+.container a {
+  text-decoration: none;
+  font-family: 'Arial', sans-serif;
+}
+
+.notice {
+  border-radius: 17px;
+  border: 1px solid #5b87aa;
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  top: 15px;
+  margin: auto;
+  background: #fff;
+  color: #5b87aa;
+  padding: 10px;
+  font-family: 'Arial', sans-serif;
+  max-width: 400px;
+  animation: noticeSlide 5s ease-out;
+  -webkit-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+
+/*################################################*/
+
+.main-row {
+  margin: 0 auto;
+  padding-top: 20px;
+}
+
+.col.left a{
+  float: left;
+}
+.col a,
+.col p {
+  font-weight: bold;
+  color: #5b87aa;
+  font-size: 18px;
+}
+.col.center .center-container {
+  margin: 0 auto;
+  max-width: 200px;
+  width: 100%;
+  text-align: center;
+  color: #5b87aa;
+  position: relative;
+}
+.col.center .center-container button {
+  border: 5px solid #5b87aa;
+  border-radius: 11px;
+  background: transparent;
+  width: 68px;
+  height: 110px;
+  padding: 0;
+  outline: none;
+}
+
+.col.right a{
+  float: right;
+}
+
+#stories {
+  display: none;
+  width: 100%;
+  border: 5px solid #5b87aa;
+  border-radius: 15px;
+  background: #fff;
+  margin: 0 auto;
+  margin-top: 26px;
+  padding: 10px 30px;
+}
+#stories p {
+  font-size: 14px;
+  color: #000;
+  font-weight: normal;
+  margin-top: 10px;
+}
+#stories form {
+  width: 100%;
+  max-width: 400px;
+  padding: 0;
+  margin: 0 auto;
+  position: relative;
+  height: 44px;
+}
+#stories form input[type="email"] {
+  border: 4px solid #5b87aa;
+  border-radius: 24px;
+  outline: none;
+  height: 44px;
+  width: 100%;
+  max-width: 400px;
+  padding-left: 10px;
+  float: left;
+  text-align: center;
+}
+#stories form input[type="submit"] {
+  background: #5b87aa;
+  border: none;
+  border-radius: 24px;
+  height: 44px;
+  padding: 0 10px;
+  color: #fff;
+  position: absolute;
+  right: 0;
+}
+
+.modal-header {
+  border-bottom: 0;
+}
+
+.appstore-link {
+  padding: 10px;
+}
+.playmarket-link img {
+  width: 155px;
+}
+
+.top-link {
+  position: absolute;
+  top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #5b87aa;
+}
+.top-link.left {
+  left: 15px;
+}
+.top-link.right {
+  right: 15px;
+}
+
+@media screen and (max-width: 425px) {
+  .main-row {
+    padding-top: 10px;
+  }
+  .top-link {
+    float: left;
+    width: 50%;
+    text-align: center;
+    display: block;
+    position: relative;
+    padding: 0 15px;
+    font-size: 14px;
+    z-index: 999;
+  }
+  .top-link.left {
+    left: 0;
+    text-align: left;
+  }
+  .top-link.right {
+    left: 0;
+    text-align: right;
+  }
+  .col.center .center-container p {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -30px;
+    margin: 0;
+    font-size: 16px;
+  }
+  body {
+    background: asset_url('faces_full.svg') no-repeat center,
+                asset_url('city-bg_c_tw.png') no-repeat center,
+                asset_url('waves.gif');
+    background-size: contain, cover, 120px;
+  }
+  #stories {
+    margin-top: 35px;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  #stories form input[type="email"] {
+    text-align: left;
+  }
+  .res-nl {
+    display: block;
+  }
+  .top-link {
+    top: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .modal-dialog {
+      max-width: 375px;
+      margin: 30px auto;
+  }
+}

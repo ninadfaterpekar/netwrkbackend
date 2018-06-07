@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Netwrk</title>
+    <%= csrf_meta_tags %>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:description" content="local broadcast platform" />
+    <!-- <meta property="og:image"       content= "<%#= root_url %>assets/logo-4e3cd8ffdd0d6f68eae386517fd0e276ae126a5b09cfdb48b09f93c8e8179d34.png"/> -->
+    <meta property="og:image"       content= "<%= asset_url 'logo.png' %>"/>
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= action_cable_meta_tag %>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>

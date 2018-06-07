@@ -1,0 +1,488 @@
+---
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)aclit[a-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)adick[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)aids[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)alabama porch monkey[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)anal intruder[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)anal invader[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)analicker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)anus[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)"4r5e"[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)"5h1t"[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)"5hit"[!-z]*)(\b)/
+- !ruby/regexp /(?i)(a55|as5)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)anal[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ar5e[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)arrse[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)arse[!-z]*)(\b)/
+- !ruby/regexp /ass/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ass bandit[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ass clown[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ass face[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ass fucker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ass hole[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ass load[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ass much[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ass out[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ass packer[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ass reamer[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ass whacker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ass wipe[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)assbandit[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)assclown[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)asscrack[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)assed out[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)assface[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)assfucker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)asshole[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)asslicker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)assload[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)assmunch[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)assout[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)asspacker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)assreamer[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)asswhacker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)asswipe[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)bastard[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)baby batter[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)babybatter[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ball breaker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ball buster[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)baller[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)balling[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)bat shit[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)batshit[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)bearded clam[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)bearded taco[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)beardedclam[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)beardedtaco[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)beaver[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)beavershot[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)beeatch[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)beener[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)biatch[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)big baller[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)bigballer[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)bimbo[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)bitch[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)bite me[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)biteme[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)blewinski[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)blood fart[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)bloodfart[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)blow job[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)blow me[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)blow my pole[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)blowjob[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)blowme[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)blue ball[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)blue balls[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)blueball[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)blueballs[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)boner[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)bull dike[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)bull shit[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)bulldike[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)bullshit[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)bung hole[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)bunghole[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)butt bandit[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)butt banger[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)butt buddy[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)butt crust[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)butt nugger[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)butt pirate[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)butt plug[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)buttbandit[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)buttbanger[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)buttcrack[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)buttfuck[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)buttfucker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)butthump[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)buttnugger[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)buttpirate[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)buttplug[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)buttporn[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)camel jockey[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)camel toe[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cameltoe[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)carpet eater[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)carpeteater[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cherry popper[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cherrypopper[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)chinc[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)chink[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)choad[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)chode[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)choke my chicken[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)choking the chicken[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cocaine[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cock jockey[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cock knocker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cock lord[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cock ring[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cock smoker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cock sucker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cock tease[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)c.ck[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)condo.[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)coochie[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)coon[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cootch[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cooze[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)corn hole[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cornhole[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)crack ho[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)crack spackler[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)crackbitch[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cracker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)crackspacker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)crackspackler[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)crakker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)crap face[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)crap head[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)crap[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cum belch[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cum belcher[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cum bubble[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cum dumpster[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cum guzzle[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cum guzzler[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cum lapper[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cum licker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cum stain[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cum sucker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumbelch[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumbelcher[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumbeltch[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumbeltcher[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumbubble[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumdumpster[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumguzzle[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumguzzler[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumlapper[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumlicker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumm bubble[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumm dumpster[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumm guzzler[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumm stain[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumm sucker[!-z]*)(\b)/
+- !ruby/regexp /(?i)(cumm|cum)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumstain[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumsucker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumsuker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cumwad[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cunt hair[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cunt whisker[!-z]*)(\b)/
+- !ruby/regexp /cunt/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)cuze[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)d i c k[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)daisy chain[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)daisy gang[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)dangelberry[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)dangleberry[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)deez nuts[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)devil[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)d.ck breath[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)d.ck fiend[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)d.ck head[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)d.ck nose[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)d.ck wad[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)d.ck weed[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)dik breath[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)dik fiend[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)dik head[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)dikbreath[!-z]*)(\b)/
+- !ruby/regexp /dike/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)dikfiend[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)dikhead[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)dildo[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)dingelberry[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)dingleberry[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)dipstick[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)douche[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)douche bag[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)drain the lizard[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)drug[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)dune coon[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)dunecoon[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)earning red wings[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)eat me[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)eat my shorts[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)eatme[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ecstacy[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)eggplant[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)ejaculate[!-z]*)(\b)/
+- !ruby/regexp /fag/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)felch[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)feltch[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)finger bang[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)finger banged[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)finger banger[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)finger fuck[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)fingerbang[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)fingerbanged[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)fingerbanger[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)fingerfuck[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)flamer[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)flip[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)flogging the bishop[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)fore skin[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)foreskin[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)f.ck face[!-z]*)(\b)/
+- !ruby/regexp /(f.ck|FU|fck|fak|fuk)/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)fudge packer[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)fudgepacker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)fur burger[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)furbuger[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)furry burger[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)fury burger[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)gang bang[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)gangbang[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)genocide[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)gniga[!-z]*)(\b)/
+- !ruby/regexp /gook/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)hairy hatchet wound[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)hairy taco[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)hairyhatchetwound[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)hairytaco[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)half breed[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)halfbreed[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)hardon[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)hermaphrodite[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)herpes[!-z]*)(\b)/
+- !ruby/regexp /(?i)(hommo|homo|hoes|ho)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)honkey[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)honky[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)hoochie mama[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)hooker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)horse shit[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)horseshit[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)hot beef injection[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)incest[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)jacking off[!-z]*)(\b)/
+- !ruby/regexp /jap/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)jerking off[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)jiz muffin[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)jiz sandwich[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)jizer[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)jizm[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)jizmuffin[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)jizz[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)jizz muffin[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)jizz sandwich[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)jizzer[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)jizzm[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)jizzmuffin[!-z]*)(\b)/
+- !ruby/regexp /jiz/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)jungle bunny[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)junglebunny[!-z]*)(\b)/
+- !ruby/regexp /kike/i
+- !ruby/regexp /kill/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)koochie[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)koochy[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)kootch[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)kootchie[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)kootchy[!-z]*)(\b)/
+- !ruby/regexp /(?i)(kumm|kum)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)lesbo[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)lettuce picker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)lettucepicker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)lezbo[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)lick my nuts[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)lickcock[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)licknipple[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)limpdick[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)love canal[!-z]*)(\b)/
+- !ruby/regexp /lsd/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)man whore[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)mangina[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)manwhore[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)marijuana[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)masturbate[!-z]*)(\b)/
+- !ruby/regexp /mick/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)monkeydick[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)monkeyhumper[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)mooli[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)mother fucker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)motherfucker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)mud people[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)mud person[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)mudpeople[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)mudperson[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)muff[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)muff diver[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)muffdiver[!-z]*)(\b)/
+- !ruby/regexp /muli/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)murder[!-z]*)(\b)/
+- !ruby/regexp /nazi/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)n.ger[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)n.gga[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)n.gg.r[!-z]*)(\b)/
+- !ruby/regexp /nip/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)nipple[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)nutted[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)nutter[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)nutting[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)one way pipe cleaner[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)panocha[!-z]*)(\b)/
+- !ruby/regexp /pcp/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pecker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pecker head[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pecker nose[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)peckerhead[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)peckernose[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pedophile[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)penis breath[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)penisbreath[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)phelch[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)phelcher[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pheltch[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pheltcher[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)phlip[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pillow biter[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pillowbiter[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pimp[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pinis wrinkle[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)piniswrinkle[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pipe hitter[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pipehitter[!-z]*)(\b)/
+- !ruby/regexp /piss/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pissdrinker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pisslicker[!-z]*)(\b)/
+- !ruby/regexp /pito/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pole sitter[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pole smoker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)polesitter[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)polesmoker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)polish the bishop[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)polishing the torpedo[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)polock[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)poon tang[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)poontang[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)poop chute[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)poop stain[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)poopchute[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)poopstain[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)popped cherry[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)poppedcherry[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)prick[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)psilocybin[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pu55y[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pussie[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)p.ssy juice[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)p.ssy juiced[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)p.ssy juicer[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)p.ssy juicing[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)p.ssy pounder[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)p.ssy pounding[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)p.ssy whipped[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)p.ssy whipper[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)p.ssy wiped[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)p.ssy[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)puta[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pv55ie[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)pv55y[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)rag head[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)raghead[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)rectal[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)rectum[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)redneck[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)retard[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)rim job[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)rimjob[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)rug munch[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)rug munched[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)rug muncher[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)rugmuncher[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)rump ranger[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)rumpranger[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)rumpshaker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)s.ck[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sachamo[!-z]*)(\b)/
+- !ruby/regexp /sambo/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sand niggah[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sand nigger[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sandniggah[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sandnigger[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)satanic[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)schlong[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)scrubbing the carrot[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)shit eater[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)shit face[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)shit faced[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)shit head[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)shit kicker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)shit pusher[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)shit shover[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sh.t[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)skank[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)skin flute[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)skullfuck[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)skullfucked[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)skullfucker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)skullfucks[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)slap the salami[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)slaping the sausage[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)slit licker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)slitlicker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)slope[!-z]*)(\b)/
+- !ruby/regexp /(?i)(slut bag|slut|slutbag)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)smegma[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)snog[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sodomise[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sodomised[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sodomiser[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sodomite[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sodomize[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sodomized[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sodomizer[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sodomy[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)spank the monkey[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sphincter boy[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sphincter face[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sphincterboy[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)sphincterface[!-z]*)(\b)/
+- !ruby/regexp /(?i)(spik|spick|spic)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)spunk monkey[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)suicide[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)taint[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)tar baby[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)tarbaby[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)tard[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)testes[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)testicles[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)testicular[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)tip polisher[!-z]*)(\b)/
+- !ruby/regexp /tit/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)tit fuck[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)tit fucker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)titfuck[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)titfucker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)tits[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)titty[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)titty twisted[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)titty twister[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)titty twisters[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)titty twisting[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)tity[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)towel head[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)towelhead[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)trailer trash[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)trailertrash[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)transsexual[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)transvestite[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)twat[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)uncle tom[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)uplay wid dix[!-z]*)(\b)/
+- !ruby/regexp /vag/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)vagina licker[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)welfare rat[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)wet back[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)wetback[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)whacking off[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)white trash[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)whore[!-z]*)(\b)/
+- !ruby/regexp /wop/i
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)wrapping the weasel[!-z]*)(\b)/
+- !ruby/regexp /(\b)(?-mix:\b[!-z]*(?i)yclit[!-z]*)(\b)/
