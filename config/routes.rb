@@ -66,6 +66,7 @@ Rails.application.routes.draw do
           get 'block'
           post 'social_feed'
           post 'delete_for_all'
+          get 'nearby'
         end
       end
       resources :networks_users, only: %i[index create]
