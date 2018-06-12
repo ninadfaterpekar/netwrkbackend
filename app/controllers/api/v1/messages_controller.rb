@@ -18,6 +18,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
         params[:lat],
         current_user
       ).perform
+
       undercover_messages =
         Message.by_ids(messages.map(&:id))
                .by_not_deleted
@@ -72,6 +73,45 @@ class Api::V1::MessagesController < Api::V1::BaseController
         )
       }
     end
+  end
+
+  def nearby
+    network = Network.find_by(post_code: params[:post_code])
+
+    messages = []
+    undercover_messages = []
+    current_ids = []
+    current_ids = params[:current_ids] if params[:current_ids].present?
+
+    messages = Undercover::CheckDistance.new(
+        params[:post_code],
+        params[:lng],
+        params[:lat],
+        current_user
+      ).perform
+
+      undercover_messages =
+        Message.by_ids(messages.map(&:id))
+               .by_not_deleted
+               .without_blacklist(current_user)
+               .without_deleted(current_user)
+               .where(messageable_type: 'Network')
+               .sort_by_points(params[:limit], params[:offset])
+               .with_images
+               .with_videos
+               .with_room(messages.map(&:id))
+               .select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
+
+      undercover_messages, ids_to_remove =
+        Messages::CurrentIdsPresent.new(
+          current_ids: current_ids,
+          undercover_messages: undercover_messages,
+          with_network: network.present?,
+          user: current_user
+        ).perform
+      render json: {
+        messages: undercover_messages, ids_to_remove: ids_to_remove
+      }
   end
 
   def profile_messages
