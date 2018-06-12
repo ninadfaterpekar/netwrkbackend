@@ -55,6 +55,7 @@ class Message < ApplicationRecord
   }
   scope :sort_by_newest, -> { order(created_at: :desc) }
   scope :sort_by_oldest, -> { order(created_at: :asc) }
+  scope :sort_by_points_higest, -> { order(points: :desc) }
   scope :by_post_code, ->(post_code) { where(post_code: post_code) }
   scope :by_messageable_type, ->(type) { where(messageable_type: type)}
   scope :by_messageable, ->(id, type = nil) do
@@ -66,9 +67,16 @@ class Message < ApplicationRecord
   scope :by_network, ->(network_id) do
     where(messageable_id: network_id, messageable_type: :Network)
   end
+  scope :with_room, ->(message_id) do
+    joins(:room).merge(Room.where(message_id: message_id))
+  end
 
   scope :sort_by_last_messages, ->(limit, offset) {
     sort_by_newest.limit(limit).offset(offset)
+  }
+
+  scope :sort_by_points, ->(limit, offset) {
+    sort_by_points_higest.limit(limit).offset(offset)
   }
 
   URI_REGEX = %r{((?:(?:[^ :/?#]+):)(?://(?:[^ /?#]*))(?:[^ ?#]*)(?:\?(?:[^ #]*))?(?:#(?:[^ ]*))?)}
