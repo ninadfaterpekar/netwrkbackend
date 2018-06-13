@@ -108,7 +108,9 @@ class Api::V1::MessagesController < Api::V1::BaseController
           undercover_messages: undercover_messages,
           with_network: network.present?,
           user: current_user
-        ).perform
+        ).perform_nearby
+
+        
       render json: {
         messages: undercover_messages, ids_to_remove: ids_to_remove
       }

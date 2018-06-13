@@ -137,6 +137,12 @@ class Message < ApplicationRecord
     end
   end
 
+  def isFollowed(user = current_user)
+    p room_id
+    p m = RoomsUser.find_by(user_id: user, room_id: room_id)
+    m.present? ? true : false
+  end
+
   def make_locked(args)
     salt = SecureRandom.base64(8)
     update_columns(
