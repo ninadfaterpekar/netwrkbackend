@@ -9,7 +9,7 @@ class Api::V1::NetworksController < Api::V1::BaseController
     Instagram::FeedFetch.new(current_user, 1).perform
     if @network
       @network.current_user = current_user
-      if User.from_network(@network.id).count >= 10 ||
+      if User.from_network(@network.id).count >= 1 ||
          User.from_network(@network.id).find_by(id: current_user.id)
         render json: { network: @network }
       else
