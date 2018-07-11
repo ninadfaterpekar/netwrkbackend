@@ -16,27 +16,50 @@ class Api::V1::MessagesController < Api::V1::BaseController
         params[:post_code],
         params[:lng],
         params[:lat],
-        current_user
+        current_user,
+        params[:is_landing_page]
       ).perform
 
-      undercover_messages =
-        Message.by_ids(messages.map(&:id))
-               .by_not_deleted
-               .without_blacklist(current_user)
-               .without_deleted(current_user)
-               .where(messageable_type: 'Network')
-               .sort_by_last_messages(params[:limit], params[:offset])
-               .with_images.with_videos
-      undercover_messages, ids_to_remove =
-        Messages::CurrentIdsPresent.new(
-          current_ids: current_ids,
-          undercover_messages: undercover_messages,
-          with_network: network.present?,
-          user: current_user
-        ).perform
-      render json: {
-        messages: undercover_messages, ids_to_remove: ids_to_remove
-      }
+      if params[:is_landing_page] == 'true'
+        undercover_messages =
+            Message.by_ids(messages.map(&:id))
+                   .by_not_deleted
+                   .without_blacklist(current_user)
+                   .without_deleted(current_user)
+                   .where(messageable_type: 'Network')
+                   .sort_by_last_messages(params[:limit], params[:offset])
+                   .with_images.with_videos
+
+          undercover_messages, ids_to_remove =
+            Messages::CurrentIdsPresent.new(
+              current_ids: current_ids,
+              undercover_messages: undercover_messages,
+              with_network: network.present?,
+              user: current_user
+            ).perform
+          render json: {
+            messages: undercover_messages, ids_to_remove: ids_to_remove
+          }
+      else 
+          undercover_messages =
+            Message.by_ids(messages.map(&:id))
+                   .by_not_deleted
+                   .without_blacklist(current_user)
+                   .without_deleted(current_user)
+                   .where(messageable_type: 'Network')
+                   .sort_by_last_messages(params[:limit], params[:offset])
+                   .with_images.with_videos
+          undercover_messages, ids_to_remove =
+            Messages::CurrentIdsPresent.new(
+              current_ids: current_ids,
+              undercover_messages: undercover_messages,
+              with_network: network.present?,
+              user: current_user
+            ).perform
+          render json: {
+            messages: undercover_messages, ids_to_remove: ids_to_remove
+          }
+      end      
     elsif params[:undercover] == 'false'
       messages = network.messages
                         .by_not_deleted
