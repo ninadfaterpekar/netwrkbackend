@@ -7,7 +7,7 @@ module Rooms
     def execute
       return room if find_room
       create_room
-      Rooms::CombineSocialMessages.run(user: room.owner, room: room)
+      #Rooms::CombineSocialMessages.run(user: room.owner, room: room)
     end
 
     private
@@ -25,7 +25,8 @@ module Rooms
     end
 
     def validate
-      return if message.undercover && message.messageable_type != 'Room'
+      #return if message.undercover && message.messageable_type != 'Room'
+      return if message.messageable_type != 'Room'
       add_error('400', :bad_request, 'cant create room for this message')
     end
   end
