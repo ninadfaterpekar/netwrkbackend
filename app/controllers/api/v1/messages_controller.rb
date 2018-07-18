@@ -89,7 +89,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
         params[:post_code],
         params[:lng],
         params[:lat],
-        current_user
+        current_user,
+        false
       ).perform
 
       undercover_messages =
