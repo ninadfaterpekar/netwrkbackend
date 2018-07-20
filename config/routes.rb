@@ -90,6 +90,7 @@ Rails.application.routes.draw do
         end
       end
       resources :user_likes, only: [:create]
+      resources :user_followed, only: [:create]
       resources :legendary_likes, only: %i[create index]
       resources :invitations, only: [:create]
       resources :contacts, only: [:create]
