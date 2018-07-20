@@ -7,7 +7,7 @@ class Api::V1::UserFollowedController < ApplicationController
     message = Message.find_by(id: params[:message_id])
 
     if @followed.save
-      render json: message
+      render json: {message: 'followed'}
     else
       head 422
     end
