@@ -15,6 +15,9 @@ class Message < ApplicationRecord
   has_many :locked_messages, dependent: :destroy
   has_many :locked_users, through: :locked_messages, class_name: 'User'
 
+  has_many :user_followed, dependent: :destroy
+  has_many :followed_users, through: :user_followed, class_name: 'User'
+
   has_many :legendary_likes, dependent: :destroy
   has_many :legendary_users, through: :legendary_likes, class_name: 'User'
 
@@ -137,10 +140,14 @@ class Message < ApplicationRecord
     end
   end
 
-  def isFollowed(user = current_user)
+  def is_followed(user = current_user)
+    p m = FollowedMessage.find_by(user_id: user, message_id: id)
+    m.present? ? true : false
+=begin
     p room_id
     p m = RoomsUser.find_by(user_id: user, room_id: room_id)
     m.present? ? true : false
+=end
   end
 
   def make_locked(args)

@@ -27,6 +27,9 @@ class User < ApplicationRecord
   has_many :locked_messages, dependent: :destroy
   has_many :messages_locked, through: :locked_messages, class_name: 'Message'
 
+  has_many :user_followed, dependent: :destroy
+  has_many :followed_messages, through: :user_followed, class_name: 'Message'
+
   has_many :user_likes, dependent: :destroy
   has_many :liked_messages, through: :user_likes, class_name: 'Message'
 

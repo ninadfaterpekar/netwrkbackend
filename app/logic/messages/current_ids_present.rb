@@ -71,7 +71,7 @@ def logic_nearby
         undercover_messages.as_json(
           methods: %i[
             user
-            expire_at has_expired isFollowed
+            expire_at has_expired is_followed
           ]
         )
       end
@@ -84,7 +84,7 @@ def logic_nearby
       @undercover_messages = undercover_messages.as_json(
         methods: %i[
           user
-          expire_at has_expired isFollowed
+          expire_at has_expired is_followed
         ]
       )
       [undercover_messages, ids_to_remove]
