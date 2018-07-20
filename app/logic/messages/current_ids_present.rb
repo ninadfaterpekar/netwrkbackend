@@ -6,6 +6,7 @@ class Messages::CurrentIdsPresent
     @undercover_messages = args[:undercover_messages]
     @with_network = args[:with_network]
     @user = args[:user]
+    @is_undercover = args[:is_undercover]
   end
 
   def perform
@@ -17,7 +18,7 @@ class Messages::CurrentIdsPresent
   end
   private
 
-  attr_reader :undercover_messages, :user, :current_ids, :with_network
+  attr_reader :undercover_messages, :user, :current_ids, :with_network, :is_undercover
 
   def logic
     if current_ids.present?
@@ -32,23 +33,44 @@ class Messages::CurrentIdsPresent
         @undercover_messages = undercover_messages.by_ids(new_ids)
         create_locked_messages if with_network
         undercover_messages.each { |message| message.current_user = user }
-        undercover_messages.as_json(
+
+        if is_undercover == 'true'
+          undercover_messages.as_json(
+            methods: %i[
+              image_urls video_urls like_by_user legendary_by_user user is_synced
+              text_with_links post_url expire_at has_expired locked_by_user is_followed is_connected
+            ]
+          )
+        else
+          undercover_messages.as_json(
+            methods: %i[
+              image_urls video_urls like_by_user legendary_by_user user is_synced
+              text_with_links post_url expire_at has_expired locked_by_user
+            ]
+          )
+        end
+      end
+    else
+      ids_to_remove = []
+      create_locked_messages if with_network
+      undercover_messages.each { |message| message.current_user = user }
+
+      if is_undercover == 'true'
+        @undercover_messages = undercover_messages.as_json(
+          methods: %i[
+            image_urls video_urls like_by_user legendary_by_user user is_synced
+            text_with_links post_url expire_at has_expired locked_by_user is_followed is_connected
+          ]
+        )
+      else
+        @undercover_messages = undercover_messages.as_json(
           methods: %i[
             image_urls video_urls like_by_user legendary_by_user user is_synced
             text_with_links post_url expire_at has_expired locked_by_user
           ]
         )
       end
-    else
-      ids_to_remove = []
-      create_locked_messages if with_network
-      undercover_messages.each { |message| message.current_user = user }
-      @undercover_messages = undercover_messages.as_json(
-        methods: %i[
-          image_urls video_urls like_by_user legendary_by_user user is_synced 
-          text_with_links post_url expire_at has_expired locked_by_user
-        ]
-      )
+
       [undercover_messages, ids_to_remove]
     end
   end

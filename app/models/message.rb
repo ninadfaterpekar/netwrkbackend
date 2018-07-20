@@ -143,11 +143,12 @@ class Message < ApplicationRecord
   def is_followed(user = current_user)
     p m = FollowedMessage.find_by(user_id: user, message_id: id)
     m.present? ? true : false
-=begin
+  end
+
+  def is_connected(user = current_user)
     p room_id
     p m = RoomsUser.find_by(user_id: user, room_id: room_id)
     m.present? ? true : false
-=end
   end
 
   def make_locked(args)
