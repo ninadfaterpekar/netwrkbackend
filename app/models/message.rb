@@ -56,6 +56,7 @@ class Message < ApplicationRecord
   scope :legendary_messages, -> {
     joins(:legendary_likes).merge(LegendaryLike.where(message_id: ids))
   }
+  scope :sort_by_latest_id, -> { order(id: :desc) }
   scope :sort_by_newest, -> { order(created_at: :desc) }
   scope :sort_by_oldest, -> { order(created_at: :asc) }
   scope :sort_by_points_highest, -> { order(points: :desc) }
@@ -76,6 +77,10 @@ class Message < ApplicationRecord
 
   scope :sort_by_last_messages, ->(limit, offset) {
     sort_by_newest.limit(limit).offset(offset)
+  }
+
+  scope :sort_by_last_messages_id, ->(limit, offset) {
+    sort_by_latest_id.limit(limit).offset(offset)
   }
 
   scope :sort_by_points, ->(limit, offset) {

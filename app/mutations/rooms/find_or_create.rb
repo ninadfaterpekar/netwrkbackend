@@ -8,6 +8,7 @@ module Rooms
       return room if find_room
       create_room
       #Rooms::CombineSocialMessages.run(user: room.owner, room: room)
+      #Rooms::CombineLatestMessages.run(user: room.owner, room: room)
     end
 
     private
