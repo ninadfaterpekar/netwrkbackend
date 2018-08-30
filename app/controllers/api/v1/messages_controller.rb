@@ -368,7 +368,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
       :public,
       :hint,
       :post_url,
-      :expire_date
+      :expire_date,
+      :role_name
     )
   end
 end
