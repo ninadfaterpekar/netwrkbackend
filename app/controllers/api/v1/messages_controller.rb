@@ -13,6 +13,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
     current_ids = params[:current_ids] if params[:current_ids].present?
     if params[:undercover] == 'true'
       #get messages from nearby area
+      # On landing page display lines/network which are created from landing page or from area page (conversations)
       messages = Undercover::CheckDistance.new(
         params[:post_code],
         params[:lng],
@@ -45,14 +46,27 @@ class Api::V1::MessagesController < Api::V1::BaseController
           messages: undercover_messages, ids_to_remove: ids_to_remove
       }
     elsif params[:undercover] == 'false'
+
+=begin  
       messages = network.messages
+          .by_not_deleted
+          .undercover_is(false)
+          .without_blacklist(current_user)
+          .without_deleted(current_user)
+          .where(messageable_type: 'Network')
+          .sort_by_last_messages(params[:limit], params[:offset])
+          .with_images.with_videos
+=end
+
+      #fetch area feed. Whats happening in that area.
+      messages = Message.where(post_code:  params[:post_code])
+                        .where("((messageable_type = 'Network' and undercover = false) or (messageable_type = 'Room' and undercover = true))")
                         .by_not_deleted
-                        .undercover_is(false)
                         .without_blacklist(current_user)
                         .without_deleted(current_user)
-                        .where(messageable_type: 'Network')
                         .sort_by_last_messages(params[:limit], params[:offset])
                         .with_images.with_videos
+
       messages = messages.by_user(params[:user_id]) if params[:user_id].present?
       messages, _ids_to_remove =
         Messages::CurrentIdsPresent.new(
