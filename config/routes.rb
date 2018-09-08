@@ -27,6 +27,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :rooms, only: [] do
         post :users, to: 'rooms#add_user'
+        get :network, to: 'rooms#get_network'
       end
 
       resources :reports, only: %i[] do
