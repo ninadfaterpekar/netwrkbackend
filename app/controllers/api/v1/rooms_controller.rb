@@ -18,7 +18,14 @@ class Api::V1::RoomsController < Api::V1::BaseController
     message = Message.find(room.message_id)
 
     if room 
-      render json: {message: message, room: room}, status: 200  
+        render json: {
+        messages: message.as_json(
+          methods: %i[
+            image_urls video_urls like_by_user legendary_by_user user
+            text_with_links post_url expire_at has_expired
+          ]
+        )
+      }
     else
       render json: {message: []}, status: 200
     end
