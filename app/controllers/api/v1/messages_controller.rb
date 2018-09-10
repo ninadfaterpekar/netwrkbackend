@@ -383,7 +383,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
       :hint,
       :post_url,
       :expire_date,
-      :role_name
+      :role_name,
+      :place_name
     )
   end
 end
