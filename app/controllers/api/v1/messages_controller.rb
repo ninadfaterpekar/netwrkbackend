@@ -326,6 +326,16 @@ class Api::V1::MessagesController < Api::V1::BaseController
     end
   end
 
+  def update_message_points
+    message = Message.find_by(id: params[:message_id])
+    if message.present?
+      message.update(points: message.points + params[:points])
+      head 204
+    else
+      head 422
+    end
+  end
+
   # api/v1/messages/delete POST
   def delete_for_all
     @message.update_attributes(deleted: true)

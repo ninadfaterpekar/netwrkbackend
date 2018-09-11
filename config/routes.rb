@@ -67,6 +67,7 @@ Rails.application.routes.draw do
           get 'block'
           post 'social_feed'
           post 'delete_for_all'
+          post 'update_message_points'
           get 'nearby'
         end
       end
