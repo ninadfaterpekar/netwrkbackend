@@ -22,16 +22,26 @@ class Api::V1::MessagesController < Api::V1::BaseController
         params[:is_landing_page]
       ).perform
 
+      messageIds = messages.map(&:id)
+
+      if params[:is_landing_page] == 'true'
+         # on landing page display followed messages + its nearby location messages
+         followed_messages = FollowedMessage.where(user_id: current_user)
+
+         followed_message_ids = followed_messages.map(&:message_id)
+         messageIds = messageIds + followed_message_ids
+      end
+
       #filter messages
       undercover_messages =
-          Message.by_ids(messages.map(&:id))
+          Message.by_ids(messageIds)
               .by_not_deleted
               .without_blacklist(current_user)
               .without_deleted(current_user)
               .where(messageable_type: 'Network')
               .sort_by_last_messages(params[:limit], params[:offset])
               .with_images.with_videos
-              .with_room(messages.map(&:id))
+              .with_room(messageIds)
               .select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
 
       undercover_messages, ids_to_remove =
