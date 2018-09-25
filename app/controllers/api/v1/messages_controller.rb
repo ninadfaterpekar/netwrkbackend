@@ -134,6 +134,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
                .with_room(messages.map(&:id))
                .select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
 =end
+
       undercover_messages =
         Message.select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
                .by_not_deleted
@@ -141,6 +142,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
                .without_deleted(current_user)
                .where(messageable_type: 'Network')
                .where(post_code: params[:post_code])
+               .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
                .joins("INNER JOIN Rooms ON Rooms.message_id = Messages.id AND Messages.messageable_type = 'Network'")
                .sort_by_points(params[:limit], params[:offset])
                
