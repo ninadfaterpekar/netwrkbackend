@@ -115,7 +115,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
     current_ids = []
     current_ids = params[:current_ids] if params[:current_ids].present?
 
-    messages = Undercover::CheckDistance.new(
+=begin    
+      messages = Undercover::CheckDistance.new(
         params[:post_code],
         params[:lng],
         params[:lat],
@@ -130,11 +131,19 @@ class Api::V1::MessagesController < Api::V1::BaseController
                .without_deleted(current_user)
                .where(messageable_type: 'Network')
                .sort_by_points(params[:limit], params[:offset])
-               .with_images
-               .with_videos
                .with_room(messages.map(&:id))
                .select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
-
+=end
+      undercover_messages =
+        Message.select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
+               .by_not_deleted
+               .without_blacklist(current_user)
+               .without_deleted(current_user)
+               .where(messageable_type: 'Network')
+               .where(post_code: params[:post_code])
+               .joins("INNER JOIN Rooms ON Rooms.message_id = Messages.id AND Messages.messageable_type = 'Network'")
+               .sort_by_points(params[:limit], params[:offset])
+               
       undercover_messages, ids_to_remove =
         Messages::CurrentIdsPresent.new(
           current_ids: current_ids,
