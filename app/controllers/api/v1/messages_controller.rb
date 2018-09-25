@@ -29,7 +29,16 @@ class Api::V1::MessagesController < Api::V1::BaseController
          followed_messages = FollowedMessage.where(user_id: current_user)
 
          followed_message_ids = followed_messages.map(&:message_id)
-         messageIds = messageIds + followed_message_ids
+
+         own_messages = Message.where(user_id: current_user)
+                               .where(messageable_type: 'Network')
+                               .where(undercover: true)
+                               .where(deleted: false)
+
+         own_message_ids = own_messages.map(&:id)
+
+         messageIds = messageIds + followed_message_ids + own_message_ids
+         messageIds = messageIds.uniq
       end
 
       #filter messages
