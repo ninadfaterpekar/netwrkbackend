@@ -39,6 +39,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
               .without_blacklist(current_user)
               .without_deleted(current_user)
               .where(messageable_type: 'Network')
+              .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
               .sort_by_last_messages(params[:limit], params[:offset])
               .with_images.with_videos
               .with_room(messageIds)
