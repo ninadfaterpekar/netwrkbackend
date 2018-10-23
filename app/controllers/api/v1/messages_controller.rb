@@ -6,7 +6,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
   ]
 
   def index
-    network = Network.find_by(post_code: params[:post_code])
+  network = Network.find_by(post_code: params[:post_code])
     messages = []
     undercover_messages = []
     current_ids = []
@@ -152,6 +152,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
                .without_deleted(current_user)
                .where(messageable_type: 'Network')
                .where(post_code: params[:post_code])
+               .where.not(user_id: current_user)
                .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
                .joins("INNER JOIN Rooms ON Rooms.message_id = Messages.id AND Messages.messageable_type = 'Network'")
                .sort_by_points(params[:limit], params[:offset])
