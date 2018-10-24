@@ -19,8 +19,10 @@ class Undercover::CheckDistance
   def messages_in_radius
     messages_in_radius = []
     # network = Network.find_by(post_code: post_code)
+    # on landing page display own conversation + Lines (any user)
     if is_landing_page == 'true'
-      messages = Message.with_users
+      messages = Message.where("((undercover = false and user_id = :user_id) or (undercover = true))", {user_id: user})
+                        .with_users
     else
       messages = Message.undercover_is(true).with_users
     end
