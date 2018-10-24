@@ -6,13 +6,14 @@ class Api::V1::MessagesController < Api::V1::BaseController
   ]
 
   def index
-  network = Network.find_by(post_code: params[:post_code])
+    network = Network.find_by(post_code: params[:post_code])
     messages = []
     undercover_messages = []
     current_ids = []
     current_ids = params[:current_ids] if params[:current_ids].present?
+
     if params[:undercover] == 'true'
-      #get messages from nearby area
+      # get messages from nearby area
       # On landing page display lines/network which are created from landing page or from area page (conversations)
       messages = Undercover::CheckDistance.new(
         params[:post_code],
@@ -25,43 +26,42 @@ class Api::V1::MessagesController < Api::V1::BaseController
       messageIds = messages.map(&:id)
 
       if params[:is_landing_page] == 'true'
-         # on landing page display followed messages + its nearby location messages
-         followed_messages = FollowedMessage.where(user_id: current_user)
+        # on landing page display followed messages + its nearby location messages
+        followed_messages = FollowedMessage.where(user_id: current_user)
 
-         followed_message_ids = followed_messages.map(&:message_id)
+        followed_message_ids = followed_messages.map(&:message_id)
 
-         own_messages = Message.where(user_id: current_user)
-                               .where(messageable_type: 'Network')
-                               .where(undercover: true)
-                               .where(deleted: false)
+        own_messages = Message.where(user_id: current_user)
+                              .where(messageable_type: 'Network')
+                              .where(undercover: true)
+                              .where(deleted: false)
 
-         own_message_ids = own_messages.map(&:id)
+        own_message_ids = own_messages.map(&:id)
 
-         messageIds = messageIds + followed_message_ids + own_message_ids
-         messageIds = messageIds.uniq
+        messageIds = messageIds + followed_message_ids + own_message_ids
+        messageIds = messageIds.uniq
       end
 
-      #filter messages
-      undercover_messages =
-          Message.by_ids(messageIds)
-              .by_not_deleted
-              .without_blacklist(current_user)
-              .without_deleted(current_user)
-              .where(messageable_type: 'Network')
-              .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
-              .sort_by_last_messages(params[:limit], params[:offset])
-              .with_images.with_videos
-              .with_room(messageIds)
-              .select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
+      # filter messages
+      undercover_messages = Message.by_ids(messageIds)
+                                   .by_not_deleted
+                                   .without_blacklist(current_user)
+                                   .without_deleted(current_user)
+                                   .where(messageable_type: 'Network')
+                                   .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
+                                   .sort_by_last_messages(params[:limit], params[:offset])
+                                   .with_images.with_videos
+                                   .with_room(messageIds)
+                                   .select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
 
-      undercover_messages, ids_to_remove =
-          Messages::CurrentIdsPresent.new(
-              current_ids: current_ids,
-              undercover_messages: undercover_messages,
-              with_network: network.present?,
-              user: current_user,
-              is_undercover: params[:undercover]
-          ).perform
+      undercover_messages, ids_to_remove = Messages::CurrentIdsPresent.new(
+          current_ids: current_ids,
+          undercover_messages: undercover_messages,
+          with_network: network.present?,
+          user: current_user,
+          is_undercover: params[:undercover]
+        ).perform
+
       render json: {
           messages: undercover_messages, ids_to_remove: ids_to_remove
       }
@@ -78,7 +78,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
           .with_images.with_videos
 =end
 
-      #fetch area feed. Whats happening in that area.
+      # fetch area feed. Whats happening in that area.
       messages = Message.where(post_code:  params[:post_code])
                         .where("((messageable_type = 'Network' and undercover = false) or (messageable_type = 'Room' and undercover = true))")
                         .by_not_deleted
@@ -151,6 +151,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
                .without_blacklist(current_user)
                .without_deleted(current_user)
                .where(messageable_type: 'Network')
+               .where(undercover: true)
                .where(post_code: params[:post_code])
                .where.not(user_id: current_user)
                .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
