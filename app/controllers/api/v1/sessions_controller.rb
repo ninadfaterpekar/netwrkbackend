@@ -16,7 +16,7 @@ class Api::V1::SessionsController < Api::V1::BaseController
     ).first
     if user && user.valid_password?(user_password)
       sign_in user, store: false
-      user.generate_authentication_token!
+      #user.generate_authentication_token!
       user.save
       render json: user.as_json(
         methods: %i[avatar_url log_in_count fb_connected tou_accepted]
