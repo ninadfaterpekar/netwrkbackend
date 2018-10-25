@@ -7,7 +7,7 @@ module Rooms
 
     def execute
       connect
-      Rooms::CombineSocialMessages.run(user: user, room: room)
+      #Rooms::CombineSocialMessages.run(user: user, room: room)
     end
 
     private
