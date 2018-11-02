@@ -80,7 +80,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
       # fetch area feed. Whats happening in that area.
       messages = Message.where(post_code:  params[:post_code])
-                        .where("((messageable_type = 'Network' and undercover = false) or (messageable_type = 'Room' and undercover = true))")
+                        .where("((messageable_type = 'Network') or (messageable_type = 'Room' and undercover = true))")
                         .by_not_deleted
                         .without_blacklist(current_user)
                         .without_deleted(current_user)
