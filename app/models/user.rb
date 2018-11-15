@@ -95,6 +95,10 @@ class User < ApplicationRecord
     sign_in_count
   end
 
+  def is_password_set
+    encrypted_password
+  end
+
   def disabled_hero?
     points_count <= -200
   end

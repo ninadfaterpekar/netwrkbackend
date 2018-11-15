@@ -23,15 +23,16 @@ class Api::V1::RegistrationsController < Api::V1::BaseController
       resource.update(user_params)
       if resource.valid?
         resource.save
+
         render json: resource.as_json(
-          methods: %i[avatar_url hero_avatar_url log_in_count tou_accepted]
+          methods: %i[avatar_url hero_avatar_url log_in_count tou_accepted is_password_set]
         ), status: 200
       else
         render json: resource.errors.messages, status: 422
       end
     else
       render json: resource.as_json(
-        methods: %i[avatar_url hero_avatar_url log_in_count tou_accepted]
+        methods: %i[avatar_url hero_avatar_url log_in_count tou_accepted is_password_set]
       ), status: 200
     end
   end
