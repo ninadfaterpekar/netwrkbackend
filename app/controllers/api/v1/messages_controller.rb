@@ -43,17 +43,31 @@ class Api::V1::MessagesController < Api::V1::BaseController
       end
 
       # filter messages
-      undercover_messages = Message.by_ids(messageIds)
-                                   .by_not_deleted
-                                   .without_blacklist(current_user)
-                                   .without_deleted(current_user)
-                                   .where(messageable_type: 'Network')
-                                   .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
-                                   .sort_by_last_messages(params[:limit], params[:offset])
-                                   .with_images.with_videos
-                                   .with_room(messageIds)
-                                   .select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
+      # undercover_messages = Message.by_ids(messageIds)
+      #                              .by_not_deleted
+      #                              .without_blacklist(current_user)
+      #                              .without_deleted(current_user)
+      #                              .where(messageable_type: 'Network')
+      #                              .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
+      #                              .sort_by_last_messages(params[:limit], params[:offset])
+      #                              .with_images.with_videos
+      #                              .with_room(messageIds)
+      #                              .select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
 
+
+      # Fetch conversation + conversation message + Lines(own) + Lines(followed) + Lines(within distance even if not followed)
+      # Do not show messages on Line at landing page
+      undercover_messages = Message.by_ids(messageIds)
+             .by_not_deleted
+             .without_blacklist(current_user)
+             .without_deleted(current_user)
+             .where("(messageable_type = 'Network' OR (messageable_type = 'Room' and 'undercover' = false))")
+             .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
+             .sort_by_last_messages(params[:limit], params[:offset])
+             .with_images.with_videos
+             .left_joins(:room)
+             .select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
+             
       undercover_messages, ids_to_remove = Messages::CurrentIdsPresent.new(
           current_ids: current_ids,
           undercover_messages: undercover_messages,
