@@ -415,6 +415,32 @@ class Api::V1::MessagesController < Api::V1::BaseController
     }
   end
 
+  def send_notifications
+    room = Room.find_by(id: params[:messageable_id])
+    message = Message.find_by(id: room.message_id)
+
+    followed_messages = FollowedMessage.where(message_id: message.id)
+    followed_message_userIds = followed_messages.map(&:user_id)
+
+    followed_users = User.where(id: followed_message_userIds)
+    user_registration_ids = followed_users.map(&:registration_id).compact
+
+    notifications_result = Notifications::Push.new(
+        current_user,
+        message.text,
+        params[:text],
+        user_registration_ids,
+        message,
+        params
+      ).perform
+
+    render json: {
+      message_id: followed_message_userIds,
+      message: message,
+      child: params
+    }
+  end
+
   private
 
   def set_room

@@ -69,6 +69,7 @@ Rails.application.routes.draw do
           post 'delete_for_all'
           post 'update_message_points'
           get 'nearby'
+          post 'send_notifications', to: 'messages#send_notifications'
         end
       end
       resources :networks_users, only: %i[index create]
