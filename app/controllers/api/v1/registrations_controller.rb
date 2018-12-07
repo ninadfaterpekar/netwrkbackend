@@ -65,7 +65,8 @@ class Api::V1::RegistrationsController < Api::V1::BaseController
       :hero_avatar,
       :gender,
       :points_count,
-      :terms_of_use_accepted
+      :terms_of_use_accepted,
+      :registration_id
     )
   end
 end
