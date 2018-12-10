@@ -36,7 +36,13 @@ class Notifications::Push
         title: title,
         body: description
       },
+      collapse_key: "type_a",
       data: {
+         title: title,
+         body: description,
+         key_1: "value for key1",
+         key_2: "value for key2",
+         child_message_id: child_message.id,
          child_message: child_message
       },
     }
