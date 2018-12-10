@@ -421,9 +421,6 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
     if params[:messageable_type] == 'Room'
 
-      room = Room.find_by(id: params[:messageable_id])
-      message = Message.find_by(id: room.message_id)
-
       if notification_type == 'like'
         # when someone likes message then send notification to its owner
         notification_title = params[:text]
@@ -442,6 +439,9 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
       elsif notification_type == "new_message"
         # when someone create message then send notification to line followers
+        room = Room.find_by(id: params[:messageable_id])
+        message = Message.find_by(id: room.message_id)
+
         notification_title = message.text
         notification_body = params[:text]
 
@@ -457,7 +457,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
         notification_title = params[:text]
         notification_body = "You've become a legend"
 
-        followed_users = User.where(id:  params[:user_id])
+        followed_users = User.where(id: params[:user_id])
         user_registration_ids = followed_users.map(&:registration_id).compact
       end
     end   
