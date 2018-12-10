@@ -416,28 +416,62 @@ class Api::V1::MessagesController < Api::V1::BaseController
   end
 
   def send_notifications
-    room = Room.find_by(id: params[:messageable_id])
-    message = Message.find_by(id: room.message_id)
+    
+    notification_type = params[:notification_type]
 
-    followed_messages = FollowedMessage.where(message_id: message.id)
-    followed_message_userIds = followed_messages.map(&:user_id)
+    if params[:messageable_type] == 'Room'
 
-    followed_users = User.where(id: followed_message_userIds)
-    user_registration_ids = followed_users.map(&:registration_id).compact
+      room = Room.find_by(id: params[:messageable_id])
+      message = Message.find_by(id: room.message_id)
+
+      if notification_type == 'like'
+        # when someone likes message then send notification to its owner
+        notification_title = params[:text]
+        notification_body = "Looks like you’ve put some good stuff out there"
+
+        followed_users = User.where(id:  params[:user_id])
+        user_registration_ids = followed_users.map(&:registration_id).compact
+
+      elsif notification_type == "legendary" 
+        # when user pin message then send notification to its owner
+        notification_title = params[:text]
+        notification_body = "You've become a legend"
+
+        followed_users = User.where(id:  params[:user_id])
+        user_registration_ids = followed_users.map(&:registration_id).compact
+
+      elsif notification_type == "new_message"
+        # when someone create message then send notification to line followers
+        notification_title = message.text
+        notification_body = params[:text]
+
+        followed_messages = FollowedMessage.where(message_id: message.id)
+        followed_message_userIds = followed_messages.map(&:user_id)
+
+        followed_users = User.where(id: followed_message_userIds)
+        user_registration_ids = followed_users.map(&:registration_id).compact
+      end 
+    elsif params[:messageable_type] == 'Network' && params[:undercover] == 'false'
+      if notification_type == 'legendary'
+        #when user pin message then send notification to its owner
+        notification_title = params[:text]
+        notification_body = "You've become a legend"
+
+        followed_users = User.where(id:  params[:user_id])
+        user_registration_ids = followed_users.map(&:registration_id).compact
+      end
+    end   
 
     notifications_result = Notifications::Push.new(
         current_user,
-        message.text,
-        params[:text],
+        notification_title,
+        notification_body,
         user_registration_ids,
-        message,
         params
       ).perform
 
     render json: {
-      message_id: followed_message_userIds,
-      message: message,
-      child: params
+      status: true
     }
   end
 

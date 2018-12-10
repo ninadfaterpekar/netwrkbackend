@@ -1,11 +1,10 @@
 class Notifications::Push
 
-  def initialize(user, title, description, receivers, parent_message, child_message)
+  def initialize(user, title, description, receivers, child_message)
     @user = user
     @title = title
     @description = description
     @receivers = receivers
-    @parent_message = parent_message
     @child_message = child_message
   end
 
@@ -22,7 +21,7 @@ class Notifications::Push
   end
 
   private
-  attr_reader :title, :description, :receivers, :parent_message, :child_message
+  attr_reader :title, :description, :receivers, :child_message
 
   def notify_android(devices, collapse_key = nil)
     require 'fcm'
