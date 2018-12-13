@@ -41,7 +41,8 @@ class Notifications::Push
          body: description,
          key_1: "value for key1",
          key_2: "value for key2",
-         child_message: child_message
+         child_message: child_message,
+         'content-available': 1
       },
     }
     fcm.send(registration_ids, options)
