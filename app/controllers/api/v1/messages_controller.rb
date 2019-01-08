@@ -171,9 +171,17 @@ class Api::V1::MessagesController < Api::V1::BaseController
                .with_room(messages.map(&:id))
                .select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
 =end
+      if params[:is_distance_check] == 'true'
+         
+         messages = Undercover::CheckNear.new(
+          params[:post_code],
+          params[:lng],
+          params[:lat],
+          current_user
+        ).perform
 
-      undercover_messages =
-        Message.select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
+        undercover_messages = Message.select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
+               .by_ids(messages.map(&:id))
                .by_not_deleted
                .without_blacklist(current_user)
                .without_deleted(current_user)
@@ -184,17 +192,22 @@ class Api::V1::MessagesController < Api::V1::BaseController
                .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
                .joins("INNER JOIN Rooms ON Rooms.message_id = Messages.id AND Messages.messageable_type = 'Network'")
                .sort_by_points(params[:limit], params[:offset])
-               
-      undercover_messages, ids_to_remove =
-        Messages::CurrentIdsPresent.new(
-          current_ids: current_ids,
-          undercover_messages: undercover_messages,
-          with_network: network.present?,
-          user: current_user
-        ).perform_nearby
+      else
+        undercover_messages =
+          Message.select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
+                 .by_not_deleted
+                 .without_blacklist(current_user)
+                 .without_deleted(current_user)
+                 .where(messageable_type: 'Network')
+                 .where(undercover: true)
+                 .where.not(user_id: current_user)
+                 .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
+                 .joins("INNER JOIN Rooms ON Rooms.message_id = Messages.id AND Messages.messageable_type = 'Network'")
+                 .sort_by_points(params[:limit], params[:offset])  
+      end
 
       render json: {
-        messages: undercover_messages, ids_to_remove: ids_to_remove
+        messages: undercover_messages, ids_to_remove: []
       }
   end
 
