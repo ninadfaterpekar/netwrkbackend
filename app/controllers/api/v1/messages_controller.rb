@@ -451,7 +451,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
         user_registration_ids = followed_users.map(&:registration_id).compact
 
       elsif notification_type == "new_message"
-        # when someone create message then send notification to line followers
+        # when someone create message then send notification
         room = Room.find_by(id: params[:messageable_id])
         message = Message.find_by(id: room.message_id)
 
@@ -461,7 +461,14 @@ class Api::V1::MessagesController < Api::V1::BaseController
         followed_messages = FollowedMessage.where(message_id: message.id)
         followed_message_userIds = followed_messages.map(&:user_id)
 
-        followed_users = User.where(id: followed_message_userIds)
+        room_users = RoomsUser.where(room_id: room.id)
+        room_userIds = room_users.map(&:user_id)
+
+        #send notification to message owner + followers users + connected users to line
+        final_usersIds = followed_message_userIds + room_userIds + Message.user_id
+        final_usersIds = final_usersIds.uniq
+
+        followed_users = User.where(id: final_usersIds)
         user_registration_ids = followed_users.map(&:registration_id).compact
       end 
     elsif params[:messageable_type] == 'Network' && params[:undercover] == 'false'
