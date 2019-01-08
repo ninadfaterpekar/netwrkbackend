@@ -93,13 +93,26 @@ class Api::V1::MessagesController < Api::V1::BaseController
 =end
 
       # fetch area feed. Whats happening in that area.
-      messages = Message.where(post_code:  params[:post_code])
+
+      if params[:is_distance_check] == 'true'
+        #if filter distance is on then messages from that postcode
+        messages = Message.where(post_code:  params[:post_code])
                         .where("((messageable_type = 'Network') or (messageable_type = 'Room' and undercover = true))")
                         .by_not_deleted
                         .without_blacklist(current_user)
                         .without_deleted(current_user)
                         .sort_by_last_messages(params[:limit], params[:offset])
                         .with_images.with_videos
+
+      else
+        # fetch all messages if distance check if off
+        messages = Message.where("((messageable_type = 'Network') or (messageable_type = 'Room' and undercover = true))")
+                        .by_not_deleted
+                        .without_blacklist(current_user)
+                        .without_deleted(current_user)
+                        .sort_by_last_messages(params[:limit], params[:offset])
+                        .with_images.with_videos
+      end
 
       messages = messages.by_user(params[:user_id]) if params[:user_id].present?
       messages, _ids_to_remove =
