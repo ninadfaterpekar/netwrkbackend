@@ -465,7 +465,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
         room_userIds = room_users.map(&:user_id)
 
         #send notification to message owner + followers users + connected users to line
-        final_usersIds = followed_message_userIds + room_userIds + Message.user_id
+        final_usersIds = followed_message_userIds + room_userIds + [message.user_id]
         final_usersIds = final_usersIds.uniq
 
         followed_users = User.where(id: final_usersIds)
