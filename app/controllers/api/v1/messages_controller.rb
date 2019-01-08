@@ -206,8 +206,16 @@ class Api::V1::MessagesController < Api::V1::BaseController
                  .sort_by_points(params[:limit], params[:offset])  
       end
 
+      undercover_messages, ids_to_remove =
+        Messages::CurrentIdsPresent.new(
+          current_ids: current_ids,
+          undercover_messages: undercover_messages,
+          with_network: network.present?,
+          user: current_user
+        ).perform_nearby
+
       render json: {
-        messages: undercover_messages, ids_to_remove: []
+        messages: undercover_messages, ids_to_remove: ids_to_remove
       }
   end
 
