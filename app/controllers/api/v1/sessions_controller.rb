@@ -33,7 +33,7 @@ class Api::V1::SessionsController < Api::V1::BaseController
     if provider
       user = provider.user
       sign_in user, store: false
-      user.generate_authentication_token!
+      #user.generate_authentication_token!
       user.save
     else
       user = User.create!(oauth_params)
