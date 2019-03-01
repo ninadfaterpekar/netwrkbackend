@@ -346,13 +346,30 @@ class Api::V1::MessagesController < Api::V1::BaseController
   end
 
   def unlock
-    if @message.present? && @message.correct_password?(params[:password])
+    if @message.present? && params[:password].present? && @message.correct_password?(params[:password])
       message_locked = LockedMessage.find_by(
         message_id: @message.id, user_id: current_user.id
       )
+
+      p message_locked
       if message_locked.present?
         message_locked.update_attributes(unlocked: true)
       end
+      render json: @message.as_json(methods: [:image_urls])
+    elsif @message.present? && @message.user_id == current_user.id
+      #if current user is message owner, then he can unlock message for other users
+      user_id = params[:message][:user_id]
+      message_locked = LockedMessage.find_by(
+        message_id: @message.id, user_id: user_id
+      )
+
+      if message_locked.present?
+        message_locked.update_attributes(unlocked: true)
+        requested_message = Message.find_by(id: params[:message][:id])
+        #delete requested message
+        requested_message.update_attributes(deleted: true)
+      end
+
       render json: @message.as_json(methods: [:image_urls])
     else
       head 422
