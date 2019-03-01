@@ -364,7 +364,9 @@ class Api::V1::MessagesController < Api::V1::BaseController
       )
 
       if message_locked.present?
-        message_locked.update_attributes(unlocked: true)
+        if params[:status] == 'ACCEPT'
+          message_locked.update_attributes(unlocked: true)
+        end
         requested_message = Message.find_by(id: params[:message][:id])
         #delete requested message
         requested_message.update_attributes(deleted: true)
