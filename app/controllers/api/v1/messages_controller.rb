@@ -144,6 +144,38 @@ class Api::V1::MessagesController < Api::V1::BaseController
     end
   end
 
+
+  # Get near by lines from latitude and longitude 
+  # Current radius is 15 miles
+  def nearby_search
+    messages = []
+    undercover_messages = []
+    current_ids = []
+    current_ids = params[:current_ids] if params[:current_ids].present?
+    
+    network = Network.find_by(post_code: params[:post_code])
+
+    messages = Undercover::CheckNear.new(
+      params[:post_code],
+      params[:lng],
+      params[:lat],
+      current_user
+    ).perform
+
+    undercover_messages =
+        Message.by_ids(messages.map(&:id))
+               .by_not_deleted
+               .without_blacklist(current_user)
+               .without_deleted(current_user)
+               .where(messageable_type: 'Network')
+               .sort_by_points(params[:limit], params[:offset])
+
+    render json: {
+      messages: undercover_messages
+    }
+  end
+
+
   def nearby
     network = Network.find_by(post_code: params[:post_code])
 
