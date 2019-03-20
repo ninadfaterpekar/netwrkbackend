@@ -567,6 +567,25 @@ class Api::V1::MessagesController < Api::V1::BaseController
     }
   end
 
+  def show
+    message = Message.find(params[:id])
+    
+    if message 
+      render json: {
+        message: message.as_json(
+          methods: %i[
+                      image_urls video_urls like_by_user legendary_by_user user
+                      text_with_links post_url expire_at has_expired is_synced
+                    ]
+        )
+      }, status: 200
+    else
+      render json: {
+        message: []
+      }, status: :bad_request
+    end
+  end
+
   private
 
   def set_room
