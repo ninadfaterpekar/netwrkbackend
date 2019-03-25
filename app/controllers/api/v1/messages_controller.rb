@@ -501,6 +501,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
   end
 
   def send_notifications
+
+    p 'abc'
     
     notification_type = params[:notification_type]
 
