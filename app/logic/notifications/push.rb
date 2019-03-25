@@ -30,32 +30,32 @@ class Notifications::Push
     #registration_ids = devices.map(&:registration_id)
     registration_ids = devices
 
-    # options = {
-    #   notification: {
-    #     title: title,
-    #     body: description
-    #   },
-    #   collapse_key: "type_a",
-    #   data: {
-    #      title: title,
-    #      body: description,
-    #      key_1: "value for key1",
-    #      key_2: "value for key2",
-    #      child_message: child_message,
-    #      'content-available': 1
-    #   },
-    # }
-
-
     options = {
+      notification: {
+        title: title,
+        body: description
+      },
+      collapse_key: "type_a",
       data: {
          title: title,
          body: description,
-         notId: child_message[:id],
+         key_1: "value for key1",
+         key_2: "value for key2",
          child_message: child_message,
          'content-available': 1
       },
     }
+
+
+    # options = {
+    #   data: {
+    #      title: title,
+    #      body: description,
+    #      notId: child_message[:id],
+    #      child_message: child_message,
+    #      'content-available': 1
+    #   },
+    # }
 
     
     fcm.send(registration_ids, options)
