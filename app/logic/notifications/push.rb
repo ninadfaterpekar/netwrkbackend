@@ -35,7 +35,6 @@ class Notifications::Push
         title: title,
         body: description
       },
-      collapse_key: "type_a",
       data: {
          title: title,
          body: description,
