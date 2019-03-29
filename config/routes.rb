@@ -56,6 +56,7 @@ Rails.application.routes.draw do
         member do
           get 'room/messages', to: 'messages#messages_from_room'
           get 'room/users', to: 'messages#users_from_room'
+          get 'reply/messages', to: 'messages#replies_on_message'
         end
         collection do
           post 'lock'

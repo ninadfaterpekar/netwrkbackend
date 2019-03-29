@@ -2,7 +2,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
   skip_before_action :verify_authenticity_token
   before_action :set_room, only: %i[messages_from_room users_from_room]
   before_action :set_message, only: %i[
-    update lock unlock destroy delete_for_all
+    update lock unlock destroy delete_for_all replies_on_message
   ]
 
   def index
@@ -493,6 +493,24 @@ class Api::V1::MessagesController < Api::V1::BaseController
                     .offset(params[:offset]).limit(params[:limit])
     messages.each { |m| m.current_user = current_user }
     render json: { room_id: @room.id, messages: @room.messages.as_json(
+      methods: %i[
+        image_urls video_urls like_by_user legendary_by_user user
+        text_with_links post_url expire_at has_expired is_synced
+      ]
+    ) }
+  end
+
+  def replies_on_message
+    unless @message
+      return render json: { message: 'message isnt created' }, status: :bad_request
+    end
+
+    replies = @message.replies
+    messages = Message.by_messageable(replies.map(&:id), 'Reply')
+               .by_not_deleted
+    
+    messages.each { |m| m.current_user = current_user }
+    render json: { reply_to_message_id: @message.id, messages: messages.as_json(
       methods: %i[
         image_urls video_urls like_by_user legendary_by_user user
         text_with_links post_url expire_at has_expired is_synced

@@ -25,10 +25,12 @@ class Message < ApplicationRecord
   has_many :users, through: :deleted_messages
 
   has_one :room, dependent: :destroy
+  has_many :replies, dependent: :destroy
 
   validates :text, obscenity: { sanitize: true }
 
   scope :by_ids, ->(ids) { where(id: ids) }
+  scope :by_messageable_ids, ->(ids) { where(id: ids) }
   scope :without_blacklist, ->(user) {
     where.not(user_id: user.blacklist.pluck(:target_id))
   }
