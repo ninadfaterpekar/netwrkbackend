@@ -291,10 +291,21 @@ class Api::V1::MessagesController < Api::V1::BaseController
   end
 
   def create
-    message = Message.new(
-      message_params.merge(created_at: Time.at(params[:message][:timestamp].to_i))
+    message = Message.new( 
+      message_params.merge(created_at: Time.at(params[:message][:timestamp].to_i)) 
     )
     message.messageable = Room.find(params[:room_id]) if params[:room_id].present?
+
+    # If message is reply of other message then create reply
+    if params[:reply_to_message_id].present?
+      replyToMessage = Message.find(params[:reply_to_message_id])
+      reply = Reply.new(message: replyToMessage)
+     
+      if reply.save
+        message.messageable = reply
+      end
+    end
+
     message.post_code = params[:post_code]
     begin
       message.expire_date = params[:message][:expire_date][:_d]
@@ -501,8 +512,6 @@ class Api::V1::MessagesController < Api::V1::BaseController
   end
 
   def send_notifications
-
-    p 'abc'
     
     notification_type = params[:notification_type]
 
