@@ -299,7 +299,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
     # If message is reply of other message then create reply
     if params[:reply_to_message_id].present?
       replyToMessage = Message.find(params[:reply_to_message_id])
-      reply = Reply.new(message: replyToMessage)
+      reply = Reply.new(message: replyToMessage, user_id: current_user.id)
      
       if reply.save
         message.messageable = reply
@@ -581,6 +581,26 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
         followed_users = User.where(id: params[:user_id])
         user_registration_ids = followed_users.map(&:registration_id).compact
+      end
+    elsif params[:messageable_type] == 'Reply'
+      if notification_type == "new_reply"
+
+        reply = Reply.find_by(id: params[:messageable_id])
+        message = Message.find_by(id: reply.message.id)
+        replies = Reply.where(message_id: reply.message.id)
+        
+        replied_userIds = replies.map(&:user_id)
+
+        #send notification to message owner + users who replied to that message
+        final_usersIds = replied_userIds + [message.user_id]
+        final_usersIds = final_usersIds.uniq.compact
+
+        users = User.where(id: final_usersIds)
+        user_registration_ids = users.map(&:registration_id).compact
+
+        #when user reply on message then send notification to its owner
+        notification_title = "You've new reply" 
+        notification_body = params[:text]
       end
     end   
 
