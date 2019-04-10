@@ -168,6 +168,16 @@ class Message < ApplicationRecord
     )
   end
 
+  def make_unlocked(args)
+    salt = SecureRandom.base64(8)
+    update_columns(
+      locked: false,
+      hint: args[:hint],
+      password_salt: salt,
+      password_hash: Digest::SHA2.hexdigest(salt + args[:password])
+    )
+  end
+
   def text_with_links
     return if text.nil?
     return text if text.include?('</a>')
