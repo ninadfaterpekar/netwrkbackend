@@ -291,80 +291,115 @@ class Api::V1::MessagesController < Api::V1::BaseController
   end
 
   def create
-    message = Message.new( 
-      message_params.merge(created_at: Time.at(params[:message][:timestamp].to_i)) 
-    )
-    message.messageable = Room.find(params[:room_id]) if params[:room_id].present?
+    if params[:message][:messageId]
+      #if message_id set then edit the message
+      message = Message.find(params[:message][:messageId]) 
 
-    # If message is reply of other message then create reply
-    if params[:reply_to_message_id].present?
-      replyToMessage = Message.find(params[:reply_to_message_id])
-      reply = Reply.new(message: replyToMessage, user_id: current_user.id)
-     
-      if reply.save
-        message.messageable = reply
-      end
-    end
+      message.update(
+         message_params.merge(updated_at: Time.at(params[:message][:timestamp].to_i)) 
+      )
 
-    message.post_code = params[:post_code]
-    begin
-      message.expire_date = params[:message][:expire_date][:_d]
-    rescue # bad request from app :(
-    end
-    if message.save
-      Rooms::FindOrCreate.run(message: message)
-      if params[:images].present?
-        params[:images].each do |v|
-          image = Image.create(image: v)
-          message.images << image
-        end
-      end
-      if params[:message][:video_urls].present?
-        begin
-          params[:message][:video_urls].each do |v|
-            video = Video.create(thumbnail_url: v[:poster], url: v[:url])
-            message.videos << video
-          end
-        end
-      end
-      if params[:message][:social_urls].present?
-        params[:message][:social_urls].each do |i|
-          image = Image.create(url: i)
-          message.images << image
-        end
-      end
-      if params[:message][:locked] == true
-        message.make_locked(
-          password: params[:message][:password],
-          hint: params[:message][:hint]
-        )
-      end
       message.current_user = current_user
-      channel =
-        if message.messageable_type == 'Network'
-          "messages#{params[:post_code]}chat"
-        else
-          "room_#{params[:room_id]}"
-        end
-      socket_type = ChatChannel::TYPE[:message] if params[:room_id].present?
-      ActionCable.server.broadcast channel, socket_type: socket_type,
-        message: message.as_json(
-          methods: %i[
-            image_urls locked video_urls user is_synced
-            text_with_links post_url expire_at
-            has_expired locked_by_user timestamp
-          ]
-        )
+
+      if params[:message][:locked] == false
+        #make message unlocked 
+        message.make_unlocked(
+            password: params[:message][:password],
+            hint: params[:message][:hint]
+          )
+      elsif params[:message][:locked] == true
+        #make message locked 
+        message.make_locked(
+            password: params[:message][:password],
+            hint: params[:message][:hint]
+          )
+      end
 
       render json: message.as_json(
-        methods: %i[
+      methods: %i[
           image_urls video_urls user text_with_links post_url locked
           expire_at has_expired locked_by_user timestamp is_synced
         ]
       )
     else
-      head 422
-    end
+
+      message = Message.new( 
+        message_params.merge(created_at: Time.at(params[:message][:timestamp].to_i)) 
+      )
+
+      message.messageable = Room.find(params[:room_id]) if params[:room_id].present?
+
+      # If message is reply of other message then create reply
+      if params[:reply_to_message_id].present?
+        replyToMessage = Message.find(params[:reply_to_message_id])
+        reply = Reply.new(message: replyToMessage, user_id: current_user.id)
+       
+        if reply.save
+          message.messageable = reply
+        end
+      end
+
+      begin
+        message.expire_date = params[:message][:expire_date][:_d]
+      rescue # bad request from app :(
+      end
+      message.post_code = params[:post_code]
+
+      if message.save
+        Rooms::FindOrCreate.run(message: message)
+        if params[:images].present?
+          params[:images].each do |v|
+            image = Image.create(image: v)
+            message.images << image
+          end
+        end
+        if params[:message][:video_urls].present?
+          begin
+            params[:message][:video_urls].each do |v|
+              video = Video.create(thumbnail_url: v[:poster], url: v[:url])
+              message.videos << video
+            end
+          end
+        end
+        if params[:message][:social_urls].present?
+          params[:message][:social_urls].each do |i|
+            image = Image.create(url: i)
+            message.images << image
+          end
+        end
+        if params[:message][:locked] == true
+          message.make_locked(
+            password: params[:message][:password],
+            hint: params[:message][:hint]
+          )
+        end
+        message.current_user = current_user
+        channel =
+          if message.messageable_type == 'Network'
+            "messages#{params[:post_code]}chat"
+          else
+            "room_#{params[:room_id]}"
+          end
+        socket_type = ChatChannel::TYPE[:message] if params[:room_id].present?
+        ActionCable.server.broadcast channel, socket_type: socket_type,
+          message: message.as_json(
+            methods: %i[
+              image_urls locked video_urls user is_synced
+              text_with_links post_url expire_at
+              has_expired locked_by_user timestamp
+            ]
+          )
+
+        render json: message.as_json(
+          methods: %i[
+            image_urls video_urls user text_with_links post_url locked
+            expire_at has_expired locked_by_user timestamp is_synced
+          ]
+        )
+      else
+        head 422
+      end    
+    end    
   end
 
   def update
