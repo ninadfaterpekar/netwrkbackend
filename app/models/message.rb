@@ -174,7 +174,7 @@ class Message < ApplicationRecord
       locked: false,
       hint: args[:hint],
       password_salt: salt,
-      password_hash: Digest::SHA2.hexdigest(salt + args[:password])
+      password_hash: ''
     )
   end
 
