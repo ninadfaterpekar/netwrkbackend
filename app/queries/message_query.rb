@@ -12,13 +12,13 @@ class MessageQuery
 
   def profile(user, post_code, method, limit, offset)
     Message.by_user(user.id)
-           .by_post_code(post_code)
            .by_messageable_type(:Network)
            .public_is(method)
            .sort_by_last_messages(limit, offset)
            .by_not_deleted
            .without_blacklist(user)
            .with_unlocked(current_user.id)
+           #.by_post_code(post_code)
   end
 
   def latest_message(user, post_code, method, limit, offset)
