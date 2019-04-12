@@ -17,7 +17,7 @@ class MessageQuery
            .sort_by_last_messages(limit, offset)
            .by_not_deleted
            .without_blacklist(user)
-           .with_unlocked(current_user.id)
+           #.with_unlocked(current_user.id)
            #.by_post_code(post_code)
   end
 
