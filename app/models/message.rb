@@ -151,12 +151,17 @@ class Message < ApplicationRecord
 
   def line_locked_by_user(user = current_user)
     if messageable_type == 'Network'
-      m = LockedMessage.where(message_id: room.message_id)
-          .where(unlocked: false)
-          .where(user_id: user.id)
-      is_locked = m.present? ? true : false
-      return is_locked
-      exit
+      if room
+        m = LockedMessage.where(message_id: room.message_id)
+            .where(unlocked: false)
+            .where(user_id: user.id)
+        is_locked = m.present? ? true : false
+        return is_locked
+        exit
+      else
+         return false
+         exit 
+      end  
     end
 
     if messageable_type == 'Room' 
