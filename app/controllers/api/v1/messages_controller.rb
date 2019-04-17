@@ -522,10 +522,10 @@ class Api::V1::MessagesController < Api::V1::BaseController
     unless @room
       return render json: { message: 'room isnt created' }, status: :bad_request
     end
-    messages = @room.messages.order(created_at: :asc)
+    messages = @room.messages.order(created_at: :desc)
                     .offset(params[:offset]).limit(params[:limit])
     messages.each { |m| m.current_user = current_user }
-    render json: { room_id: @room.id, messages: @room.messages.as_json(
+    render json: { room_id: @room.id, messages: messages.as_json(
       methods: %i[
         image_urls video_urls like_by_user legendary_by_user user
         text_with_links post_url expire_at has_expired is_synced
