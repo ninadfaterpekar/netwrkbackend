@@ -59,14 +59,14 @@ class Messages::CurrentIdsPresent
         @undercover_messages = undercover_messages.as_json(
           methods: %i[
             image_urls video_urls like_by_user legendary_by_user user is_synced
-            text_with_links post_url expire_at has_expired locked_by_user is_followed is_connected
+            text_with_links post_url expire_at has_expired locked_by_user is_followed is_connected line_locked_by_user
           ]
         )
       else
         @undercover_messages = undercover_messages.as_json(
           methods: %i[
             image_urls video_urls like_by_user legendary_by_user user is_synced
-            text_with_links post_url expire_at has_expired locked_by_user
+            text_with_links post_url expire_at has_expired locked_by_user line_locked_by_user
           ]
         )
       end
