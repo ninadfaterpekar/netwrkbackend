@@ -81,16 +81,16 @@ class Api::V1::MessagesController < Api::V1::BaseController
       }
     elsif params[:undercover] == 'false'
 
-=begin  
-      messages = network.messages
-          .by_not_deleted
-          .undercover_is(false)
-          .without_blacklist(current_user)
-          .without_deleted(current_user)
-          .where(messageable_type: 'Network')
-          .sort_by_last_messages(params[:limit], params[:offset])
-          .with_images.with_videos
-=end
+  
+      # messages = network.messages
+      #     .by_not_deleted
+      #     .undercover_is(false)
+      #     .without_blacklist(current_user)
+      #     .without_deleted(current_user)
+      #     .where(messageable_type: 'Network')
+      #     .sort_by_last_messages(params[:limit], params[:offset])
+      #     .with_images.with_videos
+
 
       # fetch area feed. Whats happening in that area.
 
@@ -111,6 +111,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
                         .without_blacklist(current_user)
                         .without_deleted(current_user)
                         .sort_by_last_messages(params[:limit], params[:offset])
+                        .include_room
                         .with_images.with_videos
       end
 
@@ -123,14 +124,11 @@ class Api::V1::MessagesController < Api::V1::BaseController
           user: current_user,
           is_undercover: params[:undercover]
         ).perform
+
       render json: {
-        messages: messages.as_json(
-          methods: %i[
-            image_urls video_urls like_by_user legendary_by_user user
-            text_with_links post_url expire_at has_expired is_synced
-          ]
-        )
+        messages: messages, ids_to_remove: _ids_to_remove
       }
+      
     else
       message_list = undercover_messages + messages
       render json: {
