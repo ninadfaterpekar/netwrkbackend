@@ -58,6 +58,8 @@ class Message < ApplicationRecord
   scope :legendary_messages, -> {
     joins(:legendary_likes).merge(LegendaryLike.where(message_id: ids))
   }
+  scope :include_room, -> { includes(:room) }
+
   scope :sort_by_latest_id, -> { order(id: :desc) }
   scope :sort_by_newest, -> { order(created_at: :desc) }
   scope :sort_by_oldest, -> { order(created_at: :asc) }
@@ -144,6 +146,29 @@ class Message < ApplicationRecord
       m.present? ? !m.unlocked : true
     else
       false
+    end
+  end
+
+  def line_locked_by_user(user = current_user)
+    if messageable_type == 'Network'
+      m = LockedMessage.where(message_id: room.message_id)
+          .where(unlocked: false)
+          .where(user_id: user.id)
+      is_locked = m.present? ? true : false
+      return is_locked
+      exit
+    end
+
+    if messageable_type == 'Room' 
+      roomMessage = Room.find_by(id: messageable_id)
+        if roomMessage
+          m = LockedMessage.where(message_id: roomMessage.message_id)
+              .where(unlocked: false)
+              .where(user_id: user.id)
+          m.present? ? true : false
+        else
+          false
+        end
     end
   end
 
