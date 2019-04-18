@@ -38,14 +38,14 @@ class Messages::CurrentIdsPresent
           undercover_messages.as_json(
             methods: %i[
               image_urls video_urls like_by_user legendary_by_user user is_synced
-              text_with_links post_url expire_at has_expired locked_by_user is_followed is_connected
+              text_with_links post_url expire_at has_expired locked_by_user is_followed is_connected line_locked_by_user
             ]
           )
         else
           undercover_messages.as_json(
             methods: %i[
               image_urls video_urls like_by_user legendary_by_user user is_synced
-              text_with_links post_url expire_at has_expired locked_by_user
+              text_with_links post_url expire_at has_expired locked_by_user line_locked_by_user
             ]
           )
         end
@@ -93,7 +93,7 @@ def logic_nearby
         undercover_messages.as_json(
           methods: %i[
             user
-            expire_at has_expired is_followed
+            expire_at has_expired is_followed locked_by_user
           ]
         )
       end
@@ -106,12 +106,13 @@ def logic_nearby
       @undercover_messages = undercover_messages.as_json(
         methods: %i[
           user
-          expire_at has_expired is_followed
+          expire_at has_expired is_followed locked_by_user 
         ]
       )
       [undercover_messages, ids_to_remove]
     end
   end
+
   def create_locked_messages
     undercover_messages.locked_is(true).each do |m|
       LockedMessage.find_or_create_by(user_id: user.id, message_id: m.id)
