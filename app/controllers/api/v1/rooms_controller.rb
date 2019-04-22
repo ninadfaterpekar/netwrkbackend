@@ -5,11 +5,18 @@ class Api::V1::RoomsController < Api::V1::BaseController
   def add_user
     room = Room.find(params[:room_id])
     outcome = Rooms::Connect.run(user: current_user, room: room)
+
+    #get line owners private lines count to show coach mark
+    user_id = room.message.user_id;
+    privateLineCount = Message.by_messageable_type('Network')
+            .locked_is(true)
+            .by_user(user_id)
+            .count
+
     if outcome.success?
-      #head :ok
-      render json: { message: 'ok' }, status: 200
+      render json: { message: 'ok', privateLineCount: privateLineCount }, status: 200
     else
-      render json: { errors: outcome.errors }, status: :bad_request
+      render json: { errors: outcome.errors, privateLineCount: privateLineCount }, status: :bad_request
     end
   end
 
