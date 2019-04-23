@@ -169,7 +169,11 @@ class Api::V1::MessagesController < Api::V1::BaseController
                .sort_by_points(params[:limit], params[:offset])
 
     render json: {
-      messages: undercover_messages
+      messages: undercover_messages.as_json(
+        methods: %i[
+          image_urls video_urls text_with_links
+        ]
+      )
     }
   end
 
