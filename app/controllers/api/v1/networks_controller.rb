@@ -14,7 +14,8 @@ class Api::V1::NetworksController < Api::V1::BaseController
         render json: { network: @network }
       else
         render json: {
-          message: 'Network not found',
+          network: @network,
+          message: 'Network user not found',
           users: User.from_network(@network.id),
           count: User.from_network(@network.id).count
         }, status: 200
