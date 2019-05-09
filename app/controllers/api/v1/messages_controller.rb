@@ -160,13 +160,24 @@ class Api::V1::MessagesController < Api::V1::BaseController
       current_user
     ).perform
 
-    undercover_messages =
+    if params[:message_type] && params[:message_type] != ''
+      undercover_messages =
+        Message.by_ids(messages.map(&:id))
+               .by_not_deleted
+               .without_blacklist(current_user)
+               .without_deleted(current_user)
+               .where(messageable_type: 'Network')
+               .where(message_type: params[:message_type])
+               .sort_by_points(params[:limit], params[:offset])
+    else
+      undercover_messages =
         Message.by_ids(messages.map(&:id))
                .by_not_deleted
                .without_blacklist(current_user)
                .without_deleted(current_user)
                .where(messageable_type: 'Network')
                .sort_by_points(params[:limit], params[:offset])
+    end
 
     render json: {
       messages: undercover_messages.as_json(
