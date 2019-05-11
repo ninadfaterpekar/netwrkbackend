@@ -28,8 +28,8 @@ class Undercover::CheckDistance
     end
 
     messages.each do |message|
-      next unless (message.lat.to_s[0..4] == current_lat.to_s[0..4]) &&
-                  (message.lng.to_s[0..4] == current_lng.to_s[0..4])
+      next unless (message.lat.to_s[0..3] == current_lat.to_s[0..3]) ||
+                  (message.lng.to_s[0..3] == current_lng.to_s[0..3])
       distance = Geocoder::Calculations.distance_between(
         [current_lng, current_lat], [message.lng, message.lat]
       )
