@@ -23,8 +23,24 @@ class Undercover::CheckNear
     messages = Message.undercover_is(true).with_users
 
     messages.each do |message|
-      next unless (message.lat.to_s[0..3] == current_lat.to_s[0..3]) ||
-                  (message.lng.to_s[0..3] == current_lng.to_s[0..3])
+
+      # Caclulate distance between those messages only which are near to current location lat and lng
+      # Skip checking distance for messages which are far from current location.
+      message_lat = message.lat.to_s[0..3]
+      message_lng = message.lng.to_s[0..3]
+
+      current_lat_min = (current_lat.to_s[0..3].to_f.floor - 1).to_s 
+      current_lat_max = (current_lat.to_s[0..3].to_f.floor + 1).to_s 
+
+      current_lng_min = (current_lng.to_s[0..3].to_f.floor - 1).to_s
+      current_lng_max = (current_lng.to_s[0..3].to_f.floor + 1).to_s
+
+      next unless (message_lat >= current_lat_min && message_lat <= current_lat_max) &&
+                  (message_lng >= current_lng_min && message_lng <= current_lng_max)
+
+      # next unless (message.lat.to_s[0..3] == current_lat.to_s[0..3]) ||
+      #             (message.lng.to_s[0..3] == current_lng.to_s[0..3])
+
       distance = Geocoder::Calculations.distance_between(
         [current_lng, current_lat], [message.lng, message.lat]
       )
