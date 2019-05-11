@@ -304,6 +304,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
   end
 
   def create
+    #if message id is present then update message
     if params[:message][:messageId]
       #if message_id set then edit the message
       message = Message.find(params[:message][:messageId]) 
@@ -335,7 +336,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
         ]
       )
     else
-
+      #if message id not present then create message
       message = Message.new( 
         message_params.merge(created_at: Time.at(params[:message][:timestamp].to_i)) 
       )
@@ -385,6 +386,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
             password: params[:message][:password],
             hint: params[:message][:hint]
           )
+          #Owner have access by default to its own private lines. 
+          LockedMessage.find_or_create_by(user_id: current_user.id, message_id: message.id, unlocked: true)
         end
         message.current_user = current_user
         channel =
