@@ -16,7 +16,12 @@ class Api::V1::UserLikesController < Api::V1::BaseController
         )
       end
       message.save
-      render json: message
+      render json: message.as_json(
+          methods: %i[
+            image_urls video_urls user text_with_links post_url locked
+            expire_at has_expired timestamp is_synced
+          ]
+        )
     else
       @like = UserLike.new(like_params)
       if @like.save
@@ -28,7 +33,12 @@ class Api::V1::UserLikesController < Api::V1::BaseController
           )
         end
         message.save
-        render json: message
+        render json: message.as_json(
+          methods: %i[
+            image_urls video_urls user text_with_links post_url locked
+            expire_at has_expired timestamp is_synced
+          ]
+        )
       else
         head 422
       end
