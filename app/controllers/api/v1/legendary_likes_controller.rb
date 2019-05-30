@@ -7,7 +7,12 @@ class Api::V1::LegendaryLikesController < Api::V1::BaseController
                          .by_user(current_user.id).first
     message = Message.find_by(id: params[:legendary][:message_id])
     if @like.present?
-      render json: message
+      render json: message.as_json(
+          methods: %i[
+            image_urls video_urls user text_with_links post_url locked
+            expire_at has_expired timestamp is_synced
+          ]
+        )
     else
       @like = LegendaryLike.new(like_params)
       if @like.save # TODO: important: fix bags with multi threads
@@ -21,9 +26,14 @@ class Api::V1::LegendaryLikesController < Api::V1::BaseController
           message.owner.update_attributes(
             points_count: message.owner.points_count + LegendaryLike::POINTS
           )
-          TemplatesMailer.legendary_mail(message.owner.email).deliver_now
+          #TemplatesMailer.legendary_mail(message.owner.email).deliver_now
         end
-        render json: message
+        render json: message.as_json(
+          methods: %i[
+            image_urls video_urls user text_with_links post_url locked
+            expire_at has_expired timestamp is_synced
+          ]
+        )
       else
         head 422
       end
