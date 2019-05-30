@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180202140527) do
+ActiveRecord::Schema.define(version: 20190530051211) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,6 +82,14 @@ ActiveRecord::Schema.define(version: 20180202140527) do
     t.index ["user_id"], name: "index_deleted_messages_on_user_id", using: :btree
   end
 
+  create_table "followed_messages", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "message_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean  "followed"
+  end
+
   create_table "images", force: :cascade do |t|
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
@@ -140,6 +148,11 @@ ActiveRecord::Schema.define(version: 20180202140527) do
     t.string   "social_id"
     t.string   "messageable_type"
     t.integer  "messageable_id"
+    t.string   "role_name"
+    t.string   "place_name"
+    t.string   "message_type"
+    t.integer  "reply_count"
+    t.string   "title"
     t.index ["messageable_type", "messageable_id"], name: "index_messages_on_messageable_type_and_messageable_id", using: :btree
     t.index ["user_id"], name: "index_messages_on_user_id", using: :btree
   end
@@ -181,6 +194,14 @@ ActiveRecord::Schema.define(version: 20180202140527) do
     t.datetime "updated_at",  null: false
     t.string   "provider_id"
     t.index ["user_id"], name: "index_providers_on_user_id", using: :btree
+  end
+
+  create_table "replies", force: :cascade do |t|
+    t.integer  "message_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "user_id"
+    t.index ["message_id"], name: "index_replies_on_message_id", using: :btree
   end
 
   create_table "reports", force: :cascade do |t|
@@ -261,6 +282,7 @@ ActiveRecord::Schema.define(version: 20180202140527) do
     t.datetime "legendary_at"
     t.integer  "points_count",             default: 0
     t.boolean  "terms_of_use_accepted",    default: false
+    t.string   "registration_id"
     t.index ["email"], name: "index_users_on_email", using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
@@ -278,5 +300,6 @@ ActiveRecord::Schema.define(version: 20180202140527) do
     t.index ["message_id"], name: "index_videos_on_message_id", using: :btree
   end
 
+  add_foreign_key "replies", "messages"
   add_foreign_key "rooms", "messages"
 end
