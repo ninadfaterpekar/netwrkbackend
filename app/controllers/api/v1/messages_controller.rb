@@ -706,6 +706,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
   def message_params
     params.require(:message).permit(
+      :title,
       :text,
       :is_emoji,
       :user_id,
