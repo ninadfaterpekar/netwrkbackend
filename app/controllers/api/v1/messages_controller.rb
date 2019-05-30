@@ -475,7 +475,17 @@ class Api::V1::MessagesController < Api::V1::BaseController
   def legendary_list
     network = Network.find_by(id: params[:network_id])
     if network.present?
-      messages = network.messages.legendary_messages
+
+      # fetch Lines and Line messages of that area (zipcode of passed networkId) 
+      # which are set as legendary by any user
+      messages = Message.by_not_deleted
+                        .where(post_code: network.post_code)
+                        .where(undercover: true)
+                        .where("(messageable_type = 'Network' OR messageable_type = 'Room')")
+                        .legendary_messages
+                        .sort_by_points(params[:limit], params[:offset])
+
+      #messages = network.messages.legendary_messages
       render json: {
         messages: messages.as_json(
           methods: %i[
