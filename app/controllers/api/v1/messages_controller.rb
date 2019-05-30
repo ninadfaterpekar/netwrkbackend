@@ -586,10 +586,14 @@ class Api::V1::MessagesController < Api::V1::BaseController
     notification_type = params[:notification_type]
 
     if params[:messageable_type] == 'Room'
+      
+      # notification title should be line name
+      room = Room.find(params[:messageable_id])
+      message = Message.find(room.message_id)
 
       if notification_type == 'like'
         # when someone likes message then send notification to its owner
-        notification_title = params[:text]
+        notification_title = message.title
         notification_body = "Looks like you’ve put some good stuff out there"
 
         followed_users = User.where(id:  params[:user_id])
@@ -597,18 +601,15 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
       elsif notification_type == "legendary" 
         # when user pin message then send notification to its owner
-        notification_title = params[:text]
+        notification_title = message.title
         notification_body = "You've become a legend"
 
         followed_users = User.where(id:  params[:user_id])
         user_registration_ids = followed_users.map(&:registration_id).compact
 
       elsif notification_type == "new_message"
-        # when someone create message then send notification
-        room = Room.find_by(id: params[:messageable_id])
-        message = Message.find_by(id: room.message_id)
 
-        notification_title = message.text
+        notification_title = message.title
         notification_body = params[:text]
 
         followed_messages = FollowedMessage.where(message_id: message.id)
@@ -626,10 +627,10 @@ class Api::V1::MessagesController < Api::V1::BaseController
         followed_users = User.where(id: final_usersIds)
         user_registration_ids = followed_users.map(&:registration_id).compact
       end 
-    elsif params[:messageable_type] == 'Network' && params[:undercover] == 'false'
+    elsif params[:messageable_type] == 'Network'
       if notification_type == 'legendary'
         #when user pin message then send notification to its owner
-        notification_title = params[:text]
+        notification_title = params[:title]
         notification_body = "You've become a legend"
 
         followed_users = User.where(id: params[:user_id])
@@ -656,7 +657,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
         #when user reply on message then send notification to its owner
         notification_title = "You've new reply" 
-        notification_body = params[:text]
+        notification_body = message.title
       end
     end   
 
@@ -671,7 +672,11 @@ class Api::V1::MessagesController < Api::V1::BaseController
     end
 
     render json: {
-      status: true
+      status: true,
+      notification_type: notification_type,
+      notification_title: notification_title,
+      notification_body: notification_body,
+      params: params
     }
   end
 
