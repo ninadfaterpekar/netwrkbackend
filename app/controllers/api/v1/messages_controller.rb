@@ -628,10 +628,11 @@ class Api::V1::MessagesController < Api::V1::BaseController
         user_registration_ids = followed_users.map(&:registration_id).compact
       end 
     elsif params[:messageable_type] == 'Network'
-      if notification_type == 'legendary'
+      if notification_type == 'like'
+
         #when user pin message then send notification to its owner
         notification_title = params[:title]
-        notification_body = "You've become a legend"
+        notification_body = "Looks like you’ve put some good stuff out there"
 
         followed_users = User.where(id: params[:user_id])
         user_registration_ids = followed_users.map(&:registration_id).compact
