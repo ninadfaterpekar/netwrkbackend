@@ -614,7 +614,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
         notification_title = message.title
         notification_body = "You've become a legend"
 
-        followed_users = User.where(id:  params[:user_id])
+        followed_users = User.where(id: params[:user_id])
         user_registration_ids = followed_users.map(&:registration_id).compact
 
       elsif notification_type == "new_message"
@@ -738,7 +738,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
       :expire_date,
       :role_name,
       :place_name,
-      :message_type
+      :message_type,
+      :avatar
     )
   end
 end
