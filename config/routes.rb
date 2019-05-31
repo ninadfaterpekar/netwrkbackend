@@ -69,6 +69,7 @@ Rails.application.routes.draw do
           post 'social_feed'
           post 'delete_for_all'
           post 'update_message_points'
+          put 'update_message_avatar'
           get 'nearby'
           get 'nearby_search'
           post 'send_notifications', to: 'messages#send_notifications'

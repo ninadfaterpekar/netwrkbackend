@@ -540,6 +540,25 @@ class Api::V1::MessagesController < Api::V1::BaseController
     end
   end
 
+  def update_message_avatar
+    message = Message.find_by(id: params[:message][:id])
+    if message.present?
+      p 'Image uploading started'
+      message.update(message_params)
+      message.save
+
+      render json: message.as_json(
+          methods: %i[
+            avatar_url image_urls video_urls like_by_user legendary_by_user user is_synced
+            text_with_links post_url expire_at has_expired locked_by_user line_locked_by_user
+          ]
+        ), status: 200
+    else
+        p 'error in uploading'
+        head 422
+    end
+  end
+
   # api/v1/messages/delete POST
   def delete_for_all
     @message.update_attributes(deleted: true)
