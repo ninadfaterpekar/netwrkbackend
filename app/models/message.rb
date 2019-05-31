@@ -27,6 +27,11 @@ class Message < ApplicationRecord
   has_one :room, dependent: :destroy
   has_many :replies, dependent: :destroy
 
+  has_attached_file :avatar, styles: {
+    medium: '256x256#', thumb: '100x100>'
+  }, default_url: '/images/missing.png'
+  validates_attachment_content_type :avatar, content_type: /\Aimage\/.*\z/
+
   validates :text, obscenity: { sanitize: true }
 
   scope :by_ids, ->(ids) { where(id: ids) }
@@ -97,6 +102,10 @@ class Message < ApplicationRecord
 
   def legendary?
     !legendary_count.zero?
+  end
+
+  def avatar_url
+    'https:' + avatar.url(:medium)
   end
 
   def image_urls
