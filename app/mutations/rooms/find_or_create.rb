@@ -21,7 +21,7 @@ module Rooms
 
     def create_room
       @room = Room.new(message: message)
-      #room.users << room.message.owner
+      room.users << room.message.owner
       room.save
     end
 
