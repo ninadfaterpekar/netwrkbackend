@@ -165,11 +165,9 @@ class Message < ApplicationRecord
             .where(unlocked: false)
             .where(user_id: user.id)
         is_locked = m.present? ? true : false
-        return is_locked
-        exit
+         return is_locked
       else
          return false
-         exit 
       end  
     end
 
