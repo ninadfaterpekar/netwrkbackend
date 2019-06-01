@@ -273,7 +273,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
     render json: {
       messages: messages.as_json(
         methods: %i[
-          image_urls video_urls like_by_user legendary_by_user user
+          avatar_url, image_urls video_urls like_by_user legendary_by_user user
           text_with_links post_url expire_at has_expired
         ]
       )
