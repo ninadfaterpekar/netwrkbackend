@@ -65,6 +65,7 @@ Rails.application.routes.draw do
           post 'sms_sharing'
           get 'legendary_list'
           get 'profile_messages'
+          get 'nearby_profile_messages'
           get 'block'
           post 'social_feed'
           post 'delete_for_all'

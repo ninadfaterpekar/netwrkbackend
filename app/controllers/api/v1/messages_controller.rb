@@ -157,7 +157,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
       params[:post_code],
       params[:lng],
       params[:lat],
-      current_user
+      current_user,
+      messages
     ).perform
 
     if params[:message_type] && params[:message_type] != ''
@@ -222,7 +223,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
           params[:post_code],
           params[:lng],
           params[:lat],
-          current_user
+          current_user,
+          messages
         ).perform
 
         undercover_messages = Message.select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
@@ -275,6 +277,35 @@ class Api::V1::MessagesController < Api::V1::BaseController
         methods: %i[
           avatar_url image_urls video_urls like_by_user legendary_by_user user
           text_with_links post_url expire_at has_expired
+        ]
+      )
+    }
+  end
+
+  def nearby_profile_messages
+    user_id = params[:user_id]
+
+    messages = Message.by_messageable_type('Network')
+            .locked_is(true)
+            .by_user(user_id)
+            .by_not_deleted
+
+    if params[:is_distance_check] == 'true'
+      # check does messages are within 15 miles
+      messages = Undercover::CheckNear.new(
+        params[:post_code],
+        params[:lng],
+        params[:lat],
+        current_user,
+        messages
+      ).perform
+    end
+
+    render json: {
+      messages: messages.as_json(
+        methods: %i[
+          avatar_url image_urls video_urls user
+          text_with_links post_url expire_at has_expired line_locked_by_user
         ]
       )
     }
