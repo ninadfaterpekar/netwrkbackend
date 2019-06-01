@@ -1,11 +1,12 @@
 class Undercover::CheckNear
   include Service
 
-  def initialize(post_code, current_lng, current_lat, user)
+  def initialize(post_code, current_lng, current_lat, user, messages)
     @post_code = post_code
     @current_lng = current_lng
     @current_lat = current_lat
     @user = user
+    @nearby_messages = messages
   end
 
   def perform
@@ -13,14 +14,17 @@ class Undercover::CheckNear
   end
 
   private
-  attr_reader :post_code, :user, :current_lng, :current_lat
+  attr_reader :post_code, :user, :current_lng, :current_lat, :nearby_messages
 
   def messages_in_radius
 
     messages_in_radius = []
-    
-    # on landing page display own conversation + Lines (any user)
-    messages = Message.undercover_is(true).with_users
+
+    if nearby_messages.empty?
+      messages = Message.undercover_is(true).with_users
+    else
+      messages = nearby_messages
+    end  
 
     messages.each do |message|
 
