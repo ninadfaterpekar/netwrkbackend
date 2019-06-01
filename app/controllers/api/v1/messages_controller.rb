@@ -134,7 +134,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
       render json: {
         messages: message_list.as_json(
           methods: %i[
-            image_urls video_urls like_by_user legendary_by_user user
+            avatar_url image_urls video_urls like_by_user legendary_by_user user
             text_with_links post_url expire_at has_expired is_synced
           ]
         )
@@ -182,7 +182,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
     render json: {
       messages: undercover_messages.as_json(
         methods: %i[
-          image_urls video_urls text_with_links user expire_at has_expired
+          avatar_url image_urls video_urls text_with_links user expire_at has_expired
         ]
       )
     }
@@ -331,7 +331,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
       render json: message.as_json(
       methods: %i[
-          image_urls video_urls user text_with_links post_url locked
+          avatar_url image_urls video_urls user text_with_links post_url locked
           expire_at has_expired locked_by_user timestamp is_synced
         ]
       )
@@ -408,7 +408,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
         render json: message.as_json(
           methods: %i[
-            image_urls video_urls user text_with_links post_url locked
+            avatar_url image_urls video_urls user text_with_links post_url locked
             expire_at has_expired locked_by_user timestamp is_synced
           ]
         )
@@ -489,7 +489,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
       render json: {
         messages: messages.as_json(
           methods: %i[
-            image_urls video_urls like_by_user legendary_by_user user
+            avatar_url image_urls video_urls like_by_user legendary_by_user user
             text_with_links post_url
           ]
         )
@@ -573,7 +573,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
     messages.each { |m| m.current_user = current_user }
     render json: { room_id: @room.id, messages: messages.as_json(
       methods: %i[
-        image_urls video_urls like_by_user legendary_by_user user
+        avatar_url image_urls video_urls like_by_user legendary_by_user user
         text_with_links post_url expire_at has_expired is_synced
       ]
     ) }
@@ -592,7 +592,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
     messages.each { |m| m.current_user = current_user }
     render json: { reply_to_message_id: @message.id, messages: messages.as_json(
       methods: %i[
-        image_urls video_urls like_by_user legendary_by_user user
+        avatar_url image_urls video_urls like_by_user legendary_by_user user
         text_with_links post_url expire_at has_expired is_synced
       ]
     ) }
@@ -716,7 +716,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
       render json: {
         message: message.as_json(
           methods: %i[
-                      image_urls video_urls like_by_user legendary_by_user user
+                      avatar_url image_urls video_urls like_by_user legendary_by_user user
                       text_with_links post_url expire_at has_expired is_synced
                     ]
         )
