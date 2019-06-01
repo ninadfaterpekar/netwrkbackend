@@ -289,6 +289,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
             .locked_is(true)
             .by_user(user_id)
             .by_not_deleted
+            .sort_by_last_messages(params[:limit], params[:offset])
 
     if params[:is_distance_check] == 'true'
       # check does messages are within 15 miles
