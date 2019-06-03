@@ -282,6 +282,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
     }
   end
 
+  # Get profile near by private message within 15 miles
   def nearby_profile_messages
     user_id = params[:user_id]
 
@@ -291,7 +292,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
             .by_not_deleted
             .sort_by_last_messages(params[:limit], params[:offset])
 
-    if params[:is_distance_check] == 'true'
+    #if user have private message then only filter with 15 miles
+    if messages.count > 0 && params[:is_distance_check] == 'true'
       # check does messages are within 15 miles
       messages = Undercover::CheckNear.new(
         params[:post_code],
