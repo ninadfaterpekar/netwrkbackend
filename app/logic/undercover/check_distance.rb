@@ -22,9 +22,10 @@ class Undercover::CheckDistance
     # on landing page display own conversation + Lines (any user) if within distance
     if is_landing_page == 'true'
       messages = Message.where("((undercover = false and user_id = :user_id) or (undercover = true))", {user_id: user})
+                        .where("message_type = 'CUSTOM_LOCATION'")
                         .with_users
     else
-      messages = Message.undercover_is(true).with_users
+      messages = Message.where("message_type = 'CUSTOM_LOCATION'").undercover_is(true).with_users
     end
 
     messages.each do |message|
