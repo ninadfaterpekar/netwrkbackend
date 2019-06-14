@@ -31,6 +31,16 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
         followed_message_ids = followed_messages.map(&:message_id)
 
+        followed_custom_messages = Message.by_ids(followed_message_ids)
+
+        #if followed message custom line is type of NCL then remove from followed list
+        followed_custom_messages.each { |message| 
+          if message.message_type == 'NONCUSTOM_LOCATION' && followed_message_ids.include?(message.custom_line_id)
+            ##remove message.id from followed_message ids
+            followed_message_ids.delete(message.id)
+          end
+        }
+
         own_messages = Message.where(user_id: current_user)
                               .where(messageable_type: 'Network')
                               .where(undercover: true)
