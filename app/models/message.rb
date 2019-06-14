@@ -27,6 +27,9 @@ class Message < ApplicationRecord
   has_one :room, dependent: :destroy
   has_many :replies, dependent: :destroy
 
+  has_many :non_custom_lines, class_name: "Message", foreign_key: "custom_line_id"
+  belongs_to :custom_line, class_name: "Message"
+
   has_attached_file :avatar, styles: {
     medium: '256x256#', thumb: '100x100>'
   }, default_url: '/images/missing.png'

@@ -743,7 +743,11 @@ class Api::V1::MessagesController < Api::V1::BaseController
     }
   end
 
-  ## Get non custom lines under the custom lines by id
+  # Get non custom lines under the custom lines by id
+  # Custom Line has many non custom lines.
+  # Non custom line belongs to Custom line.
+  # @message.custom_line - get parent
+  # @message.non_custom_lines - get childrens
   def get_non_custom_lines
     message = Message.find(params[:message_id])
     non_custom_lines = message.non_custom_lines
