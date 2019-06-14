@@ -74,6 +74,7 @@ Rails.application.routes.draw do
           get 'nearby'
           get 'nearby_search'
           post 'send_notifications', to: 'messages#send_notifications'
+          get 'non_custom_lines', to: 'messages#get_non_custom_lines'
         end
       end
       resources :networks_users, only: %i[index create]
