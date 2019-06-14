@@ -743,6 +743,21 @@ class Api::V1::MessagesController < Api::V1::BaseController
     }
   end
 
+  ## Get non custom lines under the custom lines by id
+  def get_non_custom_lines
+    message = Message.find(params[:message_id])
+    non_custom_lines = message.non_custom_lines
+
+    render json: {
+        messages: non_custom_lines.as_json(
+          methods: %i[
+            avatar_url image_urls video_urls like_by_user legendary_by_user user
+                      text_with_links post_url expire_at has_expired is_synced
+          ]
+        )
+      }
+  end
+
   def show
     message = Message.find(params[:id])
     
@@ -791,7 +806,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
       :role_name,
       :place_name,
       :message_type,
-      :avatar
+      :avatar,
+      :custom_line_id
     )
   end
 end
