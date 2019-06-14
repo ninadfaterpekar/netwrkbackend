@@ -92,7 +92,7 @@ def logic_nearby
         }
         undercover_messages.as_json(
           methods: %i[
-            user
+            avatar_url user
             expire_at has_expired is_followed locked_by_user
           ]
         )
@@ -105,7 +105,7 @@ def logic_nearby
       }
       @undercover_messages = undercover_messages.as_json(
         methods: %i[
-          user
+          avatar_url user
           expire_at has_expired is_followed locked_by_user 
         ]
       )
