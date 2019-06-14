@@ -760,13 +760,46 @@ class Api::V1::MessagesController < Api::V1::BaseController
   # @message.non_custom_lines - get childrens
   def get_non_custom_lines
     message = Message.find(params[:message_id])
-    non_custom_lines = message.non_custom_lines
+
+    # on landing page if custom line within distance then fetch all its non custom lines
+    # if not within distance then fetch only followed lines
+    if params[:is_landing_page] == 'true'
+      # check this message within 15 yards. if yes it means its all non custom lines are within distance
+      # so fetch all non custom line messages
+      undercover_messages = [message]
+
+      messages = Undercover::CheckNear.new(
+        params[:post_code],
+        params[:lng],
+        params[:lat],
+        current_user,
+        undercover_messages
+      ).perform
+
+      if messages.length > 0
+         non_custom_lines = message.non_custom_lines 
+      else 
+        # Only get followed custom lines
+        followed_messages = FollowedMessage.where(user_id: current_user)
+        followed_message_ids = followed_messages.map(&:message_id)
+
+        non_custom_line_messages = message.non_custom_lines
+        custom_line_ids = non_custom_line_messages.map(&:id)
+
+        # Get common elements from both array
+        final_message_ids = followed_message_ids & custom_line_ids
+
+        non_custom_lines = Message.by_ids(final_message_ids)
+      end  
+    else
+       non_custom_lines = message.non_custom_lines 
+    end
 
     render json: {
         messages: non_custom_lines.as_json(
           methods: %i[
             avatar_url image_urls video_urls like_by_user legendary_by_user user
-                      text_with_links post_url expire_at has_expired is_synced
+            text_with_links post_url expire_at has_expired is_synced
           ]
         )
       }
