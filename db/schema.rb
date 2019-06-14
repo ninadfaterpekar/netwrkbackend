@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190531053757) do
+ActiveRecord::Schema.define(version: 20190614074209) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -157,6 +157,8 @@ ActiveRecord::Schema.define(version: 20190531053757) do
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
+    t.integer  "custom_line_id"
+    t.index ["custom_line_id"], name: "index_messages_on_custom_line_id", using: :btree
     t.index ["messageable_type", "messageable_id"], name: "index_messages_on_messageable_type_and_messageable_id", using: :btree
     t.index ["user_id"], name: "index_messages_on_user_id", using: :btree
   end
