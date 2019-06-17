@@ -80,6 +80,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
              .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
              .sort_by_last_messages(params[:limit], params[:offset])
              .with_images.with_videos
+             .with_non_custom_lines
              .left_joins(:room)
              .select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
              
@@ -116,6 +117,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
                         .by_not_deleted
                         .without_blacklist(current_user)
                         .without_deleted(current_user)
+                        .with_non_custom_lines
                         .sort_by_last_messages(params[:limit], params[:offset])
                         .with_images.with_videos
 
@@ -125,6 +127,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
                         .by_not_deleted
                         .without_blacklist(current_user)
                         .without_deleted(current_user)
+                        .with_non_custom_lines
                         .sort_by_last_messages(params[:limit], params[:offset])
                         .include_room
                         .with_images.with_videos
@@ -247,6 +250,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
                .by_not_deleted
                .without_blacklist(current_user)
                .without_deleted(current_user)
+               .with_non_custom_lines
                .where(messageable_type: 'Network')
                .where(message_type: 'CUSTOM_LOCATION')
                .where(undercover: true)
@@ -261,6 +265,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
                  .by_not_deleted
                  .without_blacklist(current_user)
                  .without_deleted(current_user)
+                 .with_non_custom_lines
                  .where(messageable_type: 'Network')
                  .where(message_type: 'CUSTOM_LOCATION')
                  .where(undercover: true)
@@ -807,7 +812,10 @@ class Api::V1::MessagesController < Api::V1::BaseController
           methods: %i[
             avatar_url image_urls video_urls like_by_user legendary_by_user user
             text_with_links post_url expire_at has_expired is_synced
-          ]
+          ],
+          include: [
+              :custom_line,:non_custom_lines
+          ]          
         )
       }
   end
