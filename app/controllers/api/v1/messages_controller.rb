@@ -27,26 +27,31 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
       if params[:is_landing_page] == 'true'
         # on landing page display followed messages + its nearby location messages
+        own_messages = Message.where(user_id: current_user)
+                              .by_messageable_type('Network')
+                              .undercover_is(true)
+                              .by_not_deleted
+
+        own_message_ids = own_messages.map(&:id)
+
         followed_messages = FollowedMessage.where(user_id: current_user)
 
         followed_message_ids = followed_messages.map(&:message_id)
 
-        followed_custom_messages = Message.by_ids(followed_message_ids)
+        followed_and_own_message_ids = followed_message_ids + own_message_ids
+        followed_and_own_message_ids = followed_and_own_message_ids.uniq
 
-        #if followed message custom line is type of NCL then remove from followed list
-        followed_custom_messages.each { |message| 
+        total_messages = Message.by_ids(followed_and_own_message_ids)
+                                .by_not_deleted
+
+        #if message is line and it is type of NCL then remove from followed and owned message ids
+        total_messages.each { |message| 
           if message.message_type == 'NONCUSTOM_LOCATION' && followed_message_ids.include?(message.custom_line_id)
             ##remove message.id from followed_message ids
             followed_message_ids.delete(message.id)
+            own_message_ids.delete(message.id)
           end
         }
-
-        own_messages = Message.where(user_id: current_user)
-                              .where(messageable_type: 'Network')
-                              .where(undercover: true)
-                              .where(deleted: false)
-
-        own_message_ids = own_messages.map(&:id)
 
         messageIds = messageIds + followed_message_ids + own_message_ids
         messageIds = messageIds.uniq
