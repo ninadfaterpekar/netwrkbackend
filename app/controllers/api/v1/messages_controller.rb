@@ -46,7 +46,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
         #if message is line and it is type of NCL then remove from followed and owned message ids
         total_messages.each { |message| 
-          if message.message_type == 'NONCUSTOM_LOCATION' && followed_message_ids.include?(message.custom_line_id)
+          if message.message_type == 'NONCUSTOM_LOCATION' && followed_and_own_message_ids.include?(message.custom_line_id)
             ##remove message.id from followed_message ids
             followed_message_ids.delete(message.id)
             own_message_ids.delete(message.id)
