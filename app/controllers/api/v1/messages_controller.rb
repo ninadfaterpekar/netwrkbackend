@@ -643,7 +643,9 @@ class Api::V1::MessagesController < Api::V1::BaseController
     replies = @message.replies
     messages = Message.by_messageable(replies.map(&:id), 'Reply')
                .by_not_deleted
-               .sort_by_last_messages_id(params[:limit], params[:offset])
+               .order(id: :asc)
+               .limit(params[:limit])
+               .offset(params[:offset])
     
     messages.each { |m| m.current_user = current_user }
     render json: { reply_to_message_id: @message.id, messages: messages.as_json(
