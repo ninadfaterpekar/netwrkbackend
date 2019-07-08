@@ -501,7 +501,6 @@ class Api::V1::MessagesController < Api::V1::BaseController
         message_id: @message.id, user_id: current_user.id
       )
 
-      p message_locked
       if message_locked.present?
         message_locked.update_attributes(unlocked: true)
       end
@@ -825,6 +824,10 @@ class Api::V1::MessagesController < Api::V1::BaseController
   def show
     message = Message.find(params[:id])
     message.current_user = current_user
+
+    if message.locked == true && params[:grant_access] == 'true'
+      grant_access(message.id, current_user.id)
+    end
     
     if message 
       render json: {
@@ -850,6 +853,15 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
   def set_message
     @message = Message.find(params[:id])
+  end
+
+  # Make line unlocked for current user. Grant access to user for that message
+  def grant_access(messageId, userId)
+      lockedMessage = LockedMessage.find_by(message_id: messageId, user_id: userId)
+
+      if lockedMessage && lockedMessage.unlocked == false
+        lockedMessage.update_attributes(unlocked: true)
+      end
   end
 
   def message_params
