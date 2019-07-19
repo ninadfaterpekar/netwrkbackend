@@ -375,6 +375,88 @@ class Api::V1::MessagesController < Api::V1::BaseController
     }
   end
 
+  def share
+    send_messages = []
+    if params[:message_ids]
+      # Get the room ids from message ids / network ids
+      rooms = Room.where(message_id: params[:message_ids])
+      room_ids = rooms.map(&:id)
+
+      room_ids.each { |room_id|
+        message = Message.new(
+            message_params.merge(created_at: Time.at(params[:message][:timestamp].to_i))
+        )
+
+        message.messageable = Room.find(room_id)
+        begin
+          message.expire_date = params[:message][:expire_date][:_d]
+        rescue # bad request from app :(
+        end
+
+        message.post_code = params[:post_code]
+        if message.save
+          if params[:images].present?
+            params[:images].each do |v|
+              image = Image.create(image: v)
+              message.images << image
+            end
+          end
+          if params[:message][:video_urls].present?
+            begin
+              params[:message][:video_urls].each do |v|
+                video = Video.create(thumbnail_url: v[:poster], url: v[:url])
+                message.videos << video
+              end
+            end
+          end
+          if params[:message][:social_urls].present?
+            params[:message][:social_urls].each do |i|
+              image = Image.create(url: i)
+              message.images << image
+            end
+          end
+          if params[:message][:locked] == true
+            message.make_locked(
+                password: params[:message][:password],
+                hint: params[:message][:hint]
+            )
+            #Owner have access by default to its own private lines.
+            LockedMessage.find_or_create_by(user_id: current_user.id, message_id: message.id, unlocked: true)
+          end
+          message.current_user = current_user
+
+          channel =
+            if message.messageable_type == 'Network'
+              "messages#{params[:post_code]}chat"
+            else
+              "room_#{params[:room_id]}"
+            end
+
+          socket_type = ChatChannel::TYPE[:message] if params[:room_id].present?
+          ActionCable.server.broadcast channel,
+                                       socket_type: socket_type,
+                                       message: message.as_json(
+                                         methods: %i[
+                                              image_urls locked video_urls user is_synced
+                                              text_with_links post_url expire_at
+                                              has_expired locked_by_user timestamp
+                                          ]
+                                       )
+
+          send_messages.push(message)
+        end
+      }
+      render json: {
+          send_messages: send_messages
+      }
+    else
+      render json: {
+          error: true,
+          message: 'Message ids not set'
+      }
+    end
+  end
+
   def create
     #if message id is present then update message
     if params[:message][:messageId]

@@ -63,6 +63,7 @@ Rails.application.routes.draw do
           post 'unlock'
           post 'delete'
           post 'sms_sharing'
+          post 'share'
           get 'legendary_list'
           get 'profile_messages'
           get 'nearby_profile_messages'
