@@ -336,6 +336,22 @@ class Api::V1::MessagesController < Api::V1::BaseController
     }
   end
 
+  # Get the profile own and followed lines
+  def profile_communities
+    messages = MessageQuery.new(current_user).communities(
+      current_user, params[:limit], params[:offset]
+    )
+
+    render json: {
+      messages: messages.as_json(
+        methods: %i[
+          avatar_url image_urls video_urls like_by_user legendary_by_user user
+          text_with_links post_url expire_at has_expired
+        ]
+      )
+    }, status: 200
+  end
+
   def social_feed
     if params[:social].include?('facebook')
       Facebook::FeedFetch.new(current_user, 10).perform
