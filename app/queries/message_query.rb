@@ -34,15 +34,15 @@ class MessageQuery
 
   def communities(user, limit, offset)
     followed_messages = FollowedMessage.where(user_id: user.id)
-    followed_messageIds = followed_messages.map(&:message_id)
+    followed_message_ids = followed_messages.map(&:message_id)
 
     own_messages = Message.by_user(user.id)
                           .by_not_deleted
                           .by_messageable_type(:Network)
-    own_messageIds = own_messages.map(&:id)
+    own_message_ids = own_messages.map(&:id)
 
-    followed_owned_messageIds = (followed_messageIds + own_messageIds).uniq
-    messages = Message.by_ids(followed_owned_messageIds)
+    followed_owned_message_id = (followed_message_ids + own_message_ids).uniq
+    messages = Message.by_ids(followed_owned_message_id)
                       .by_not_deleted
                       .by_messageable_type(:Network)
                       .sort_by_last_messages(limit, offset)
