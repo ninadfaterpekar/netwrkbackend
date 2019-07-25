@@ -7,7 +7,7 @@ class Api::V1::RoomsController < Api::V1::BaseController
     outcome = Rooms::Connect.run(user: current_user, room: room)
 
     #get line owners private lines count to show coach mark
-    user_id = room.message.user_id;
+    user_id = room.message.user_id
     privateLineCount = Message.by_messageable_type('Network')
             .locked_is(true)
             .by_user(user_id)

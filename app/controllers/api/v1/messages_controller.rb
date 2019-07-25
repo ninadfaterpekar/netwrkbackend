@@ -26,6 +26,14 @@ class Api::V1::MessagesController < Api::V1::BaseController
       messageIds = messages.map(&:id)
 
       if params[:is_landing_page] == 'true'
+        # on landing page display only public messages within distance 15 miles.
+        # Private and semi public should be hide for 15 miles
+        messages.each { |message|
+          if message.public == 'false'
+            messageIds.delete(message.id)
+          end
+        }
+
         # on landing page display followed messages + its nearby location messages
         own_messages = Message.where(user_id: current_user)
                               .by_messageable_type('Network')
