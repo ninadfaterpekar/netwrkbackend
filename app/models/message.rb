@@ -18,6 +18,8 @@ class Message < ApplicationRecord
   has_many :user_followed, dependent: :destroy
   has_many :followed_users, through: :user_followed, class_name: 'User'
 
+  has_many :followed_messages, dependent: :destroy
+
   has_many :legendary_likes, dependent: :destroy
   has_many :legendary_users, through: :legendary_likes, class_name: 'User'
 
