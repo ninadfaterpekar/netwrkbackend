@@ -87,7 +87,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
              .where("(messageable_type = 'Network' OR (messageable_type = 'Room' and undercover = false))")
              .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
              .sort_by_last_messages(params[:limit], params[:offset])
-             .with_images.with_videos
+             .with_images
+             .with_videos
              .with_non_custom_lines
              .left_joins(:room)
              .select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
@@ -104,43 +105,75 @@ class Api::V1::MessagesController < Api::V1::BaseController
           messages: undercover_messages, ids_to_remove: ids_to_remove
       }
     elsif params[:undercover] == 'false'
-
-  
-      # messages = network.messages
-      #     .by_not_deleted
-      #     .undercover_is(false)
-      #     .without_blacklist(current_user)
-      #     .without_deleted(current_user)
-      #     .where(messageable_type: 'Network')
-      #     .sort_by_last_messages(params[:limit], params[:offset])
-      #     .with_images.with_videos
-
-
       # fetch area feed. Whats happening in that area.
+
+      # Display criteria on area page
+      # Public - All Lines + Lines Messages
+      # Private - Private Lines (Own/Followed) + Private Lines messages (Get line messages on own and followed lines only)
+      # Semi Public - Semi public Lines (Own/Followed) + Semi public Lines messages (Get line messages on own and followed lines only)
+      followed_messages = FollowedMessage.where(user_id: current_user)
+      followed_message_ids = followed_messages.map(&:message_id)
+
+      own_messages = Message.where(user_id: current_user)
+                         .by_messageable_type('Network')
+                         .undercover_is(true)
+                         .by_not_deleted
+
+      own_message_ids = own_messages.map(&:id)
+
+      followed_and_own_message_ids = followed_message_ids + own_message_ids
+      followed_and_own_message_ids = followed_and_own_message_ids.uniq
+
+      rooms = Room.where(message_id: followed_and_own_message_ids)
+      if rooms.count > 0
+        rooms_ids = "(#{rooms.map(&:id).join(',')})"
+      else
+        # prevented sql error
+        rooms_ids = "(0)"
+      end
 
       if params[:is_distance_check] == 'true'
         #if filter distance is on then messages from that postcode
-        messages = Message.where(post_code:  params[:post_code])
-                        .where("((messageable_type = 'Network') or (messageable_type = 'Room' and undercover = true))")
-                        .by_not_deleted
-                        .without_blacklist(current_user)
-                        .without_deleted(current_user)
-                        .with_non_custom_lines
-                        .sort_by_last_messages(params[:limit], params[:offset])
-                        .with_images.with_videos
-
+        messages = Message.by_post_code(params[:post_code])
+                       .left_joins(:room)
+                       .left_joins(:followed_messages)
+                       .select('Rooms.id as room_id, followed_messages.id as followed_messages_id, Messages.*')
+                       .where("((messageable_type = 'Network') or (messageable_type = 'Room' and undercover = true))")
+                       .where("
+                          messages.public = true
+                          or (followed_messages.id is not null and followed_messages.user_id = #{current_user.id})
+                          or (messages.public = false and messages.user_id = #{current_user.id})
+                          or (messages.public = false and messages.messageable_id in #{rooms_ids})
+                      ")
+                       .by_not_deleted
+                       .without_blacklist(current_user)
+                       .without_deleted(current_user)
+                       .with_non_custom_lines
+                       .sort_by_last_messages(params[:limit], params[:offset])
+                       .with_images
+                       .with_videos
       else
         # fetch all messages if distance check if off
-        messages = Message.where("((messageable_type = 'Network') or (messageable_type = 'Room' and undercover = true))")
-                        .by_not_deleted
-                        .without_blacklist(current_user)
-                        .without_deleted(current_user)
-                        .with_non_custom_lines
-                        .sort_by_last_messages(params[:limit], params[:offset])
-                        .include_room
-                        .with_images.with_videos
+        messages = Message.left_joins(:room)
+                       .left_joins(:followed_messages)
+                       .select('Rooms.id as room_id, followed_messages.id as followed_messages_id, Messages.*')
+                       .where("((messageable_type = 'Network') or (messageable_type = 'Room' and undercover = true))")
+                       .where("
+                          messages.public = true
+                          or (followed_messages.id is not null and followed_messages.user_id = #{current_user.id})
+                          or (messages.public = false and messages.user_id = #{current_user.id})
+                          or (messages.public = false and messages.messageable_id in #{rooms_ids})
+                      ")
+                       .by_not_deleted
+                       .without_blacklist(current_user)
+                       .without_deleted(current_user)
+                       .with_non_custom_lines
+                       .sort_by_last_messages(params[:limit], params[:offset])
+                       .with_images
+                       .with_videos
       end
 
+      # if private / semi public then only shows own or followed
       messages = messages.by_user(params[:user_id]) if params[:user_id].present?
       messages, _ids_to_remove =
         Messages::CurrentIdsPresent.new(
@@ -968,6 +1001,9 @@ class Api::V1::MessagesController < Api::V1::BaseController
       if lockedMessage && lockedMessage.unlocked == false
         lockedMessage.update_attributes(unlocked: true)
       end
+
+      # Auto follow to that line  
+
   end
 
   def message_params
