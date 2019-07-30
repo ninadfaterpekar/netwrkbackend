@@ -966,6 +966,9 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
     if message.locked == true && params[:grant_access] == 'true'
       grant_access(message.id, current_user.id)
+
+      # auto follow to line
+      follow_message(message.id, current_user.id)
     end
     
     if message 
@@ -995,15 +998,15 @@ class Api::V1::MessagesController < Api::V1::BaseController
   end
 
   # Make line unlocked for current user. Grant access to user for that message
-  def grant_access(messageId, userId)
-      lockedMessage = LockedMessage.find_by(message_id: messageId, user_id: userId)
-
+  def grant_access(message_id, user_id)
+      lockedMessage = LockedMessage.find_by(message_id: message_id, user_id: user_id)
       if lockedMessage && lockedMessage.unlocked == false
         lockedMessage.update_attributes(unlocked: true)
       end
+  end
 
-      # Auto follow to that line  
-
+  def follow_message(message_id, user_id)
+    FollowedMessage.find_or_create_by(user_id: user_id, message_id: message_id)
   end
 
   def message_params
