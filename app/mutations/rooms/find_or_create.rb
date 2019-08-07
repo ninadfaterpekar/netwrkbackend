@@ -27,7 +27,7 @@ module Rooms
 
     def validate
       #return if message.undercover && message.messageable_type != 'Room'
-      return if message.messageable_type != 'Room' && message.messageable_type != 'Reply'
+      return if message.messageable_type != 'Room' || message.messageable_type != 'Reply'
       add_error('400', :bad_request, 'cant create room for this message')
     end
   end

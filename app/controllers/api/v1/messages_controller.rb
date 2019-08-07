@@ -37,7 +37,6 @@ class Api::V1::MessagesController < Api::V1::BaseController
         # on landing page display followed messages + its nearby location messages
         own_messages = Message.where(user_id: current_user)
                               .by_messageable_type('Network')
-                              .undercover_is(true)
                               .by_not_deleted
 
         own_message_ids = own_messages.map(&:id)
@@ -502,7 +501,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
     #if message id is present then update message
     if params[:message][:messageId]
       #if message_id set then edit the message
-      message = Message.find(params[:message][:messageId]) 
+      message = Message.find(params[:message][:messageId])
 
       message.update(
          message_params.merge(updated_at: Time.at(params[:message][:timestamp].to_i)) 
