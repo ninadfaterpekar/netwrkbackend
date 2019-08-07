@@ -582,7 +582,13 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
   # api/v1/messages/delete POST
   def delete_for_all
+    #delete the line
     @message.update_attributes(deleted: true)
+
+    #delete associated messages on lines
+    messages = Message.where(messageable: @message.room)
+    messages.update_all(deleted: true) if messages.present?
+
     render json: { message: 'ok' }, status: 200
   end
 
@@ -863,11 +869,9 @@ class Api::V1::MessagesController < Api::V1::BaseController
       own_messages = Message.where(user_id: current_user)
                          .by_messageable_type('Network')
                          .by_not_deleted
-
       own_message_ids = own_messages.map(&:id)
 
       followed_messages = FollowedMessage.where(user_id: current_user)
-
       followed_message_ids = followed_messages.map(&:message_id)
 
       followed_and_own_message_ids = followed_message_ids + own_message_ids
@@ -875,7 +879,6 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
       total_messages = Message.by_ids(followed_and_own_message_ids)
                            .by_not_deleted
-
       #if message is line and it is type of NCL then remove from followed and owned message ids
       total_messages.each { |message|
         if message.message_type == 'NONCUSTOM_LOCATION' && followed_and_own_message_ids.include?(message.custom_line_id)
@@ -918,9 +921,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
   end
 
   def get_area_page_feeds(network, current_ids)
-
     # fetch area feed. Whats happening in that area.
-
     # Display criteria on area page
     # Public - All Lines + Lines Messages
     # Private - Private Lines (Own/Followed) + Private Lines messages (Get line messages on own and followed lines only)
