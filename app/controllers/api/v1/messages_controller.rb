@@ -926,6 +926,26 @@ class Api::V1::MessagesController < Api::V1::BaseController
     # Public - All Lines + Lines Messages
     # Private - Private Lines (Own/Followed) + Private Lines messages (Get line messages on own and followed lines only)
     # Semi Public - Semi public Lines (Own/Followed) + Semi public Lines messages (Get line messages on own and followed lines only)
+    # Display legendary messages which are within 15 miles of any users as a feed on area page
+    near_by_messages = []
+    near_by_messages = Undercover::CheckNear.new(
+        params[:post_code],
+        params[:lng],
+        params[:lat],
+        current_user,
+        []
+    ).perform
+
+    # Get private / semi public legendary message within 15 miles
+    legendary_near_by_messages = Message.legendary_messages(near_by_messages.map(&:id))
+                                      .where('messages.public = false')
+    if legendary_near_by_messages.count > 0
+      legendary_near_by_message_ids = "(#{legendary_near_by_messages.map(&:id).join(',')})"
+    else
+      # prevented sql error
+      legendary_near_by_message_ids = "(0)"
+    end
+
     followed_messages = FollowedMessage.where(user_id: current_user)
     followed_message_ids = followed_messages.map(&:message_id)
 
@@ -959,6 +979,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
                           or (followed_messages.id is not null and followed_messages.user_id = #{current_user.id})
                           or (messages.public = false and messages.user_id = #{current_user.id})
                           or (messages.public = false and messages.messageable_id in #{rooms_ids})
+                          or (messages.id in #{legendary_near_by_message_ids})
                       ")
                      .by_not_deleted
                      .without_blacklist(current_user)
@@ -978,6 +999,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
                           or (followed_messages.id is not null and followed_messages.user_id = #{current_user.id})
                           or (messages.public = false and messages.user_id = #{current_user.id})
                           or (messages.public = false and messages.messageable_id in #{rooms_ids})
+                          or (messages.id in #{legendary_near_by_message_ids})
                       ")
                      .by_not_deleted
                      .without_blacklist(current_user)
