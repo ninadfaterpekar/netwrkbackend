@@ -1047,7 +1047,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
       :place_name,
       :message_type,
       :avatar,
-      :custom_line_id
+      :custom_line_id,
+      :conversation_line_id
     )
   end
 end
