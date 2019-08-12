@@ -32,6 +32,9 @@ class Message < ApplicationRecord
   has_many :non_custom_lines, class_name: "Message", foreign_key: "custom_line_id"
   belongs_to :custom_line, class_name: "Message", counter_cache: :lines_count
 
+  belongs_to :conversation_line, class_name: "Message", foreign_key: "conversation_line_id"
+  has_many :conversation_line_messages, class_name: "Message", foreign_key: "conversation_line_id"
+
   has_attached_file :avatar, styles: {
     medium: '256x256#', thumb: '100x100>'
   }, default_url: '/images/missing.png'
