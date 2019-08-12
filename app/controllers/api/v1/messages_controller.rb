@@ -205,7 +205,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
     }
   end
 
-  # Get the profile own and followed lines
+  # Get the profile own and followed lines but not get conversations (messageble_type = 'Network' && undercover = false)
   def profile_communities
     messages = MessageQuery.new(current_user).communities(
       current_user, params[:limit], params[:offset]
