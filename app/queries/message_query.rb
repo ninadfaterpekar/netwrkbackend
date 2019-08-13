@@ -43,7 +43,7 @@ class MessageQuery
 
     followed_owned_message_id = (followed_message_ids + own_message_ids).uniq
     messages = Message.by_ids(followed_owned_message_id)
-                      .undercover_is(false)
+                      .undercover_is(true)
                       .by_not_deleted
                       .by_messageable_type(:Network)
                       .sort_by_last_messages(limit, offset)
