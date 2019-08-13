@@ -251,12 +251,12 @@ class Api::V1::MessagesController < Api::V1::BaseController
       rooms = Room.where(message_id: params[:message_ids])
       room_ids = rooms.map(&:id)
 
-      room_ids.each { |room_id|
+      rooms.each { |room|
         message = Message.new(
             message_params.merge(created_at: Time.at(params[:message][:timestamp].to_i))
         )
 
-        message.messageable = Room.find(room_id)
+        message.messageable = Room.find(room.id)
         begin
           message.expire_date = params[:message][:expire_date][:_d]
         rescue # bad request from app :(
@@ -313,6 +313,15 @@ class Api::V1::MessagesController < Api::V1::BaseController
                                        )
 
           send_messages.push(message)
+        end
+
+        # Auto follow room_users for that conversation id.
+        if params[:message][:conversation_line_id].present?
+          if room.users.count > 0
+            room.users.each {|room_user|
+              FollowedMessage.find_or_create_by(user_id: room_user.id, message_id: params[:message][:conversation_line_id])
+            }
+          end
         end
       }
       render json: {
