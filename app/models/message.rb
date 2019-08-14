@@ -206,20 +206,22 @@ class Message < ApplicationRecord
   def conversation_status
     conversation_request_status = nil
     if message_type == 'CONV_REQUEST'
-      # if rooms_users table have entry with current_user and conversation__line_id then accepted
-      conversation_line_room_user =  RoomsUser.find_by(room_id: conversation_line.room.id, user_id: current_user.id)
+      if conversation_line.present? and conversation_line.room.present?
+        # if rooms_users table have entry with current_user and conversation__line_id then accepted
+        conversation_line_room_user =  RoomsUser.find_by(room_id: conversation_line.room.id, user_id: current_user.id)
 
-      if conversation_line_room_user.present?
-        conversation_request_status = 'ACCEPTED'
-      else
-        is_conversation_request_rejected = Message.find_by(user_id: current_user.id,
-                                                           messageable_id: conversation_line.room.id,
-                                                           messageable_type: 'Room',
-                                                           message_type: 'CONV_REJECTED')
-        if is_conversation_request_rejected.present?
-          conversation_request_status = 'REJECTED'
+        if conversation_line_room_user.present?
+          conversation_request_status = 'ACCEPTED'
         else
-          conversation_request_status = 'REQUESTED'
+          is_conversation_request_rejected = Message.find_by(user_id: current_user.id,
+                                                             messageable_id: conversation_line.room.id,
+                                                             messageable_type: 'Room',
+                                                             message_type: 'CONV_REJECTED')
+          if is_conversation_request_rejected.present?
+            conversation_request_status = 'REJECTED'
+          else
+            conversation_request_status = 'REQUESTED'
+          end
         end
       end
     elsif message_type == 'LOCAL_MESSAGE'
@@ -227,19 +229,21 @@ class Message < ApplicationRecord
       # If current user is rejected to conversation request (having rejected entry for that conversation in message table) then request is rejected
       # If neither have entry in rooms_users nor in messages (rejected) then request status is requested
 
-      conversation_line_room_user =  RoomsUser.find_by(room_id: room.id, user_id: current_user.id)
+      if room.present?
+        conversation_line_room_user =  RoomsUser.find_by(room_id: room.id, user_id: current_user.id)
 
-      if conversation_line_room_user.present?
-        conversation_request_status = 'ACCEPTED'
-      else
-        is_conversation_request_rejected = Message.find_by(user_id: current_user.id,
-                                                           messageable_id: room.id,
-                                                           messageable_type: 'Room',
-                                                           message_type: 'CONV_REJECTED')
-        if is_conversation_request_rejected.present?
-          conversation_request_status = 'REJECTED'
+        if conversation_line_room_user.present?
+          conversation_request_status = 'ACCEPTED'
         else
-          conversation_request_status = 'REQUESTED'
+          is_conversation_request_rejected = Message.find_by(user_id: current_user.id,
+                                                             messageable_id: room.id,
+                                                             messageable_type: 'Room',
+                                                             message_type: 'CONV_REJECTED')
+          if is_conversation_request_rejected.present?
+            conversation_request_status = 'REJECTED'
+          else
+            conversation_request_status = 'REQUESTED'
+          end
         end
       end
     end
@@ -288,7 +292,7 @@ class Message < ApplicationRecord
 
   def user
     u = User.find_by(id: user_id)
-    u.as_json(methods: %i[avatar_url hero_avatar_url], only: %i[name role_name])
+    u.as_json(methods: %i[id avatar_url hero_avatar_url], only: %i[name role_name])
   end
 
   def expire_at
