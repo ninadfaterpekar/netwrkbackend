@@ -606,6 +606,9 @@ class Api::V1::MessagesController < Api::V1::BaseController
     messages = Message.where(messageable: @message.room)
     messages.update_all(deleted: true) if messages.present?
 
+    # if message is conversation line / means message_type is 'LOCAL_MESSAGE' then delete the associated requests
+    conversation_line_requests = @message.conversation_line_messages.update_all(deleted: true) if @message.message_type == 'LOCAL_MESSAGE'
+
     render json: { message: 'ok' }, status: 200
   end
 
