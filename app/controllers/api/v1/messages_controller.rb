@@ -906,36 +906,47 @@ class Api::V1::MessagesController < Api::V1::BaseController
     if params[:is_landing_page] == 'true'
       # on landing page display only public messages within distance 15 miles.
       # Private and semi public should be hide for 15 miles
+      # Display followed lines + owned lines
+      # Display Joined Lines
       messages.each { |message|
         if message.public == 'false'
           messageIds.delete(message.id)
         end
       }
 
-      # on landing page display followed messages + its nearby location messages
+      # Get own lines ids
       own_messages = Message.where(user_id: current_user)
                          .by_messageable_type('Network')
                          .by_not_deleted
       own_message_ids = own_messages.map(&:id)
 
+      # Get followed lines ids
       followed_messages = FollowedMessage.where(user_id: current_user)
       followed_message_ids = followed_messages.map(&:message_id)
 
-      followed_and_own_message_ids = followed_message_ids + own_message_ids
-      followed_and_own_message_ids = followed_and_own_message_ids.uniq
+      # Get joined lines ids
+      joined_lines_ids = []
+      current_user.rooms_users.each { |room_user|
+        joined_lines_ids.push(room_user.room.message_id)
+      }
 
-      total_messages = Message.by_ids(followed_and_own_message_ids)
+      total_line_ids = followed_message_ids + own_message_ids + joined_lines_ids
+      total_line_ids = total_line_ids.uniq
+
+      total_messages = Message.by_ids(total_line_ids)
                            .by_not_deleted
-      #if message is line and it is type of NCL then remove from followed and owned message ids
+
+      #if message is line and it is type of NCL then remove total line ids
       total_messages.each { |message|
-        if message.message_type == 'NONCUSTOM_LOCATION' && followed_and_own_message_ids.include?(message.custom_line_id)
+        if message.message_type == 'NONCUSTOM_LOCATION' && total_line_ids.include?(message.custom_line_id)
           ##remove message.id from followed_message ids
           followed_message_ids.delete(message.id)
           own_message_ids.delete(message.id)
+          joined_lines_ids.delete(message.id)
         end
       }
 
-      messageIds = messageIds + followed_message_ids + own_message_ids
+      messageIds = messageIds + followed_message_ids + own_message_ids + joined_lines_ids
       messageIds = messageIds.uniq
     end
 
