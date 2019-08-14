@@ -213,7 +213,27 @@ class Message < ApplicationRecord
         conversation_request_status = 'ACCEPTED'
       else
         is_conversation_request_rejected = Message.find_by(user_id: current_user.id,
-                                                           messageable_id: messageable_id,
+                                                           messageable_id: conversation_line.room.id,
+                                                           messageable_type: 'Room',
+                                                           message_type: 'CONV_REJECTED')
+        if is_conversation_request_rejected.present?
+          conversation_request_status = 'REJECTED'
+        else
+          conversation_request_status = 'REQUESTED'
+        end
+      end
+    elsif message_type == 'LOCAL_MESSAGE'
+      # if current user is joined to conversation_line (having rooms_users table entry) then request is accepted.
+      # If current user is rejected to conversation request (having rejected entry for that conversation in message table) then request is rejected
+      # If neither have entry in rooms_users nor in messages (rejected) then request status is requested
+
+      conversation_line_room_user =  RoomsUser.find_by(room_id: room.id, user_id: current_user.id)
+
+      if conversation_line_room_user.present?
+        conversation_request_status = 'ACCEPTED'
+      else
+        is_conversation_request_rejected = Message.find_by(user_id: current_user.id,
+                                                           messageable_id: room.id,
                                                            messageable_type: 'Room',
                                                            message_type: 'CONV_REJECTED')
         if is_conversation_request_rejected.present?
