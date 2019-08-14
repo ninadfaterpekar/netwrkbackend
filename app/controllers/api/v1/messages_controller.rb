@@ -931,9 +931,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
       # Get joined lines ids
       joined_lines_ids = []
-      current_user.rooms_users.each { |room_user|
-        joined_lines_ids.push(room_user.room.message_id)
-      }
+      joined_line_rooms = Room.includes(:rooms_users).where(:rooms_users => {:user_id => current_user.id})
+      joined_lines_ids = joined_line_rooms.map(&:message_id)
 
       total_line_ids = followed_message_ids + own_message_ids + joined_lines_ids
       total_line_ids = total_line_ids.uniq
@@ -1023,9 +1022,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
     # Get joined lines ids
     joined_lines_ids = []
-    current_user.rooms_users.each { |room_user|
-      joined_lines_ids.push(room_user.room.message_id)
-    }
+    joined_line_rooms = Room.includes(:rooms_users).where(:rooms_users => {:user_id => current_user.id})
+    joined_lines_ids = joined_line_rooms.map(&:message_id)
 
     total_line_ids = followed_message_ids + own_message_ids + joined_lines_ids
     total_line_ids = total_line_ids.uniq
