@@ -107,7 +107,7 @@ class Message < ApplicationRecord
 
   URI_REGEX = %r{((?:(?:[^ :/?#]+):)(?://(?:[^ /?#]*))(?:[^ ?#]*)(?:\?(?:[^ #]*))?(?:#(?:[^ ]*))?)}
 
-  attr_accessor :current_user
+  attr_accessor :current_user, :is_conversation
 
   def legendary?
     !legendary_count.zero?
@@ -194,14 +194,17 @@ class Message < ApplicationRecord
   end
 
   def is_followed(user = current_user)
-    p m = FollowedMessage.find_by(user_id: user, message_id: id)
+    m = FollowedMessage.find_by(user_id: user, message_id: id)
     m.present? ? true : false
   end
 
   def is_connected(user = current_user)
-    p room_id
-    p m = RoomsUser.find_by(user_id: user, room_id: room_id)
+    m = RoomsUser.find_by(user_id: user, room_id: room_id)
     m.present? ? true : false
+  end
+
+  def conversation_status
+    return is_conversation
   end
 
   def make_locked(args)
