@@ -854,10 +854,11 @@ class Api::V1::MessagesController < Api::V1::BaseController
     
     if message 
       render json: {
+        room_id: message.room.id,
         message: message.as_json(
           methods: %i[
                       avatar_url image_urls video_urls like_by_user legendary_by_user user
-                      text_with_links post_url expire_at locked_by_user has_expired is_synced 
+                      text_with_links post_url expire_at locked_by_user has_expired is_synced
                     ]
         )
       }, status: 200
@@ -890,6 +891,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
     FollowedMessage.find_or_create_by(user_id: user_id, message_id: message_id)
   end
 
+  # Landing page api
   def get_landing_page_feeds(network, current_ids)
     # get messages from nearby area
     # On landing page display lines/network which are created from landing page or from area page (conversations)
@@ -952,18 +954,18 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
     # Fetch conversation + conversation message + Lines(own) + Lines(followed) + Lines(within distance even if not followed)
     # Do not show messages on Line at landing page
-    undercover_messages = Message.by_ids(messageIds)
+    undercover_messages = Message.select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
+                              .left_joins(:room)
+                              .by_ids(messageIds)
                               .by_not_deleted
                               .without_blacklist(current_user)
                               .without_deleted(current_user)
                               .where("(messageable_type = 'Network' OR (messageable_type = 'Room' and undercover = false))")
                               .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
-                              .sort_by_last_messages(params[:limit], params[:offset])
                               .with_images
                               .with_videos
                               .with_non_custom_lines
-                              .left_joins(:room)
-                              .select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
+                              .sort_by_last_messages(params[:limit], params[:offset])
 
     undercover_messages, ids_to_remove = Messages::CurrentIdsPresent.new(
         current_ids: current_ids,
@@ -978,13 +980,15 @@ class Api::V1::MessagesController < Api::V1::BaseController
     }
   end
 
+  # Area page api
+  # fetch area feed. Whats happening in that area.
+  # Display criteria on area page
+  # Public - All Lines + Lines Messages
+  # Private - Private Lines (Own/Followed) + Private Lines messages (Get line messages on own and followed lines only)
+  # Semi Public - Semi public Lines (Own/Followed) + Semi public Lines messages (Get line messages on own and followed lines only)
+  # Display legendary messages which are within 15 miles of any users as a feed on area page
+  # If distance check is true then show messages withing that postcode / area else show all
   def get_area_page_feeds(network, current_ids)
-    # fetch area feed. Whats happening in that area.
-    # Display criteria on area page
-    # Public - All Lines + Lines Messages
-    # Private - Private Lines (Own/Followed) + Private Lines messages (Get line messages on own and followed lines only)
-    # Semi Public - Semi public Lines (Own/Followed) + Semi public Lines messages (Get line messages on own and followed lines only)
-    # Display legendary messages which are within 15 miles of any users as a feed on area page
     near_by_messages = []
     near_by_messages = Undercover::CheckNear.new(
         params[:post_code],
