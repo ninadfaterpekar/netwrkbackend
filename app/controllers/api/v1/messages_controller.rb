@@ -615,11 +615,37 @@ class Api::V1::MessagesController < Api::V1::BaseController
     end
     messages = @room.messages.order(created_at: :desc)
                     .offset(params[:offset]).limit(params[:limit])
-    messages.each { |m| m.current_user = current_user }
+
+    messages.each { |m|
+      m.current_user = current_user
+
+      if m.message_type == 'CONV_REQUEST'
+        # if rooms_users table have entry with current_user and conversation__line_id then accepted
+
+        m.conversation_line.room.id
+        conversation_line_room_user =  RoomsUser.find_by(room_id: m.conversation_line.room.id, user_id: current_user.id)
+
+        conversation_line_room_user
+        if conversation_line_room_user.present?
+          m.is_conversation = 'ACCEPTED'
+        else
+          is_conversation_request_rejected = Message.find_by(user_id: current_user.id, messageable_id: @room.id, messageable_type: 'Room', message_type: 'CONV_REJECTED')
+
+          if is_conversation_request_rejected.present?
+            m.is_conversation = 'REJECTED'
+          else
+            m.is_conversation = 'REQUESTED'
+          end
+        end
+      else
+        m.is_conversation = nil
+      end
+    }
+
     render json: { room_id: @room.id, messages: messages.as_json(
       methods: %i[
         avatar_url image_urls video_urls like_by_user legendary_by_user user
-        text_with_links post_url expire_at has_expired is_synced
+        text_with_links post_url expire_at has_expired is_synced conversation_status
       ]
     ) }
   end
@@ -809,6 +835,32 @@ class Api::V1::MessagesController < Api::V1::BaseController
           ]          
         )
       }
+  end
+
+  # Update the conversation and its messages expiry date
+  def conversation_update
+    if params[:message][:conversation_line_id]
+      #if message_id set then edit the message
+      message = Message.find(params[:message][:conversation_line_id])
+
+      message.update(
+          message_params.merge(updated_at: Time.at(params[:message][:timestamp].to_i))
+      )
+
+      # Update expiry date of messages on conversations lines
+      message.conversation_line_messages.update(
+          message_params.merge(updated_at: Time.at(params[:message][:timestamp].to_i))
+      )
+
+      message.current_user = current_user
+      render json: {
+          success: true
+      }
+    else
+      render json: {
+          success: false
+      }
+    end
   end
 
   def show
