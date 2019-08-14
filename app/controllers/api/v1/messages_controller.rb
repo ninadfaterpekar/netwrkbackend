@@ -1018,10 +1018,16 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
     own_message_ids = own_messages.map(&:id)
 
-    followed_and_own_message_ids = followed_message_ids + own_message_ids
-    followed_and_own_message_ids = followed_and_own_message_ids.uniq
+    # Get joined lines ids
+    joined_lines_ids = []
+    current_user.rooms_users.each { |room_user|
+      joined_lines_ids.push(room_user.room.message_id)
+    }
 
-    rooms = Room.where(message_id: followed_and_own_message_ids)
+    total_line_ids = followed_message_ids + own_message_ids + joined_lines_ids
+    total_line_ids = total_line_ids.uniq
+
+    rooms = Room.where(message_id: total_line_ids)
     if rooms.count > 0
       rooms_ids = "(#{rooms.map(&:id).join(',')})"
     else
