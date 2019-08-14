@@ -204,7 +204,27 @@ class Message < ApplicationRecord
   end
 
   def conversation_status
-    return is_conversation
+    conversation_request_status = nil
+    if message_type == 'CONV_REQUEST'
+      # if rooms_users table have entry with current_user and conversation__line_id then accepted
+      conversation_line_room_user =  RoomsUser.find_by(room_id: conversation_line.room.id, user_id: current_user.id)
+
+      if conversation_line_room_user.present?
+        conversation_request_status = 'ACCEPTED'
+      else
+        is_conversation_request_rejected = Message.find_by(user_id: current_user.id,
+                                                           messageable_id: messageable_id,
+                                                           messageable_type: 'Room',
+                                                           message_type: 'CONV_REJECTED')
+        if is_conversation_request_rejected.present?
+          conversation_request_status = 'REJECTED'
+        else
+          conversation_request_status = 'REQUESTED'
+        end
+      end
+    end
+
+    return conversation_request_status
   end
 
   def make_locked(args)

@@ -618,28 +618,6 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
     messages.each { |m|
       m.current_user = current_user
-
-      if m.message_type == 'CONV_REQUEST'
-        # if rooms_users table have entry with current_user and conversation__line_id then accepted
-
-        m.conversation_line.room.id
-        conversation_line_room_user =  RoomsUser.find_by(room_id: m.conversation_line.room.id, user_id: current_user.id)
-
-        conversation_line_room_user
-        if conversation_line_room_user.present?
-          m.is_conversation = 'ACCEPTED'
-        else
-          is_conversation_request_rejected = Message.find_by(user_id: current_user.id, messageable_id: @room.id, messageable_type: 'Room', message_type: 'CONV_REJECTED')
-
-          if is_conversation_request_rejected.present?
-            m.is_conversation = 'REJECTED'
-          else
-            m.is_conversation = 'REQUESTED'
-          end
-        end
-      else
-        m.is_conversation = nil
-      end
     }
 
     render json: { room_id: @room.id, messages: messages.as_json(
