@@ -1081,6 +1081,9 @@ class Api::V1::MessagesController < Api::V1::BaseController
                      .with_videos
     end
 
+    final_messages_ids = messages.map(&:id).uniq
+    messages = Message.by_ids(final_messages_ids)
+
     # if private / semi public then only shows own or followed
     messages = messages.by_user(params[:user_id]) if params[:user_id].present?
     messages, _ids_to_remove =
