@@ -954,8 +954,9 @@ class Api::V1::MessagesController < Api::V1::BaseController
       messageIds = messageIds.uniq
     end
 
-    # Fetch conversation + conversation message + Lines(own) + Lines(followed) + Lines(within distance even if not followed)
+    # Fetch conversation + Lines(own) + Lines(followed) + Lines(within distance even if not followed)
     # Do not show messages on Line at landing page
+    # Removed messages of conversation from LP
     undercover_messages = Message.select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
                               .left_joins(:room)
                               .by_ids(messageIds)
@@ -1080,7 +1081,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
     end
 
     final_messages_ids = messages.map(&:id).uniq
-    messages = Message.by_ids(final_messages_ids)
+    messages = messages.by_ids(final_messages_ids)
+                      .sort_by_last_messages(params[:limit], params[:offset])
 
     # if private / semi public then only shows own or followed
     messages = messages.by_user(params[:user_id]) if params[:user_id].present?
@@ -1093,6 +1095,15 @@ class Api::V1::MessagesController < Api::V1::BaseController
             is_undercover: params[:undercover]
         ).perform
 
+
+    # Delete the rejected conversation
+    messages.delete_if { |message|
+      if message['conversation_status'] == 'REJECTED'
+        true
+      else
+        false
+      end
+    }
 
     render json: {
         messages: messages, ids_to_remove: _ids_to_remove
