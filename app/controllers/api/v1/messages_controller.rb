@@ -208,7 +208,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
   # Get the profile own and followed lines but not get conversations (messageble_type = 'Network' && undercover = false)
   def profile_communities
     messages = MessageQuery.new(current_user).communities(
-      current_user, params[:limit], params[:offset]
+      params[:limit], params[:offset]
     )
 
     render json: {
@@ -962,7 +962,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
                               .by_not_deleted
                               .without_blacklist(current_user)
                               .without_deleted(current_user)
-                              .where("(messageable_type = 'Network' OR (messageable_type = 'Room' and undercover = false))")
+                              .by_messageable_type('Network')
                               .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
                               .with_images
                               .with_videos
