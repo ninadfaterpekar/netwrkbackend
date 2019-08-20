@@ -32,17 +32,22 @@ class MessageQuery
            .with_unlocked(current_user.id)
   end
 
-  def communities(user, limit, offset)
-    followed_messages = FollowedMessage.where(user_id: user.id)
+  def communities(limit, offset)
+    followed_messages = FollowedMessage.where(user_id: current_user.id)
     followed_message_ids = followed_messages.map(&:message_id)
 
-    own_messages = Message.by_user(user.id)
+    own_messages = Message.by_user(current_user.id)
                           .by_not_deleted
                           .by_messageable_type(:Network)
     own_message_ids = own_messages.map(&:id)
 
-    followed_owned_message_id = (followed_message_ids + own_message_ids).uniq
-    messages = Message.by_ids(followed_owned_message_id)
+    joined_lines_ids = []
+    joined_line_rooms = Room.includes(:rooms_users).where(:rooms_users => {:user_id => current_user.id})
+    joined_lines_ids = joined_line_rooms.map(&:message_id)
+
+    total_line_ids = (followed_message_ids + own_message_ids + joined_lines_ids).uniq
+
+    messages = Message.by_ids(total_line_ids)
                       .undercover_is(true)
                       .by_not_deleted
                       .by_messageable_type(:Network)
