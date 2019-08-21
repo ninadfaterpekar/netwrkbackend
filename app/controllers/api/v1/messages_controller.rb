@@ -862,6 +862,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
           methods: %i[
                       avatar_url image_urls video_urls like_by_user legendary_by_user user
                       text_with_links post_url expire_at locked_by_user has_expired is_synced
+                      conversation_status
                     ]
         )
       }, status: 200
