@@ -21,8 +21,9 @@ class Api::V1::RoomsController < Api::V1::BaseController
   end
 
   def get_network
-    room = Room.find(params[:room_id])
-    message = Message.find(room.message_id)
+    room = Room.includes(:message).find(params[:room_id])
+    message = room.message
+    message.current_user = current_user
 
     if room 
         render json: {
@@ -30,6 +31,7 @@ class Api::V1::RoomsController < Api::V1::BaseController
           methods: %i[
             image_urls video_urls like_by_user legendary_by_user user
             text_with_links post_url expire_at has_expired
+            conversation_status
           ]
         )
       }
