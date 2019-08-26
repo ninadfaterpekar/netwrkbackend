@@ -1081,12 +1081,13 @@ class Api::V1::MessagesController < Api::V1::BaseController
                      .with_videos
     end
 
-    final_messages_ids = messages.map(&:id).uniq
-    messages = messages.by_ids(final_messages_ids)
-                      .sort_by_last_messages(params[:limit], params[:offset])
-
     # if private / semi public then only shows own or followed
     messages = messages.by_user(params[:user_id]) if params[:user_id].present?
+
+    final_messages_ids = messages.map(&:id).uniq
+    messages = Message.by_ids(final_messages_ids)
+                      .sort_by_last_messages(params[:limit], params[:offset])
+
     messages, _ids_to_remove =
         Messages::CurrentIdsPresent.new(
             current_ids: current_ids,
