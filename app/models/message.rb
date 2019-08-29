@@ -69,7 +69,10 @@ class Message < ApplicationRecord
   scope :by_not_deleted, -> { where(deleted: false) }
   scope :by_user, ->(user_id) { where(user_id: user_id) }
   scope :by_social, ->(social) { where(social: social) }
-  scope :legendary_messages, -> {
+  scope :legendary_messages, ->(ids) {
+    joins(:legendary_likes).merge(LegendaryLike.where(message_id: ids))
+  }
+  scope :joins_legendary_messages, -> {
     joins(:legendary_likes).merge(LegendaryLike.where(message_id: ids))
   }
   scope :joins_room, -> {
