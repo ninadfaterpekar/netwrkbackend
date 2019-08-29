@@ -718,6 +718,14 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
         followed_users = User.where(id: params[:user_id])
         user_registration_ids = followed_users.map(&:registration_id).compact
+      elsif notification_type == "legendary" 
+
+        # when user pin message then send notification to its owner
+        notification_title = params[:title]
+        notification_body = "You've become a legend"
+
+        followed_users = User.where(id: params[:user_id])
+        user_registration_ids = followed_users.map(&:registration_id).compact
       end
     elsif params[:messageable_type] == 'Reply'
       if notification_type == "new_reply"
