@@ -521,7 +521,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
                         by_post_code(network.post_code).
                         undercover_is(true).
                         where("(messageable_type = 'Network' OR messageable_type = 'Room')").
-                        legendary_messages.
+                        joins_legendary_messages.
                         # select('legendary_likes.id as LegendaryId').
                         # joins_room.
                         # select('Rooms.id as RoomId').
