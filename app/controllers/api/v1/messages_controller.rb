@@ -517,12 +517,16 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
       # fetch Lines and Line messages of that area (zipcode of passed networkId) 
       # which are set as legendary by any user
-      messages = Message.by_not_deleted
-                        .where(post_code: network.post_code)
-                        .where(undercover: true)
-                        .where("(messageable_type = 'Network' OR messageable_type = 'Room')")
-                        .legendary_messages
-                        .sort_by_points(params[:limit], params[:offset])
+      messages = Message.by_not_deleted.
+                        by_post_code(network.post_code).
+                        undercover_is(true).
+                        where("(messageable_type = 'Network' OR messageable_type = 'Room')").
+                        legendary_messages.
+                        # select('legendary_likes.id as LegendaryId').
+                        # joins_room.
+                        # select('Rooms.id as RoomId').
+                        # select("Messages.*")
+                        sort_by_points(params[:limit], params[:offset])
 
       #messages = network.messages.legendary_messages
       render json: {
