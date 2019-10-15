@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190614104713) do
+ActiveRecord::Schema.define(version: 20190812104935) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -127,23 +127,23 @@ ActiveRecord::Schema.define(version: 20190614104713) do
     t.decimal  "lng"
     t.decimal  "lat"
     t.boolean  "undercover"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
     t.boolean  "legendary"
-    t.integer  "likes_count",         default: 0
-    t.boolean  "public",              default: true
-    t.boolean  "locked",              default: false
+    t.integer  "likes_count",          default: 0
+    t.boolean  "public",               default: true
+    t.boolean  "locked",               default: false
     t.string   "password_hash"
     t.string   "hint"
     t.string   "password_salt"
-    t.boolean  "is_emoji",            default: false
-    t.integer  "legendary_count",     default: 0
+    t.boolean  "is_emoji",             default: false
+    t.integer  "legendary_count",      default: 0
     t.string   "social"
     t.string   "url"
     t.string   "post_permalink"
     t.datetime "expire_date"
-    t.integer  "points",              default: 0
-    t.boolean  "deleted",             default: false
+    t.integer  "points",               default: 0
+    t.boolean  "deleted",              default: false
     t.integer  "post_code"
     t.string   "social_id"
     t.string   "messageable_type"
@@ -159,6 +159,7 @@ ActiveRecord::Schema.define(version: 20190614104713) do
     t.datetime "avatar_updated_at"
     t.integer  "custom_line_id"
     t.integer  "lines_count"
+    t.integer  "conversation_line_id"
     t.index ["custom_line_id"], name: "index_messages_on_custom_line_id", using: :btree
     t.index ["messageable_type", "messageable_id"], name: "index_messages_on_messageable_type_and_messageable_id", using: :btree
     t.index ["user_id"], name: "index_messages_on_user_id", using: :btree
@@ -232,6 +233,8 @@ ActiveRecord::Schema.define(version: 20190614104713) do
   create_table "rooms_users", force: :cascade do |t|
     t.integer "room_id"
     t.integer "user_id"
+    t.boolean "read"
+    t.integer "unread_count"
     t.index ["room_id"], name: "index_rooms_users_on_room_id", using: :btree
     t.index ["user_id"], name: "index_rooms_users_on_user_id", using: :btree
   end
