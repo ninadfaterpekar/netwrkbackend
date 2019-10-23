@@ -1052,8 +1052,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
     if params[:is_distance_check] == 'true'
       #if filter distance is on then messages from that postcode
-      messages = Message.by_post_code(params[:post_code])
-                     .left_joins(:room)
+      messages = Message.left_joins(:room)
                      .left_joins(:followed_messages)
                      .select('Rooms.id as room_id, followed_messages.id as followed_messages_id, Messages.*')
                      .where("((messageable_type = 'Network') or (messageable_type = 'Room' and undercover = true))")
@@ -1071,6 +1070,14 @@ class Api::V1::MessagesController < Api::V1::BaseController
                      .sort_by_last_messages(params[:limit], params[:offset])
                      .with_images
                      .with_videos
+
+      messages = Undercover::CheckNear.new(
+          params[:post_code],
+          params[:lng],
+          params[:lat],
+          current_user,
+          messages
+      ).perform
     else
       # fetch all messages if distance check if off
       messages = Message.left_joins(:room)
