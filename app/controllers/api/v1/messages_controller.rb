@@ -620,7 +620,9 @@ class Api::V1::MessagesController < Api::V1::BaseController
     unless @room
       return render json: { message: 'room isnt created' }, status: :bad_request
     end
-    messages = @room.messages.order(created_at: :desc)
+    messages = @room.messages
+                    .by_not_deleted
+                    .order(created_at: :desc)
                     .offset(params[:offset]).limit(params[:limit])
 
     messages.each { |m|
