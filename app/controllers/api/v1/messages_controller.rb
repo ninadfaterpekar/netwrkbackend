@@ -785,11 +785,12 @@ class Api::V1::MessagesController < Api::V1::BaseController
   def get_non_custom_lines
     message = Message.find(params[:message_id])
 
-    # on landing page if custom line within distance then fetch all its non custom lines
+    # on landing page if custom line within distance then fetch all its non custom lines + All non custom lines created on Own custom line.
     # if not within distance then fetch only followed lines
     if params[:is_landing_page] == 'true'
       # check this message within 15 yards. if yes it means its all non custom lines are within distance
       # so fetch all non custom line messages
+      # Get all non custom lines created on Own custom line.
       undercover_messages = [message]
 
       messages = Undercover::CheckNear.new(
@@ -800,9 +801,9 @@ class Api::V1::MessagesController < Api::V1::BaseController
         undercover_messages
       ).perform
 
-      if messages.length > 0
+      if messages.length > 0 || message.user_id = current_user.id
          non_custom_lines = message.non_custom_lines 
-      else 
+      else
         # Only get followed custom lines
         followed_messages = FollowedMessage.where(user_id: current_user)
         followed_message_ids = followed_messages.map(&:message_id)
