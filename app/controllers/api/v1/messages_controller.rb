@@ -971,7 +971,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
   # Area page api
   # fetch area feed. Whats happening in that area. Local messages and messages in the world and around you.
   # Display criteria on area page
-  # Public - All Lines + Lines Messages
+  # Dont show Lines on area (messageble_type = Network and message_type in [NULL, 'CUSTOM_LOCATION', 'NONCUSTOM_LOCATION'])
   # Private - Private Lines (Own/Followed) + Private Lines messages (Get line messages on own and followed lines only)
   # Semi Public - Semi public Lines (Own/Followed) + Semi public Lines messages (Get line messages on own and followed lines only)
   # Display legendary messages which are within 15 miles of any users as a feed on area page
@@ -1027,7 +1027,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
       messages = Message.left_joins(:room)
                      .left_joins(:followed_messages)
                      .select('Rooms.id as room_id, followed_messages.id as followed_messages_id, Messages.*')
-                     .where("((messageable_type = 'Network' and message_type is not null and message_type != 'CUSTOM_LOCATION' AND message_type != 'NONCUSTOM_LOCATION') OR (messageable_type = 'Room' and undercover = true))")
+                     .where("((messageable_type = 'Network' and message_type is not null and message_type != 'CUSTOM_LOCATION' AND message_type != 'NONCUSTOM_LOCATION') OR (messageable_type = 'Room' and undercover = true and message_type != 'CONV_REQUEST'))")
                      .where("
                           messages.public = true
                           or (followed_messages.id is not null and followed_messages.user_id = #{current_user.id})
@@ -1055,7 +1055,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
       messages = Message.left_joins(:room)
                      .left_joins(:followed_messages)
                      .select('Rooms.id as room_id, followed_messages.id as followed_messages_id, Messages.*')
-                     .where("((messageable_type = 'Network' and message_type is not null and message_type != 'CUSTOM_LOCATION' AND message_type != 'NONCUSTOM_LOCATION') OR (messageable_type = 'Room' and undercover = true))")
+                     .where("((messageable_type = 'Network' and message_type is not null and message_type != 'CUSTOM_LOCATION' AND message_type != 'NONCUSTOM_LOCATION') OR (messageable_type = 'Room' and undercover = true and message_type != 'CONV_REQUEST'))")
                      .where("
                           messages.public = true
                           or (followed_messages.id is not null and followed_messages.user_id = #{current_user.id})
