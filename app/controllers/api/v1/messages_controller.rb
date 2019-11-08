@@ -13,7 +13,11 @@ class Api::V1::MessagesController < Api::V1::BaseController
     current_ids = params[:current_ids] if params[:current_ids].present?
 
     if params[:undercover] == 'true'
-      get_landing_page_feeds(network, current_ids)
+      if params[:is_distance_check] == 'true'
+        nearby
+      else
+        get_landing_page_feeds(network, current_ids)
+      end
     elsif params[:undercover] == 'false'
       get_area_page_feeds(network, current_ids)
     else
@@ -21,7 +25,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
       render json: {
         messages: message_list.as_json(
           methods: %i[
-            avatar_url image_urls video_urls like_by_user legendary_by_user user
+            users_count, avatar_url image_urls video_urls like_by_user legendary_by_user user
             text_with_links post_url expire_at has_expired is_synced
           ]
         )
@@ -85,76 +89,41 @@ class Api::V1::MessagesController < Api::V1::BaseController
     current_ids = []
     current_ids = params[:current_ids] if params[:current_ids].present?
 
-=begin    
-      messages = Undercover::CheckDistance.new(
+    messages = Undercover::CheckNear.new(
         params[:post_code],
         params[:lng],
         params[:lat],
         current_user,
-        false
-      ).perform
+        messages
+    ).perform
 
-      undercover_messages =
-        Message.by_ids(messages.map(&:id))
-               .by_not_deleted
-               .without_blacklist(current_user)
-               .without_deleted(current_user)
-               .where(messageable_type: 'Network')
-               .sort_by_points(params[:limit], params[:offset])
-               .with_room(messages.map(&:id))
-               .select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
-=end
-      if params[:is_distance_check] == 'true'
-         
-         messages = Undercover::CheckNear.new(
-          params[:post_code],
-          params[:lng],
-          params[:lat],
-          current_user,
-          messages
+    undercover_messages = Message
+                              .by_ids(messages.map(&:id))
+                              .include_room
+                              .by_not_deleted
+                              .without_blacklist(current_user)
+                              .without_deleted(current_user)
+                              .with_images
+                              .with_videos
+                              .with_non_custom_lines
+                              .by_messageable_type('Network')
+                              .where("(message_type = 'CUSTOM_LOCATION' OR message_type IS NULL)")
+                              .where(undercover: true)
+                              .where.not(user_id: current_user)
+                              .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
+                              .sort_by_last_messages(params[:limit], params[:offset])
+
+    undercover_messages, ids_to_remove =
+        Messages::CurrentIdsPresent.new(
+            current_ids: current_ids,
+            undercover_messages: undercover_messages,
+            with_network: network.present?,
+            user: current_user
         ).perform
 
-        undercover_messages = Message.select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
-               .by_ids(messages.map(&:id))
-               .by_not_deleted
-               .without_blacklist(current_user)
-               .without_deleted(current_user)
-               .with_non_custom_lines
-               .where(messageable_type: 'Network')
-               .where(message_type: 'CUSTOM_LOCATION')
-               .where(undercover: true)
-               .where(post_code: params[:post_code])
-               .where.not(user_id: current_user)
-               .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
-               .joins("INNER JOIN Rooms ON Rooms.message_id = Messages.id AND Messages.messageable_type = 'Network'")
-               .sort_by_points(params[:limit], params[:offset])
-      else
-        undercover_messages =
-          Message.select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
-                 .by_not_deleted
-                 .without_blacklist(current_user)
-                 .without_deleted(current_user)
-                 .with_non_custom_lines
-                 .where(messageable_type: 'Network')
-                 .where(message_type: 'CUSTOM_LOCATION')
-                 .where(undercover: true)
-                 .where.not(user_id: current_user)
-                 .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
-                 .joins("INNER JOIN Rooms ON Rooms.message_id = Messages.id AND Messages.messageable_type = 'Network'")
-                 .sort_by_points(params[:limit], params[:offset])  
-      end
-
-      undercover_messages, ids_to_remove =
-        Messages::CurrentIdsPresent.new(
-          current_ids: current_ids,
-          undercover_messages: undercover_messages,
-          with_network: network.present?,
-          user: current_user
-        ).perform_nearby
-
-      render json: {
+    render json: {
         messages: undercover_messages, ids_to_remove: ids_to_remove
-      }
+    }
   end
 
   def profile_messages
@@ -911,9 +880,9 @@ class Api::V1::MessagesController < Api::V1::BaseController
   end
 
   # Landing page api
+  # Look landing page is lines if yours and once around you.
   def get_landing_page_feeds(network, current_ids)
     # get messages from nearby area
-    # On landing page display lines/network which are created from landing page or from area page (conversations)
     messages = Undercover::CheckDistance.new(
         params[:post_code],
         params[:lng],
@@ -1000,7 +969,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
   end
 
   # Area page api
-  # fetch area feed. Whats happening in that area.
+  # fetch area feed. Whats happening in that area. Local messages and messages in the world and around you.
   # Display criteria on area page
   # Public - All Lines + Lines Messages
   # Private - Private Lines (Own/Followed) + Private Lines messages (Get line messages on own and followed lines only)
@@ -1058,7 +1027,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
       messages = Message.left_joins(:room)
                      .left_joins(:followed_messages)
                      .select('Rooms.id as room_id, followed_messages.id as followed_messages_id, Messages.*')
-                     .where("((messageable_type = 'Network') or (messageable_type = 'Room' and undercover = true))")
+                     .where("((messageable_type = 'Network' and message_type is not null and message_type != 'CUSTOM_LOCATION' AND message_type != 'NONCUSTOM_LOCATION') OR (messageable_type = 'Room' and undercover = true))")
                      .where("
                           messages.public = true
                           or (followed_messages.id is not null and followed_messages.user_id = #{current_user.id})
@@ -1086,7 +1055,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
       messages = Message.left_joins(:room)
                      .left_joins(:followed_messages)
                      .select('Rooms.id as room_id, followed_messages.id as followed_messages_id, Messages.*')
-                     .where("((messageable_type = 'Network') or (messageable_type = 'Room' and undercover = true))")
+                     .where("((messageable_type = 'Network' and message_type is not null and message_type != 'CUSTOM_LOCATION' AND message_type != 'NONCUSTOM_LOCATION') OR (messageable_type = 'Room' and undercover = true))")
                      .where("
                           messages.public = true
                           or (followed_messages.id is not null and followed_messages.user_id = #{current_user.id})
