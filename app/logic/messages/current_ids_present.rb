@@ -39,7 +39,7 @@ class Messages::CurrentIdsPresent
             methods: %i[
               avatar_url image_urls video_urls like_by_user legendary_by_user user is_synced
               text_with_links post_url expire_at has_expired locked_by_user is_followed is_connected line_locked_by_user
-              conversation_status
+              conversation_status users_count room_id
             ],
             include: [
               :custom_line, :non_custom_lines
@@ -50,7 +50,7 @@ class Messages::CurrentIdsPresent
             methods: %i[
               avatar_url image_urls video_urls like_by_user legendary_by_user user is_synced
               text_with_links post_url expire_at has_expired locked_by_user line_locked_by_user
-              conversation_status
+              conversation_status users_count room_id
             ],
             include: [
               :custom_line, :non_custom_lines
@@ -68,7 +68,7 @@ class Messages::CurrentIdsPresent
           methods: %i[
             avatar_url image_urls video_urls like_by_user legendary_by_user user is_synced
             text_with_links post_url expire_at has_expired locked_by_user is_followed is_connected line_locked_by_user
-            conversation_status
+            conversation_status users_count room_id
           ],
           include: [
               :non_custom_lines
@@ -79,7 +79,7 @@ class Messages::CurrentIdsPresent
           methods: %i[
             avatar_url image_urls video_urls like_by_user legendary_by_user user is_synced
             text_with_links post_url expire_at has_expired locked_by_user line_locked_by_user
-            conversation_status
+            conversation_status users_count room_id
           ],
           include: [
               :non_custom_lines
