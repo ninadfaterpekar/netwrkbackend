@@ -209,6 +209,22 @@ class Message < ApplicationRecord
     m.present? ? true : false
   end
 
+  def users_count
+    if room.present?
+      room.users_count
+    else
+      0
+    end
+  end
+
+  def room_id
+    if room.present?
+      room.id
+    else
+      NIL
+    end
+  end
+
   def conversation_status
     conversation_request_status = nil
     if message_type == 'CONV_REQUEST'
