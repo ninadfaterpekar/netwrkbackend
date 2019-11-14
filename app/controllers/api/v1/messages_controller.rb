@@ -942,8 +942,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
     # Fetch conversation + Lines(own) + Lines(followed) + Lines(within distance even if not followed)
     # Do not show messages on Line at landing page
     # Removed messages of conversation from LP
-    undercover_messages = Message.select('Messages.*, Rooms.id as room_id, Rooms.users_count as users_count')
-                              .left_joins(:room)
+    undercover_messages = Message
+                              .include_room
                               .by_ids(messageIds)
                               .by_not_deleted
                               .without_blacklist(current_user)

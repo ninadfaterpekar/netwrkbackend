@@ -71,7 +71,26 @@ class Messages::CurrentIdsPresent
             conversation_status users_count room_id
           ],
           include: [
-              :non_custom_lines
+              :non_custom_lines,
+              room: {
+                only: [
+                    :id,
+                    :message_id,
+                    :users_count,
+                ],
+                include: [
+                    rooms_users: {
+                        methods: [
+                            :avatar_url
+                        ],
+                        only: [
+                            :id,
+                            :user_id,
+                            :created_at
+                        ]
+                    }
+                ]
+              }
           ]
         )
       else
@@ -82,7 +101,7 @@ class Messages::CurrentIdsPresent
             conversation_status users_count room_id
           ],
           include: [
-              :non_custom_lines
+              :non_custom_lines, :room
           ]
         )
       end
