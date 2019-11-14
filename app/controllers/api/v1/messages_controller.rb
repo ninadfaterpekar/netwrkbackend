@@ -1024,10 +1024,14 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
     if params[:is_distance_check] == 'true'
       #if filter distance is on then messages from that postcode
+      # Dont display CONV_REQUEST and CONV_ACCEPTED messages
+      # Display messages on Lines/Communities
       messages = Message.left_joins(:room)
                      .left_joins(:followed_messages)
                      .select('Rooms.id as room_id, followed_messages.id as followed_messages_id, Messages.*')
-                     .where("((messageable_type = 'Network' and message_type is not null and message_type != 'CUSTOM_LOCATION' AND message_type != 'NONCUSTOM_LOCATION') OR (messageable_type = 'Room' and undercover = true and message_type != 'CONV_REQUEST'))")
+                     .where("((messageable_type = 'Network' and message_type is not null and message_type != 'CUSTOM_LOCATION' AND message_type != 'NONCUSTOM_LOCATION')
+                                OR (messageable_type = 'Room' and undercover = true and (message_type is null OR (message_type != 'CONV_REQUEST' AND message_type != 'CONV_ACCEPTED'))
+                              ))")
                      .where("
                           messages.public = true
                           or (followed_messages.id is not null and followed_messages.user_id = #{current_user.id})
@@ -1055,7 +1059,9 @@ class Api::V1::MessagesController < Api::V1::BaseController
       messages = Message.left_joins(:room)
                      .left_joins(:followed_messages)
                      .select('Rooms.id as room_id, followed_messages.id as followed_messages_id, Messages.*')
-                     .where("((messageable_type = 'Network' and message_type is not null and message_type != 'CUSTOM_LOCATION' AND message_type != 'NONCUSTOM_LOCATION') OR (messageable_type = 'Room' and undercover = true and message_type != 'CONV_REQUEST'))")
+                     .where("((messageable_type = 'Network' and message_type is not null and message_type != 'CUSTOM_LOCATION' AND message_type != 'NONCUSTOM_LOCATION')
+                                OR (messageable_type = 'Room' and undercover = true and (message_type is null OR (message_type != 'CONV_REQUEST' AND message_type != 'CONV_ACCEPTED'))
+                              ))")
                      .where("
                           messages.public = true
                           or (followed_messages.id is not null and followed_messages.user_id = #{current_user.id})
