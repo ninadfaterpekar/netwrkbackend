@@ -42,7 +42,29 @@ class Messages::CurrentIdsPresent
               conversation_status users_count room_id
             ],
             include: [
-              :custom_line, :non_custom_lines
+              :custom_line,
+              :non_custom_lines,
+              room: {
+                only: [
+                  :id,
+                  :message_id,
+                  :users_count,
+                ],
+                include: [
+                  rooms_users: {
+                    methods: [
+                      :user
+                    ],
+                    only: [
+                      :id,
+                      :room_id,
+                      :user_id,
+                      :read,
+                      :unread_count
+                    ]
+                  }
+                ]
+              }
             ]
           )
         else
@@ -53,7 +75,29 @@ class Messages::CurrentIdsPresent
               conversation_status users_count room_id
             ],
             include: [
-              :custom_line, :non_custom_lines
+              :custom_line,
+              :non_custom_lines,
+              room: {
+                only: [
+                  :id,
+                  :message_id,
+                  :users_count,
+                ],
+                include: [
+                  rooms_users: {
+                    methods: [
+                      :user
+                    ],
+                    only: [
+                      :id,
+                      :room_id,
+                      :user_id,
+                      :read,
+                      :unread_count
+                    ]
+                  }
+                ]
+              }
             ]
           )
         end
@@ -71,26 +115,28 @@ class Messages::CurrentIdsPresent
             conversation_status users_count room_id
           ],
           include: [
-              :non_custom_lines,
-              room: {
-                only: [
+            :non_custom_lines,
+            room: {
+              only: [
+                :id,
+                :message_id,
+                :users_count,
+              ],
+              include: [
+                rooms_users: {
+                  methods: [
+                    :user
+                  ],
+                  only: [
                     :id,
-                    :message_id,
-                    :users_count,
-                ],
-                include: [
-                    rooms_users: {
-                        methods: [
-                            :avatar_url
-                        ],
-                        only: [
-                            :id,
-                            :user_id,
-                            :created_at
-                        ]
-                    }
-                ]
-              }
+                    :room_id,
+                    :user_id,
+                    :read,
+                    :unread_count
+                  ]
+                }
+              ]
+            }
           ]
         )
       else
@@ -101,7 +147,28 @@ class Messages::CurrentIdsPresent
             conversation_status users_count room_id
           ],
           include: [
-              :non_custom_lines, :room
+            :non_custom_lines,
+            room: {
+              only: [
+                :id,
+                :message_id,
+                :users_count,
+              ],
+              include: [
+                rooms_users: {
+                  methods: [
+                    :user
+                  ],
+                  only: [
+                    :id,
+                    :room_id,
+                    :user_id,
+                    :read,
+                    :unread_count
+                  ]
+                }
+              ]
+            }
           ]
         )
       end
