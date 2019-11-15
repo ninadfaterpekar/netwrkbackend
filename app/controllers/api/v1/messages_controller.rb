@@ -342,7 +342,11 @@ class Api::V1::MessagesController < Api::V1::BaseController
         message_params.merge(created_at: Time.at(params[:message][:timestamp].to_i)) 
       )
 
-      message.messageable = Room.find(params[:room_id]) if params[:room_id].present?
+      room = Room.find(params[:room_id]) if params[:room_id].present?
+      if room.present?
+        message.messageable = room if room.present?
+        line_message = room.message.update_attributes(updated_at: DateTime.now)
+      end
 
       #if conversation is rejected then unfollow to that conversation, So on landing page this feed will not display.
       if (params[:message][:message_type] == "CONV_REJECTED")
