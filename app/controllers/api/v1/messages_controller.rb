@@ -949,7 +949,14 @@ class Api::V1::MessagesController < Api::V1::BaseController
                               .without_blacklist(current_user)
                               .without_deleted(current_user)
                               .by_messageable_type('Network')
-                              .where("(expire_date is null OR expire_date > :current_date)", {current_date: DateTime.now})
+                              .where("
+                                ((expire_date IS NULL OR expire_date > :current_date) and (message_type != 'LOCAL_MESSAGE' OR message_type is null))
+                                  OR
+                                (message_type = 'LOCAL_MESSAGE' AND (updated_at > :local_message_expiry_date OR expire_date > :current_date))",
+                                {
+                                  current_date: DateTime.now,
+                                  local_message_expiry_date: DateTime.now - 3.days
+                                })
                               .with_images
                               .with_videos
                               .with_non_custom_lines
