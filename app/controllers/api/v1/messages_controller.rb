@@ -677,23 +677,45 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
       elsif notification_type == "new_message"
 
-        notification_title = message.title
-        notification_body = params[:text]
+        if params[:message_type] == 'CONV_REJECTED'
+          # Notify conversation owner when conversation is rejected by user.
+          notification_title = message.title
+          notification_body = params[:text]
 
-        followed_messages = FollowedMessage.where(message_id: message.id)
-        followed_message_userIds = followed_messages.map(&:user_id)
+          followed_users = User.where(id: message.user_id)
+          user_registration_ids = followed_users.map(&:registration_id).compact
+        elsif params[:message_type] == 'CONV_ACCEPTED'
+          # Notify conversation owner + connected users of conversation when conversation is accepted by any user.
+          notification_title = message.title
+          notification_body = params[:text]
 
-        room_users = RoomsUser.where(room_id: room.id)
-        room_userIds = room_users.map(&:user_id)
+          room_users = RoomsUser.where(room_id: room.id)
+          room_userIds = room_users.map(&:user_id)
 
-        #send notification to message owner + followers users + connected users to line
-        final_usersIds = followed_message_userIds + room_userIds + [message.user_id]
-        final_usersIds = final_usersIds.uniq
+          final_usersIds = room_userIds + [message.user_id]
+          final_usersIds = final_usersIds.uniq
 
-        final_usersIds.delete(current_user.id)
+          followed_users = User.where(id: final_usersIds)
+          user_registration_ids = followed_users.map(&:registration_id).compact
+        else
+          notification_title = message.title
+          notification_body = params[:text]
 
-        followed_users = User.where(id: final_usersIds)
-        user_registration_ids = followed_users.map(&:registration_id).compact
+          followed_messages = FollowedMessage.where(message_id: message.id)
+          followed_message_userIds = followed_messages.map(&:user_id)
+
+          room_users = RoomsUser.where(room_id: room.id)
+          room_userIds = room_users.map(&:user_id)
+
+          #send notification to message owner + followers users + connected users to line
+          final_usersIds = followed_message_userIds + room_userIds + [message.user_id]
+          final_usersIds = final_usersIds.uniq
+
+          final_usersIds.delete(current_user.id)
+
+          followed_users = User.where(id: final_usersIds)
+          user_registration_ids = followed_users.map(&:registration_id).compact
+        end
       end 
     elsif params[:messageable_type] == 'Network'
       if notification_type == 'like'
@@ -722,7 +744,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
         
         replied_userIds = replies.map(&:user_id)
 
-        #send notification to message owner + users who replied to that message 
+        # send notification to message owner + users who replied to that message
         
         final_usersIds = replied_userIds + [message.user_id]
         final_usersIds = final_usersIds.uniq.compact
@@ -736,7 +758,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
         notification_title = "You've new reply" 
         notification_body = message.title
       end
-    end   
+    end
 
     if user_registration_ids.length > 0
       notifications_result = Notifications::Push.new(
