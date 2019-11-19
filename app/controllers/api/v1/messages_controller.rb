@@ -688,8 +688,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
           user_registration_ids = followed_users.map(&:registration_id).compact
         elsif params[:message_type] == 'CONV_ACCEPTED'
           # Notify conversation owner + connected users of conversation when conversation is accepted by any user.
-          notification_title = message.title
-          notification_body = params[:text]
+          notification_title = params[:user][:name]
+          notification_body = message.title + ' - ' + params[:user][:name] + ' is in'
 
           room_users = RoomsUser.where(room_id: room.id)
           room_userIds = room_users.map(&:user_id)
