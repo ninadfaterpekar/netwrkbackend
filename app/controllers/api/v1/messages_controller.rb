@@ -1100,7 +1100,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
                      .left_joins(:followed_messages)
                      .select('Rooms.id as room_id, followed_messages.id as followed_messages_id, Messages.*')
                      .where("((messageable_type = 'Network' and message_type is not null and message_type != 'CUSTOM_LOCATION' AND message_type != 'NONCUSTOM_LOCATION')
-                                OR (messageable_type = 'Room' and undercover = true and (message_type is null OR (message_type != 'CONV_REQUEST' AND message_type != 'CONV_ACCEPTED'))
+                                OR (messageable_type = 'Room' and undercover = true and (message_type is null OR (message_type != 'CONV_REQUEST' AND message_type != 'CONV_ACCEPTED' AND message_type != 'CONV_REJECTED'))
                               ))")
                      .where("
                           messages.public = true
