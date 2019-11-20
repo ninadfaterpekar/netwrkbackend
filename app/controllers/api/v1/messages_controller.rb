@@ -222,6 +222,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
   def share
     send_messages = []
+    community_member_ids = []
     if params[:message_ids]
       # Get the room ids from message ids / network ids
       rooms = Room.where(message_id: params[:message_ids])
@@ -295,12 +296,39 @@ class Api::V1::MessagesController < Api::V1::BaseController
         if params[:message][:conversation_line_id].present?
           if room.users.count > 0
             room.users.each {|room_user|
+              community_member_ids.push(room_user.id)
               FollowedMessage.find_or_create_by(user_id: room_user.id, message_id: params[:message][:conversation_line_id])
             }
           end
         end
       }
+
+      # send notification to connected community members.
+      # exclude local message owner
+      community_member_ids.uniq.compact
+      community_member_ids.delete(current_user.id)
+
+      users = User.where(id: community_member_ids)
+      user_registration_ids = users.map(&:registration_id).compact
+
+      # when user reply on message then send notification to its owner
+      notification_title = current_user.name
+      notification_body = params[:message][:text] << '?'
+
+      if user_registration_ids.length > 0
+        notifications_result = Notifications::Push.new(
+            current_user,
+            notification_title,
+            notification_body,
+            user_registration_ids,
+            params
+        ).perform
+      end
+
       render json: {
+          notification_title: notification_title,
+          notification_body: notification_body,
+          community_member_ids: community_member_ids,
           send_messages: send_messages
       }
     else
