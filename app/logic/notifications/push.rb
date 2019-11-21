@@ -38,8 +38,6 @@ class Notifications::Push
       data: {
          title: title,
          body: description,
-         key_1: "value for key1",
-         key_2: "value for key2",
          child_message: child_message,
          'content-available': 1
       },
@@ -57,7 +55,7 @@ class Notifications::Push
     # }
 
     
-    fcm.send(registration_ids, options)
+    #fcm.send(registration_ids, options)
   end
 
   def notify_ios(devices)
