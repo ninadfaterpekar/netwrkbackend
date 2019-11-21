@@ -55,7 +55,7 @@ class Notifications::Push
     # }
 
     
-    #fcm.send(registration_ids, options)
+    fcm.send(registration_ids, options)
   end
 
   def notify_ios(devices)

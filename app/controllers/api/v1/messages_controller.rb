@@ -315,13 +315,15 @@ class Api::V1::MessagesController < Api::V1::BaseController
       notification_title = current_user.name
       notification_body = params[:message][:title] << '?'
 
+      # send id as conversation live id
+      params[:message][:id] = params[:message][:conversation_line_id]
       if user_registration_ids.length > 0
         notifications_result = Notifications::Push.new(
             current_user,
             notification_title,
             notification_body,
             user_registration_ids,
-            params
+            params[:message]
         ).perform
       end
 
