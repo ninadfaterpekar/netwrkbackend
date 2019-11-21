@@ -313,7 +313,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
       # when user reply on message then send notification to its owner
       notification_title = current_user.name
-      notification_body = params[:message][:text] << '?'
+      notification_body = params[:message][:title] << '?'
 
       if user_registration_ids.length > 0
         notifications_result = Notifications::Push.new(
