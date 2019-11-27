@@ -1085,9 +1085,15 @@ class Api::V1::MessagesController < Api::V1::BaseController
     joined_lines_ids = joined_line_rooms.map(&:message_id)
 
     user_like_messages = UserLike.where(user_id: current_user)
-    user_like_message_ids = followed_messages.map(&:message_id)
+    user_like_message_ids = user_like_messages.map(&:message_id)
 
-    total_line_ids = followed_message_ids + own_message_ids + joined_lines_ids + user_like_message_ids
+    nearby_and_likes_line_ids = user_like_message_ids + near_by_messages.map(&:id)
+    nearby_and_likes_lines = Message.where("messageable_type = 'Network'")
+                        .by_ids(nearby_and_likes_line_ids)
+
+    nearby_and_likes_lines_ids = nearby_and_likes_lines.map(&:id)
+
+    total_line_ids = followed_message_ids + own_message_ids + joined_lines_ids + nearby_and_likes_lines_ids
     total_line_ids = total_line_ids.uniq
 
     rooms = Room.where(message_id: total_line_ids)
@@ -1099,7 +1105,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
     end
 
     if params[:is_distance_check] == 'true'
-      #if filter distance is on then messages from that postcode
+      # if filter distance is on then messages f      rom that postcode
       # Dont display CONV_REQUEST and CONV_ACCEPTED messages
       # Display messages on Lines/Communities
       # Removed following conditon which displays on coversation messages on area page. Now all message on lines of that area will be displayed
