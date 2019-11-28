@@ -538,12 +538,16 @@ class Api::V1::MessagesController < Api::V1::BaseController
                         # select("Messages.*")
                         sort_by_points(params[:limit], params[:offset])
 
+      messages.each do |message|
+        message.current_user = current_user
+      end
+
       #messages = network.messages.legendary_messages
       render json: {
         messages: messages.as_json(
           methods: %i[
             avatar_url image_urls video_urls like_by_user legendary_by_user user
-            text_with_links post_url
+            text_with_links post_url is_followed is_connected line_locked_by_user
           ]
         )
       }
