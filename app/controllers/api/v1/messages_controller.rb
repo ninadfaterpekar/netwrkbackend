@@ -530,13 +530,14 @@ class Api::V1::MessagesController < Api::V1::BaseController
       messages = Message.by_not_deleted.
                         by_post_code(network.post_code).
                         undercover_is(true).
-                        where("(messageable_type = 'Network' OR messageable_type = 'Room')").
                         joins_legendary_messages.
                         # select('legendary_likes.id as LegendaryId').
                         # joins_room.
                         # select('Rooms.id as RoomId').
                         # select("Messages.*")
                         sort_by_points(params[:limit], params[:offset])
+
+      messages = Message.by_ids(messages.map(&:id))
 
       messages.each do |message|
         message.current_user = current_user
