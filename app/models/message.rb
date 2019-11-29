@@ -208,6 +208,33 @@ class Message < ApplicationRecord
     m.present? ? true : false
   end
 
+  def line_message_type
+    if undercover == true
+      if messageable_type == 'Network'
+        if locked
+          return 'PRIVATE_LINE'
+        else
+          return 'PUBLIC_LINE'
+        end
+      elsif messageable_type == 'Room'
+        if room.message.public == false && room.message.locked == false
+          # semi private
+          return 'SEMI_PRIVATE_LINE'
+        elsif room.message.public == false && room.message.locked == true && room.message.undercover == true
+          # private
+          return 'PRIVATE_LINE'
+        elsif room.message.public == true && room.message.undercover == true
+          return 'PUBLIC_LINE'
+        end
+      else
+        return 'REPLY'
+      end
+    else
+      # conversation local message
+      return 'LOCAL_MESSAGE'
+    end
+  end
+
   def users_count
     if room.present?
       room.users_count
