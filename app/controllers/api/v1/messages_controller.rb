@@ -1056,60 +1056,62 @@ class Api::V1::MessagesController < Api::V1::BaseController
   # Display user likes messages
   def get_area_page_feeds(network, current_ids)
     near_by_messages = []
-    near_by_messages = Undercover::CheckNear.new(
-        params[:post_code],
-        params[:lng],
-        params[:lat],
-        current_user,
-        []
-    ).perform
-
-    # Get private / semi public legendary message within 15 miles
-    legendary_near_by_messages = Message.legendary_messages(near_by_messages.map(&:id))
-                                      .where('messages.public = false')
-    if legendary_near_by_messages.count > 0
-      legendary_near_by_message_ids = "(#{legendary_near_by_messages.map(&:id).join(',')})"
-    else
-      # prevented sql error
-      legendary_near_by_message_ids = "(0)"
-    end
-
-    followed_messages = FollowedMessage.where(user_id: current_user)
-    followed_message_ids = followed_messages.map(&:message_id)
-
-    own_messages = Message.where(user_id: current_user)
-                       .by_messageable_type('Network')
-                       .undercover_is(true)
-                       .by_not_deleted
-
-    own_message_ids = own_messages.map(&:id)
-
-    # Get joined lines ids
-    joined_lines_ids = []
-    joined_line_rooms = Room.includes(:rooms_users).where(:rooms_users => {:user_id => current_user.id})
-    joined_lines_ids = joined_line_rooms.map(&:message_id)
-
-    user_like_messages = UserLike.where(user_id: current_user)
-    user_like_message_ids = user_like_messages.map(&:message_id)
-
-    nearby_and_likes_line_ids = user_like_message_ids + near_by_messages.map(&:id)
-    nearby_and_likes_lines = Message.where("messageable_type = 'Network'")
-                        .by_ids(nearby_and_likes_line_ids)
-
-    nearby_and_likes_lines_ids = nearby_and_likes_lines.map(&:id)
-
-    total_line_ids = followed_message_ids + own_message_ids + joined_lines_ids + nearby_and_likes_lines_ids
-    total_line_ids = total_line_ids.uniq
-
-    rooms = Room.where(message_id: total_line_ids)
-    if rooms.count > 0
-      rooms_ids = "(#{rooms.map(&:id).join(',')})"
-    else
-      # prevented sql error
-      rooms_ids = "(0)"
-    end
 
     if params[:is_distance_check] == 'true'
+
+      near_by_messages = Undercover::CheckNear.new(
+          params[:post_code],
+          params[:lng],
+          params[:lat],
+          current_user,
+          []
+      ).perform
+
+      # Get private / semi public legendary message within 15 miles
+      legendary_near_by_messages = Message.legendary_messages(near_by_messages.map(&:id))
+
+      if legendary_near_by_messages.count > 0
+        legendary_near_by_message_ids = "(#{legendary_near_by_messages.map(&:id).join(',')})"
+      else
+        # prevented sql error
+        legendary_near_by_message_ids = "(0)"
+      end
+
+      followed_messages = FollowedMessage.where(user_id: current_user)
+      followed_message_ids = followed_messages.map(&:message_id)
+
+      own_messages = Message.where(user_id: current_user)
+                         .by_messageable_type('Network')
+                         .undercover_is(true)
+                         .by_not_deleted
+
+      own_message_ids = own_messages.map(&:id)
+
+      # Get joined lines ids
+      joined_lines_ids = []
+      joined_line_rooms = Room.includes(:rooms_users).where(:rooms_users => {:user_id => current_user.id})
+      joined_lines_ids = joined_line_rooms.map(&:message_id)
+
+      user_like_messages = UserLike.where(user_id: current_user)
+      user_like_message_ids = user_like_messages.map(&:message_id)
+
+      nearby_and_likes_line_ids = user_like_message_ids + near_by_messages.map(&:id)
+      nearby_and_likes_lines = Message.where("messageable_type = 'Network'")
+                                   .by_ids(nearby_and_likes_line_ids)
+
+      nearby_and_likes_lines_ids = nearby_and_likes_lines.map(&:id)
+
+      total_line_ids = followed_message_ids + own_message_ids + joined_lines_ids + nearby_and_likes_lines_ids
+      total_line_ids = total_line_ids.uniq
+
+      rooms = Room.where(message_id: total_line_ids)
+      if rooms.count > 0
+        rooms_ids = "(#{rooms.map(&:id).join(',')})"
+      else
+        # prevented sql error
+        rooms_ids = "(0)"
+      end
+
       # if filter distance is on then messages f      rom that postcode
       # Dont display CONV_REQUEST and CONV_ACCEPTED messages
       # Display messages on Lines/Communities
@@ -1147,6 +1149,52 @@ class Api::V1::MessagesController < Api::V1::BaseController
           messages
       ).perform
     else
+
+      # Get private / semi public legendary message within 15 miles
+      legendary_near_by_messages = LegendaryLike.all
+
+      if legendary_near_by_messages.count > 0
+        legendary_near_by_message_ids = "(#{legendary_near_by_messages.map(&:id).join(',')})"
+      else
+        # prevented sql error
+        legendary_near_by_message_ids = "(0)"
+      end
+
+      followed_messages = FollowedMessage.where(user_id: current_user)
+      followed_message_ids = followed_messages.map(&:message_id)
+
+      own_messages = Message.where(user_id: current_user)
+                         .by_messageable_type('Network')
+                         .undercover_is(true)
+                         .by_not_deleted
+
+      own_message_ids = own_messages.map(&:id)
+
+      # Get joined lines ids
+      joined_lines_ids = []
+      joined_line_rooms = Room.includes(:rooms_users).where(:rooms_users => {:user_id => current_user.id})
+      joined_lines_ids = joined_line_rooms.map(&:message_id)
+
+      user_like_messages = UserLike.where(user_id: current_user)
+      user_like_message_ids = user_like_messages.map(&:message_id)
+
+      #nearby_and_likes_line_ids = user_like_message_ids + near_by_messages.map(&:id)
+      nearby_and_likes_line_ids = user_like_message_ids
+      nearby_and_likes_lines = Message.where("messageable_type = 'Network'")
+                                   .by_ids(nearby_and_likes_line_ids)
+
+      nearby_and_likes_lines_ids = nearby_and_likes_lines.map(&:id)
+
+      total_line_ids = followed_message_ids + own_message_ids + joined_lines_ids + nearby_and_likes_lines_ids
+      total_line_ids = total_line_ids.uniq
+
+      rooms = Room.where(message_id: total_line_ids)
+      if rooms.count > 0
+        rooms_ids = "(#{rooms.map(&:id).join(',')})"
+      else
+        # prevented sql error
+        rooms_ids = "(0)"
+      end
       # fetch all messages if distance check if off
       #
       messages = Message.left_joins(:room)
