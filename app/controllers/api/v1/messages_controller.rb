@@ -549,6 +549,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
           methods: %i[
             avatar_url image_urls video_urls like_by_user legendary_by_user user
             text_with_links post_url is_followed is_connected line_locked_by_user
+            line_message_type
           ]
         )
       }
@@ -650,6 +651,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
       methods: %i[
         avatar_url image_urls video_urls like_by_user legendary_by_user user
         text_with_links post_url expire_at has_expired is_synced conversation_status
+        is_connected line_message_type
       ]
     ) }
   end
