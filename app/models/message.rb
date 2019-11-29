@@ -204,8 +204,15 @@ class Message < ApplicationRecord
   end
 
   def is_connected(user = current_user)
-    m = RoomsUser.find_by(user_id: user, room_id: room_id)
-    m.present? ? true : false
+    if messageable_type == 'Network'
+      m = RoomsUser.find_by(user_id: user, room_id: room_id)
+      m.present? ? true : false
+    elsif messageable_type == 'Room'
+      m = RoomsUser.find_by(user_id: user, room_id: messageable_id)
+      m.present? ? true : false
+    else
+      true
+    end
   end
 
   def line_message_type
