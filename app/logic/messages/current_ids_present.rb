@@ -71,7 +71,7 @@ class Messages::CurrentIdsPresent
           undercover_messages.as_json(
             methods: %i[
               avatar_url image_urls video_urls like_by_user legendary_by_user user is_synced
-              text_with_links post_url expire_at has_expired locked_by_user is_followed line_locked_by_user
+              text_with_links post_url expire_at has_expired is_connected locked_by_user is_followed line_locked_by_user
               conversation_status users_count room_id
             ],
             include: [
@@ -143,7 +143,7 @@ class Messages::CurrentIdsPresent
         @undercover_messages = undercover_messages.as_json(
           methods: %i[
             avatar_url image_urls video_urls like_by_user legendary_by_user user is_synced
-            text_with_links post_url expire_at has_expired locked_by_user is_followed line_locked_by_user
+            text_with_links post_url expire_at has_expired is_connected locked_by_user is_followed line_locked_by_user
             conversation_status users_count room_id
           ],
           include: [

@@ -179,8 +179,7 @@ class Message < ApplicationRecord
         m = LockedMessage.where(message_id: room.message_id)
             .where(unlocked: false)
             .where(user_id: user.id)
-        is_locked = m.present? ? true : false
-         return is_locked
+         return m.present? ? true : false
       else
          return false
       end  
