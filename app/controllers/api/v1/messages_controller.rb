@@ -638,10 +638,10 @@ class Api::V1::MessagesController < Api::V1::BaseController
     unless @room
       return render json: { message: 'room isnt created' }, status: :bad_request
     end
-    messages = @room.messages
-                    .by_not_deleted
-                    .order(created_at: :desc)
-                    .offset(params[:offset]).limit(params[:limit])
+    messages = Message.where(messageable: @room)
+                     .by_not_deleted
+                     .order(created_at: :desc)
+                     .offset(params[:offset]).limit(params[:limit])
 
     messages.each { |m|
       m.current_user = current_user
@@ -1069,7 +1069,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
           []
       ).perform
 
-      # Get private / semi public legendary message within 15 miles
+      # Get public legendary message within 15 miles
       legendary_near_by_messages = Message.legendary_messages(near_by_messages.map(&:id))
 
       if legendary_near_by_messages.count > 0
