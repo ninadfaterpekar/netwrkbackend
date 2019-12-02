@@ -218,9 +218,11 @@ class Message < ApplicationRecord
   def line_message_type
     if undercover == true
       if messageable_type == 'Network'
-        if locked
+        if public == false && locked == false
+          return 'SEMI_PRIVATE_LINE'
+        elsif public == false && locked == true && undercover == true
           return 'PRIVATE_LINE'
-        else
+        elsif public == true && undercover == true
           return 'PUBLIC_LINE'
         end
       elsif messageable_type == 'Room'
