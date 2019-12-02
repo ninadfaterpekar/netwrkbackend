@@ -224,13 +224,13 @@ class Message < ApplicationRecord
           return 'PUBLIC_LINE'
         end
       elsif messageable_type == 'Room'
-        if room.message.public == false && room.message.locked == false
+        if messageable.message.public == false && messageable.message.locked == false
           # semi private
           return 'SEMI_PRIVATE_LINE'
-        elsif room.message.public == false && room.message.locked == true && room.message.undercover == true
+        elsif messageable.message.public == false && messageable.message.locked == true && messageable.message.undercover == true
           # private
           return 'PRIVATE_LINE'
-        elsif room.message.public == true && room.message.undercover == true
+        elsif messageable.message.public == true && messageable.message.undercover == true
           return 'PUBLIC_LINE'
         end
       else
