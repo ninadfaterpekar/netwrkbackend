@@ -197,21 +197,21 @@ class Message < ApplicationRecord
 
     if messageable_type == 'Room'
       roomMessage = Room.find_by(id: messageable_id)
-        if roomMessage
-          m = LockedMessage.where(message_id: roomMessage.message_id)
-              .where(user_id: user.id).first
-          #m.present? ? true : false
-          if m.present?
-            m.unlocked == true ? true : false
-          else
-            # If line is private and there is no record found in Locked_messages table for current user
-            # then consider this line is locked for current user
-            return true if roomMessage.message.present? && roomMessage.message.locked == true
-            false
-          end
+      if roomMessage
+        m = LockedMessage.where(message_id: roomMessage.message_id)
+            .where(user_id: user.id).first
+        #m.present? ? true : false
+        if m.present?
+          m.unlocked == true ? true : false
         else
+          # If line is private and there is no record found in Locked_messages table for current user
+          # then consider this line is locked for current user
+          return true if roomMessage.message.present? && roomMessage.message.locked == true
           false
         end
+      else
+        false
+      end
     end
   end
 
