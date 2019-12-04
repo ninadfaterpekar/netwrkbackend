@@ -173,25 +173,42 @@ class Message < ApplicationRecord
     end
   end
 
+  # check wheather current line or message is locked for current user or not.
+  # True - if line is locked for current user
+  # False - if line is unlocked by current user or line is not locked for current user.
   def line_locked_by_user(user = current_user)
     if messageable_type == 'Network'
       if room
         m = LockedMessage.where(message_id: room.message_id)
-            .where(unlocked: false)
-            .where(user_id: user.id)
-         return m.present? ? true : false
+            .where(user_id: user.id).first
+        #return m.present? ? true : false
+        if m.present?
+          m.unlocked == true ? true : false
+        else
+          # If line is private and there is no record found in Locked_messages table for current user
+          # then consider this line is locked for current user
+          return true if locked == true
+          false
+        end
       else
          return false
       end  
     end
 
-    if messageable_type == 'Room' 
+    if messageable_type == 'Room'
       roomMessage = Room.find_by(id: messageable_id)
         if roomMessage
           m = LockedMessage.where(message_id: roomMessage.message_id)
-              .where(unlocked: false)
-              .where(user_id: user.id)
-          m.present? ? true : false
+              .where(user_id: user.id).first
+          #m.present? ? true : false
+          if m.present?
+            m.unlocked == true ? true : false
+          else
+            # If line is private and there is no record found in Locked_messages table for current user
+            # then consider this line is locked for current user
+            return true if roomMessage.message.present? && roomMessage.message.locked == true
+            false
+          end
         else
           false
         end
