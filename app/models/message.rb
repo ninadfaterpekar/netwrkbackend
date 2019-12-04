@@ -183,7 +183,7 @@ class Message < ApplicationRecord
             .where(user_id: user.id).first
         #return m.present? ? true : false
         if m.present?
-          m.unlocked == true ? true : false
+          m.unlocked == true ? false : true
         else
           # If line is private and there is no record found in Locked_messages table for current user
           # then consider this line is locked for current user
@@ -202,7 +202,7 @@ class Message < ApplicationRecord
             .where(user_id: user.id).first
         #m.present? ? true : false
         if m.present?
-          m.unlocked == true ? true : false
+          m.unlocked == true ? false : true
         else
           # If line is private and there is no record found in Locked_messages table for current user
           # then consider this line is locked for current user
