@@ -376,7 +376,10 @@ class Api::V1::MessagesController < Api::V1::BaseController
     else
       #if message id not present then create message
       message = Message.new( 
-        message_params.merge(created_at: Time.at(params[:message][:timestamp].to_i)) 
+        message_params.merge(
+            created_at: Time.at(params[:message][:timestamp].to_i),
+            updated_at: Time.at(params[:message][:timestamp].to_i)
+        )
       )
 
       room = Room.find(params[:room_id]) if params[:room_id].present?
