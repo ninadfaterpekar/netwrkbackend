@@ -1094,16 +1094,27 @@ class Api::V1::MessagesController < Api::V1::BaseController
       joined_line_rooms = Room.includes(:rooms_users).where(:rooms_users => {:user_id => current_user.id})
       joined_lines_ids = joined_line_rooms.map(&:message_id)
 
+      if joined_line_rooms.count > 0
+        all_joined_lines_ids = "(#{joined_lines_ids.join(',')})"
+      else
+        # prevented sql error
+        all_joined_lines_ids = "(0)"
+      end
+
       user_like_messages = UserLike.where(user_id: current_user)
       user_like_message_ids = user_like_messages.map(&:message_id)
 
-      nearby_and_likes_line_ids = user_like_message_ids + near_by_messages.map(&:id)
-      nearby_and_likes_lines = Message.where("messageable_type = 'Network'")
-                                   .by_ids(nearby_and_likes_line_ids)
+      user_likes_lines = Message.where("messageable_type = 'Network'")
+                                   .by_ids(user_like_message_ids)
 
-      nearby_and_likes_lines_ids = nearby_and_likes_lines.map(&:id)
+      user_likes_lines_ids = user_likes_lines.map(&:id)
 
-      total_line_ids = followed_message_ids + own_message_ids + joined_lines_ids + nearby_and_likes_lines_ids
+      nearby_public_lines = Message.where("messageable_type = 'Network' and public = true")
+                                .by_ids(near_by_messages.map(&:id))
+
+      nearby_public_lines_ids = nearby_public_lines.map(&:id)
+
+      total_line_ids = followed_message_ids + own_message_ids + joined_lines_ids + user_likes_lines_ids + nearby_public_lines_ids
       total_line_ids = total_line_ids.uniq
 
       rooms = Room.where(message_id: total_line_ids)
@@ -1132,7 +1143,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
                           messages.public = true
                           or (followed_messages.id is not null and followed_messages.user_id = #{current_user.id})
                           or (messages.public = false and messages.user_id = #{current_user.id})
-                          or (messages.public = false and messages.messageable_id in #{rooms_ids})
+                          or (messages.public = false and messageable_type = 'Room' and messages.messageable_id in #{rooms_ids})
+                          or (messages.public = false and messageable_type = 'Network' and message_type = 'LOCAL_MESSAGE' and messages.id in #{all_joined_lines_ids})
                           or (messages.id in #{legendary_near_by_message_ids})
                       ")
                      .by_not_deleted
@@ -1140,8 +1152,6 @@ class Api::V1::MessagesController < Api::V1::BaseController
                      .without_deleted(current_user)
                      .with_non_custom_lines
                      .sort_by_last_messages(params[:limit], params[:offset])
-                     .with_images
-                     .with_videos
 
       messages = Undercover::CheckNear.new(
           params[:post_code],
@@ -1177,17 +1187,27 @@ class Api::V1::MessagesController < Api::V1::BaseController
       joined_line_rooms = Room.includes(:rooms_users).where(:rooms_users => {:user_id => current_user.id})
       joined_lines_ids = joined_line_rooms.map(&:message_id)
 
+      if joined_line_rooms.count > 0
+        all_joined_lines_ids = "(#{joined_lines_ids.join(',')})"
+      else
+        # prevented sql error
+        all_joined_lines_ids = "(0)"
+      end
+
       user_like_messages = UserLike.where(user_id: current_user)
       user_like_message_ids = user_like_messages.map(&:message_id)
 
-      #nearby_and_likes_line_ids = user_like_message_ids + near_by_messages.map(&:id)
-      nearby_and_likes_line_ids = user_like_message_ids
-      nearby_and_likes_lines = Message.where("messageable_type = 'Network'")
-                                   .by_ids(nearby_and_likes_line_ids)
+      user_likes_lines = Message.where("messageable_type = 'Network'")
+                             .by_ids(user_like_message_ids)
 
-      nearby_and_likes_lines_ids = nearby_and_likes_lines.map(&:id)
+      user_likes_lines_ids = user_likes_lines.map(&:id)
 
-      total_line_ids = followed_message_ids + own_message_ids + joined_lines_ids + nearby_and_likes_lines_ids
+      nearby_public_lines = Message.where("messageable_type = 'Network' and public = true")
+                                .by_ids(near_by_messages.map(&:id))
+
+      nearby_public_lines_ids = nearby_public_lines.map(&:id)
+
+      total_line_ids = followed_message_ids + own_message_ids + joined_lines_ids + user_likes_lines_ids + nearby_public_lines_ids
       total_line_ids = total_line_ids.uniq
 
       rooms = Room.where(message_id: total_line_ids)
@@ -1209,7 +1229,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
                           messages.public = true
                           or (followed_messages.id is not null and followed_messages.user_id = #{current_user.id})
                           or (messages.public = false and messages.user_id = #{current_user.id})
-                          or (messages.public = false and messages.messageable_id in #{rooms_ids})
+                          or (messages.public = false and messageable_type = 'Room' and messages.messageable_id in #{rooms_ids})
+                          or (messages.public = false and messageable_type = 'Network' and message_type = 'LOCAL_MESSAGE' and messages.id in #{all_joined_lines_ids})
                           or (messages.id in #{legendary_near_by_message_ids})
                       ")
                      .by_not_deleted
@@ -1217,8 +1238,6 @@ class Api::V1::MessagesController < Api::V1::BaseController
                      .without_deleted(current_user)
                      .with_non_custom_lines
                      .sort_by_last_messages(params[:limit], params[:offset])
-                     .with_images
-                     .with_videos
     end
 
     # if private / semi public then only shows own or followed
@@ -1226,6 +1245,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
     final_messages_ids = messages.map(&:id).uniq
     messages = Message.by_ids(final_messages_ids)
+                      .with_images
+                      .with_videos
                       .sort_by_last_messages(params[:limit], params[:offset])
 
     messages, _ids_to_remove =
