@@ -802,8 +802,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
         #when user reply on message then send notification to its owner
         notification_title = "You've new reply" 
         notification_body = message.title
-        params = []
-        params[:id] = message.id
+        params['id'] = message.id # change the parent id
       end
     end
 
