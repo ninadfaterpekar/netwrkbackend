@@ -230,7 +230,10 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
       rooms.each { |room|
         message = Message.new(
-            message_params.merge(created_at: Time.at(params[:message][:timestamp].to_i))
+            message_params.merge(
+                created_at: Time.at(params[:message][:timestamp].to_i),
+                updated_at: Time.at(params[:message][:timestamp].to_i)
+            )
         )
 
         message.messageable = Room.find(room.id)
@@ -799,6 +802,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
         #when user reply on message then send notification to its owner
         notification_title = "You've new reply" 
         notification_body = message.title
+        params = []
+        params[:id] = message.id
       end
     end
 
