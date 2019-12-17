@@ -743,7 +743,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
           followed_users = User.where(id: final_usersIds)
           user_registration_ids = followed_users.map(&:registration_id).compact
         else
-          notification_title = message.title
+          notification_title = params[:user][:name]
           notification_body = params[:text]
 
           followed_messages = FollowedMessage.where(message_id: message.id)
