@@ -139,13 +139,26 @@ class Api::V1::MessagesController < Api::V1::BaseController
     messages = MessageQuery.new(current_user).profile(
       user, params[:post_code], method, params[:limit], params[:offset]
     )
+
+    own_local_message_count = Message.by_user(current_user.id)
+                                  .where("messageable_type = 'Network' AND (message_type is null or message_type = 'CUSTOM_LOCATION' or message_type = 'NONCUSTOM_LOCATION')")
+                                  .count
+
+    own_community_count = Message.by_user(current_user.id)
+                                  .where("messageable_type = 'Network' AND message_type = 'LOCAL_MESSAGE'")
+                                  .count
+
     render json: {
       messages: messages.as_json(
         methods: %i[
           avatar_url image_urls video_urls like_by_user legendary_by_user user
           text_with_links post_url expire_at has_expired
         ]
-      )
+      ),
+      metadata: [
+          local_messages_count: own_local_message_count,
+          comminities_count: own_community_count
+      ]
     }
   end
 
