@@ -1,5 +1,5 @@
 class TemplatesMailer < MandrillMailer::TemplateMailer
-  default from: 'team@netwrkapp.com'
+  default from: 'info@somvo.app'
 
   def send_template(template_name, email)
     subject = TemplatesMailer.get_subject(template_name)

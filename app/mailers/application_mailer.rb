@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: 'team@netwrkapp.com'
+  default from: 'info@somvo.app'
   layout 'mailer'
 end
