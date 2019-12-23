@@ -140,11 +140,11 @@ class Api::V1::MessagesController < Api::V1::BaseController
       user, params[:post_code], method, params[:limit], params[:offset]
     )
 
-    own_local_message_count = Message.by_user(current_user.id)
+    own_communities_count = Message.by_user(current_user.id)
                                   .where("messageable_type = 'Network' AND (message_type is null or message_type = 'CUSTOM_LOCATION' or message_type = 'NONCUSTOM_LOCATION')")
                                   .count
 
-    own_community_count = Message.by_user(current_user.id)
+    own_local_messages_count = Message.by_user(current_user.id)
                                   .where("messageable_type = 'Network' AND message_type = 'LOCAL_MESSAGE'")
                                   .count
 
@@ -156,8 +156,9 @@ class Api::V1::MessagesController < Api::V1::BaseController
         ]
       ),
       metadata: [
-          local_messages_count: own_local_message_count,
-          comminities_count: own_community_count
+          local_messages_count: own_local_messages_count,
+          comminities_count: own_communities_count,
+          communities_count: own_communities_count
       ]
     }
   end
