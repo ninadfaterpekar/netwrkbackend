@@ -816,8 +816,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
         user_registration_ids = users.map(&:registration_id).compact
 
         #when user reply on message then send notification to its owner
-        notification_title = message.text
-        notification_body = message.title
+        notification_title = params[:user][:name]
+        notification_body = params[:text]
         params['id'] = message.id # change the parent id
       end
     end
