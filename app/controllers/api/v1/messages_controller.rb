@@ -756,6 +756,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
           followed_users = User.where(id: final_usersIds)
           user_registration_ids = followed_users.map(&:registration_id).compact
+
+          params['id'] = message.conversation_line_id # change the parent id. so it will open LM when click on notification
         else
           notification_title = params[:user][:name]
           notification_body = params[:text]
@@ -814,7 +816,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
         user_registration_ids = users.map(&:registration_id).compact
 
         #when user reply on message then send notification to its owner
-        notification_title = "You've new reply" 
+        notification_title = message.text
         notification_body = message.title
         params['id'] = message.id # change the parent id
       end
