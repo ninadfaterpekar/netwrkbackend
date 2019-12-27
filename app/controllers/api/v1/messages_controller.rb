@@ -672,8 +672,40 @@ class Api::V1::MessagesController < Api::V1::BaseController
         avatar_url image_urls video_urls like_by_user legendary_by_user user
         text_with_links post_url expire_at has_expired is_synced conversation_status
         is_connected line_message_type
-      ]
-    ) }
+      ],
+      include: [
+          conversation_line: {
+              only: [
+                  :id,
+                  :text
+              ],
+              include: [
+                  room: {
+                      only: [
+                          :id,
+                          :message_id,
+                          :users_count,
+                      ],
+                      include: [
+                          rooms_users: {
+                              methods: [
+                                  :user
+                              ],
+                              only: [
+                                  :id,
+                                  :room_id,
+                                  :user_id,
+                                  :read,
+                                  :unread_count
+                              ]
+                          }
+                      ]
+                  }
+              ]
+
+          }
+      ])
+    }
   end
 
   def replies_on_message
