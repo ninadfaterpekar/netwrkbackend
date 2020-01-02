@@ -791,18 +791,28 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
           params['id'] = message.conversation_line_id # change the parent id. so it will open LM when click on notification
         else
+          # When undercover = false means local message, then dont include followed users as they may not be connected to resolve freeze issue
           notification_title = params[:user][:name]
           notification_body = params[:text]
 
-          followed_messages = FollowedMessage.where(message_id: message.id)
-          followed_message_userIds = followed_messages.map(&:user_id)
+          if params[:undercover] == 'false'
+            room_users = RoomsUser.where(room_id: room.id)
+            room_userIds = room_users.map(&:user_id)
 
-          room_users = RoomsUser.where(room_id: room.id)
-          room_userIds = room_users.map(&:user_id)
+            #send notification to message owner + connected users to line
+            final_usersIds = room_userIds + [message.user_id]
+            final_usersIds = final_usersIds.uniq
+          else
+            followed_messages = FollowedMessage.where(message_id: message.id)
+            followed_message_userIds = followed_messages.map(&:user_id)
 
-          #send notification to message owner + followers users + connected users to line
-          final_usersIds = followed_message_userIds + room_userIds + [message.user_id]
-          final_usersIds = final_usersIds.uniq
+            room_users = RoomsUser.where(room_id: room.id)
+            room_userIds = room_users.map(&:user_id)
+
+            #send notification to message owner + followers users + connected users to line
+            final_usersIds = followed_message_userIds + room_userIds + [message.user_id]
+            final_usersIds = final_usersIds.uniq
+          end
 
           final_usersIds.delete(current_user.id)
 
