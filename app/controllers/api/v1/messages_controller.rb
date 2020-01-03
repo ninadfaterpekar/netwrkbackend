@@ -19,7 +19,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
         get_landing_page_feeds(network, current_ids)
       end
     elsif params[:undercover] == 'false'
-      get_area_page_feeds(network, current_ids)
+      get_public_area_page_feeds(network, current_ids)
     else
       message_list = undercover_messages + messages
       render json: {
@@ -1110,6 +1110,124 @@ class Api::V1::MessagesController < Api::V1::BaseController
     render json: {
         messages: undercover_messages, ids_to_remove: ids_to_remove
     }
+  end
+
+  def get_public_area_page_feeds(network, current_ids)
+    if params[:is_distance_check] == 'true'
+      # Local Mode
+      # Show Legendary Public Messages within 15 miles
+      # Show Public Local Messages within 15 miles (Do not show messages of Local Messages)
+      # Show messages of Public Communities within 15 miles (Do not show community itself)
+
+      legendary_near_by_messages = LegendaryLike.all
+
+      legendary_message_ids = legendary_near_by_messages.map(&:message_id).uniq.join(',')
+
+      if legendary_near_by_messages.count > 0
+        legendary_near_by_message_ids = "(#{legendary_message_ids})"
+      else
+        # prevented sql error
+        legendary_near_by_message_ids = "(0)"
+      end
+
+      messages = Message
+                     .where("((messageable_type = 'Network' and message_type = 'LOCAL_MESSAGE')
+                                OR (messageable_type = 'Room' and undercover = true and (message_type is null OR (message_type != 'CONV_REQUEST' AND message_type != 'CONV_ACCEPTED' AND message_type != 'CONV_REJECTED'))
+                            ))")
+                     .where("
+                          messages.public = true
+                          or (messages.public = false and messages.user_id = #{current_user.id})
+                          or (messages.id in #{legendary_near_by_message_ids})
+                      ")
+                     .by_not_deleted
+                     .without_blacklist(current_user)
+                     .without_deleted(current_user)
+                     .with_non_custom_lines
+                     .sort_by_newest
+
+      near_by_messages = Undercover::CheckNear.new(
+          params[:post_code],
+          params[:lng],
+          params[:lat],
+          current_user,
+          messages
+      ).perform
+
+      near_by_message_ids = near_by_messages.map(&:id).uniq
+
+      messages = Message.left_joins(:room)
+                     .select('Rooms.id as room_id, Messages.*')
+                     .by_ids(near_by_message_ids)
+                     .with_images
+                     .with_videos
+                     .sort_by_last_messages(params[:limit], params[:offset])
+
+      messages, _ids_to_remove =
+          Messages::CurrentIdsPresent.new(
+              current_ids: current_ids,
+              undercover_messages: messages,
+              with_network: network.present?,
+              user: current_user,
+              is_undercover: params[:undercover]
+          ).perform
+
+      render json: {
+          messages: messages, ids_to_remove: _ids_to_remove
+      }
+    else
+      # World Mode
+      # Show Legendary Public Messages
+      # Do Not Show Local Messages. There is no point as they are only for local use.
+      # Show messages of Public Communities (Do not show community itself)
+
+      legendary_near_by_messages = LegendaryLike.all
+
+      legendary_message_ids = legendary_near_by_messages.map(&:message_id).uniq.join(',')
+
+      if legendary_near_by_messages.count > 0
+        legendary_near_by_message_ids = "(#{legendary_message_ids})"
+      else
+        # prevented sql error
+        legendary_near_by_message_ids = "(0)"
+      end
+
+      messages = Message
+                     .where("(
+                              (messageable_type = 'Room' and undercover = true and (message_type is null OR (message_type != 'CONV_REQUEST' AND message_type != 'CONV_ACCEPTED' AND message_type != 'CONV_REJECTED'))
+                            ))")
+                     .where("
+                          messages.public = true
+                          or (messages.public = false and messages.user_id = #{current_user.id})
+                          or (messages.id in #{legendary_near_by_message_ids})
+                      ")
+                     .by_not_deleted
+                     .without_blacklist(current_user)
+                     .without_deleted(current_user)
+                     .with_non_custom_lines
+                     .sort_by_newest
+
+      world_message_ids = messages.map(&:id).uniq
+
+      messages = Message.left_joins(:room)
+                     .select('Rooms.id as room_id, Messages.*')
+                     .by_ids(world_message_ids)
+                     .with_images
+                     .with_videos
+                     .sort_by_last_messages(params[:limit], params[:offset])
+
+      messages, _ids_to_remove =
+          Messages::CurrentIdsPresent.new(
+              current_ids: current_ids,
+              undercover_messages: messages,
+              with_network: network.present?,
+              user: current_user,
+              is_undercover: params[:undercover]
+          ).perform
+
+      render json: {
+          messages: messages, ids_to_remove: _ids_to_remove
+      }
+    end
   end
 
   # Area page api
