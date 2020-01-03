@@ -795,7 +795,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
           notification_title = params[:user][:name]
           notification_body = params[:text]
 
-          if params[:undercover] == 'false'
+          if params[:undercover] == false
             room_users = RoomsUser.where(room_id: room.id)
             room_userIds = room_users.map(&:user_id)
 
