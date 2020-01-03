@@ -10,13 +10,18 @@ class Api::V1::BlacklistsController < Api::V1::BaseController
   end
 
   def create
-    bl =
-      Blacklist.find_by(user_id: current_user.id, target_id: params[:target_id])
+    bl = Blacklist.find_by(user_id: current_user.id, target_id: params[:target_id])
     if bl.nil?
       Blacklist.create(user_id: current_user.id, target_id: params[:target_id])
+      user = User.find_by(id: params[:target_id])
+      user.points_count -= 15
+      user.save
       render json: { message: 'block_ok' }, status: 200
     else
       bl.destroy
+      user = User.find_by(id: params[:target_id])
+      user.points_count += 15
+      user.save
       render json: { message: 'unblock_ok' }, status: 200
     end
   end
