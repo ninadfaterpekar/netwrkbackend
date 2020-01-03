@@ -157,8 +157,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
       ),
       metadata: [
           local_messages_count: own_local_messages_count,
-          comminities_count: own_communities_count,
-          communities_count: own_communities_count
+          communities_count: own_communities_count,
+          user_points_count: user.points_count
       ]
     }
   end
