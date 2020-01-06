@@ -1020,26 +1020,28 @@ class Api::V1::MessagesController < Api::V1::BaseController
   # Look landing page is lines if yours and once around you.
   def get_landing_page_feeds(network, current_ids)
     # get messages from nearby area
-    messages = Undercover::CheckDistance.new(
-        params[:post_code],
-        params[:lng],
-        params[:lat],
-        current_user,
-        params[:is_landing_page]
-    ).perform
-
-    messageIds = messages.map(&:id)
+    # messages = Undercover::CheckDistance.new(
+    #     params[:post_code],
+    #     params[:lng],
+    #     params[:lat],
+    #     current_user,
+    #     params[:is_landing_page]
+    # ).perform
+    #
+    # messageIds = messages.map(&:id)
 
     if params[:is_landing_page] == 'true'
       # on landing page display only public messages within distance 15 miles.
       # Private and semi public should be hide for 15 miles
       # Display followed lines + owned lines
       # Display Joined Lines
+=begin
       messages.each { |message|
-        if message.public == 'false'
+        if message.public == false
           messageIds.delete(message.id)
         end
       }
+=end
 
       # Get own lines ids
       own_messages = Message.where(user_id: current_user)
@@ -1072,7 +1074,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
         end
       }
 
-      messageIds = messageIds + followed_message_ids + own_message_ids + joined_lines_ids
+      # messageIds = messageIds + followed_message_ids + own_message_ids + joined_lines_ids
+      messageIds = followed_message_ids + own_message_ids + joined_lines_ids
       messageIds = messageIds.uniq
     end
 
