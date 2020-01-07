@@ -1118,7 +1118,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
   def get_public_area_page_feeds(network, current_ids)
     if params[:is_distance_check] == 'true'
       # Local Mode
-      # Show Legendary Public Messages within 15 miles
+      # Show Legendary Public/Private Messages within 15 miles. When something is legendary, it basically becomes public
       # Show Public Local Messages within 15 miles (Do not show messages of Local Messages)
       # Show messages of Public Communities within 15 miles (Do not show community itself)
 
@@ -1178,7 +1178,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
       }
     else
       # World Mode
-      # Show Legendary Public Messages
+      # Show Legendary Public/Private Messages. When something is legendary, it basically becomes public
       # Do Not Show Local Messages. There is no point as they are only for local use.
       # Show messages of Public Communities (Do not show community itself)
 
