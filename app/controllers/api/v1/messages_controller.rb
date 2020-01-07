@@ -1139,7 +1139,6 @@ class Api::V1::MessagesController < Api::V1::BaseController
                             ))")
                      .where("
                           messages.public = true
-                          or (messages.public = false and messages.user_id = #{current_user.id})
                           or (messages.id in #{legendary_near_by_message_ids})
                       ")
                      .by_not_deleted
@@ -1200,7 +1199,6 @@ class Api::V1::MessagesController < Api::V1::BaseController
                             ))")
                      .where("
                           messages.public = true
-                          or (messages.public = false and messages.user_id = #{current_user.id})
                           or (messages.id in #{legendary_near_by_message_ids})
                       ")
                      .by_not_deleted
