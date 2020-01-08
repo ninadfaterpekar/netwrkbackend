@@ -1478,7 +1478,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
       :message_type,
       :avatar,
       :custom_line_id,
-      :conversation_line_id
+      :conversation_line_id,
+      :user_public_profile
     )
   end
 end
