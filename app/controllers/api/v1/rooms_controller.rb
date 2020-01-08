@@ -14,6 +14,8 @@ class Api::V1::RoomsController < Api::V1::BaseController
             .count
 
     if outcome.success?
+      # if user joined then auto follow to Line/Community/LM
+      FollowedMessage.find_or_create_by(user_id: current_user.id, message_id: room.message_id)
       render json: { message: 'ok', privateLineCount: privateLineCount }, status: 200
     else
       render json: { errors: outcome.errors, privateLineCount: privateLineCount }, status: :bad_request
