@@ -544,18 +544,20 @@ class Api::V1::MessagesController < Api::V1::BaseController
   def legendary_list
     network = Network.find_by(id: params[:network_id])
     if network.present?
-
-      # fetch Lines and Line messages of that area (zipcode of passed networkId) 
-      # which are set as legendary by any user
-      messages = Message.by_not_deleted.
-                        by_post_code(network.post_code).
-                        undercover_is(true).
-                        joins_legendary_messages.
-                        # select('legendary_likes.id as LegendaryId').
-                        # joins_room.
-                        # select('Rooms.id as RoomId').
-                        # select("Messages.*")
-                        sort_by_points(params[:limit], params[:offset])
+      if params[:is_distance_check] == 'true'
+        # Local
+        # fetch Lines and Line messages of that area (zipcode of passed networkId) which are set as legendary by any user
+        messages = Message.by_not_deleted.
+            by_post_code(network.post_code).
+            joins_legendary_messages.
+            sort_by_points(params[:limit], params[:offset])
+      else
+        # World
+        # Show all legendary posts on world
+        messages = Message.by_not_deleted.
+            joins_legendary_messages.
+            sort_by_points(params[:limit], params[:offset])
+      end
 
       messages = Message.by_ids(messages.map(&:id))
 
@@ -575,7 +577,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
       }
     else
       render json: {
-          messages:[]
+          messages:[],
+          message: "Network not found"
       }
     end
   end
