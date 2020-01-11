@@ -97,8 +97,15 @@ class Api::V1::MessagesController < Api::V1::BaseController
         messages
     ).perform
 
+    messageIds = messages.map(&:id)
+    messages.each { |message|
+      if message.public == false && message.locked == false
+        messageIds.delete(message.id)
+      end
+    }
+
     undercover_messages = Message
-                              .by_ids(messages.map(&:id))
+                              .by_ids(messageIds)
                               .include_room
                               .by_not_deleted
                               .without_blacklist(current_user)
