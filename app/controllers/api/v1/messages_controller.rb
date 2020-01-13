@@ -34,10 +34,11 @@ class Api::V1::MessagesController < Api::V1::BaseController
   end
 
 
-  # Get near by lines from latitude and longitude 
+  # Get near by lines from latitude and longitude
   # Current radius is 15 miles
   def nearby_search
     messages = []
+    mutual_communities_ids = []
     undercover_messages = []
     current_ids = []
     current_ids = params[:current_ids] if params[:current_ids].present?
@@ -52,23 +53,55 @@ class Api::V1::MessagesController < Api::V1::BaseController
       messages
     ).perform
 
+    message_ids = messages.map(&:id)
+
+    # If user is connected then show mutual public and private communities but avoid showing semi public communities
+    # As it can directly accessible though it is private and without password
+    # If user not connected then show mutual public communities.
+    if params[:with_mutual_connected_communities] && params[:with_mutual_connected_communities] == 'true'
+      # find the connected users of community
+      community = Message.find(params[:message_id])
+      connected_user_ids = community.room.rooms_users.map(&:user_id)
+      mutual_rooms_ids = RoomsUser.where(user_id: connected_user_ids).map(&:room_id)
+
+      if params[:is_connected] == 'true'
+        # get public, private (avoid semi public) communities of connected users
+        mutual_communities = Message.by_messageable_type('Network')
+                                 .by_not_deleted
+                                 .where("message_type is null or message_type = 'CUSTOM_LOCATION' or message_type = 'NONCUSTOM_LOCATION'")
+                                 .where.not('(public = false and locked = false)')
+      else
+        # get public, private (avoid semi public) communities of connected users
+        mutual_communities = Message.by_messageable_type('Network')
+                                 .by_not_deleted
+                                 .where("message_type is null or message_type = 'CUSTOM_LOCATION' or message_type = 'NONCUSTOM_LOCATION'")
+                                 .where('public = true')
+      end
+      mutual_communities_ids = mutual_communities.map(&:id)
+    end
+
+    message_ids = message_ids + mutual_communities_ids
+    message_ids = message_ids.uniq
+
     if params[:message_type] && params[:message_type] != ''
       undercover_messages =
-        Message.by_ids(messages.map(&:id))
-               .by_not_deleted
-               .without_blacklist(current_user)
-               .without_deleted(current_user)
-               .where(messageable_type: 'Network')
-               .where(message_type: params[:message_type])
-               .sort_by_points(params[:limit], params[:offset])
+          Message.by_ids(message_ids)
+              .by_not_deleted
+              .without_blacklist(current_user)
+              .without_deleted(current_user)
+              .where(messageable_type: 'Network')
+              .where(message_type: params[:message_type])
+              .where.not('(public = false and locked = false)')
+              .sort_by_points(params[:limit], params[:offset])
     else
       undercover_messages =
-        Message.by_ids(messages.map(&:id))
-               .by_not_deleted
-               .without_blacklist(current_user)
-               .without_deleted(current_user)
-               .where(messageable_type: 'Network')
-               .sort_by_points(params[:limit], params[:offset])
+          Message.by_ids(message_ids)
+              .by_not_deleted
+              .without_blacklist(current_user)
+              .without_deleted(current_user)
+              .where(messageable_type: 'Network')
+              .where.not('(public = false and locked = false)')
+              .sort_by_points(params[:limit], params[:offset])
     end
 
     render json: {
