@@ -151,12 +151,10 @@ class Api::V1::MessagesController < Api::V1::BaseController
                               .where(undercover: true)
                               .where.not(user_id: current_user)
                               .where("
-                                ((expire_date IS NULL OR expire_date > :current_date) and (message_type != 'LOCAL_MESSAGE' OR message_type is null))
-                                  OR
-                                (message_type = 'LOCAL_MESSAGE' AND (updated_at > :local_message_expiry_date OR expire_date > :current_date))",
+                                  ((expire_date IS NULL OR expire_date > :current_date) and (message_type != 'LOCAL_MESSAGE' OR message_type is null))
+                                ",
                                 {
-                                  current_date: DateTime.now,
-                                  local_message_expiry_date: DateTime.now - 3.days
+                                  current_date: DateTime.now
                                 })
                               .sort_by_last_messages(params[:limit], params[:offset])
 
