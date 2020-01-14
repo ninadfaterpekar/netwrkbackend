@@ -104,6 +104,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
               .sort_by_points(params[:limit], params[:offset])
     end
 
+    undercover_messages.each { |message| message.current_user = current_user }
+
     render json: {
       messages: undercover_messages.as_json(
         methods: %i[
