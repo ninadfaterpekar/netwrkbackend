@@ -107,7 +107,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
     render json: {
       messages: undercover_messages.as_json(
         methods: %i[
-          avatar_url image_urls video_urls text_with_links user expire_at has_expired
+          avatar_url image_urls video_urls like_by_user legendary_by_user user is_synced
+            text_with_links post_url expire_at has_expired is_connected locked_by_user is_followed line_locked_by_user
         ]
       )
     }
