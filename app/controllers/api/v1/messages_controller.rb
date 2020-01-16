@@ -43,7 +43,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
     current_ids = []
     current_ids = params[:current_ids] if params[:current_ids].present?
     
-    network = Network.find_by(post_code: params[:post_code])
+    # network = Network.find_by(post_code: params[:post_code])
 
     messages = Undercover::CheckNear.new(
       params[:post_code],
@@ -64,23 +64,39 @@ class Api::V1::MessagesController < Api::V1::BaseController
       connected_user_ids = community.room.rooms_users.map(&:user_id)
       mutual_rooms_ids = RoomsUser.where(user_id: connected_user_ids).map(&:room_id)
 
-      if params[:is_connected] == 'true'
-        # get public, private (avoid semi public) communities of connected users
-        mutual_communities = Message.by_messageable_type('Network')
-                                 .by_not_deleted
-                                 .where("message_type is null or message_type = 'CUSTOM_LOCATION' or message_type = 'NONCUSTOM_LOCATION'")
-                                 .where.not('(public = false and locked = false)')
-      else
-        # get public, private (avoid semi public) communities of connected users
-        mutual_communities = Message.by_messageable_type('Network')
-                                 .by_not_deleted
-                                 .where("message_type is null or message_type = 'CUSTOM_LOCATION' or message_type = 'NONCUSTOM_LOCATION'")
-                                 .where('public = true')
+      room_message_ids = Room.where(id: mutual_rooms_ids).map(&:message_id)
+      if message_ids.count > 0
+        if params[:is_connected] == 'true'
+          # get public, private (avoid semi public) communities of connected users + get nearby all public and private communities
+          mutual_communities = Message.by_messageable_type('Network')
+                                   .by_ids(room_message_ids)
+                                   .by_not_deleted
+                                   .where("message_type is null or message_type = 'CUSTOM_LOCATION' or message_type = 'NONCUSTOM_LOCATION'")
+                                   .where.not('(public = false and locked = false)')
+
+          mutual_communities_ids = mutual_communities.map(&:id)
+
+          message_ids = messages.map(&:id)
+          message_ids = message_ids + mutual_communities_ids
+        else
+          # get public (avoid semi public) communities of connected users + get nearby public communities
+          mutual_communities = Message.by_messageable_type('Network')
+                                   .by_ids(room_message_ids)
+                                   .by_not_deleted
+                                   .where("message_type is null or message_type = 'CUSTOM_LOCATION' or message_type = 'NONCUSTOM_LOCATION'")
+                                   .where('public = true')
+
+          mutual_communities_ids = mutual_communities.map(&:id)
+
+          nearby_public_messages = Message.by_ids(message_ids)
+                                       .where.not('(public = false)')
+
+          message_ids = nearby_public_messages.map(&:id)
+          message_ids = message_ids + mutual_communities_ids
+        end
       end
-      mutual_communities_ids = mutual_communities.map(&:id)
     end
 
-    message_ids = message_ids + mutual_communities_ids
     message_ids = message_ids.uniq
 
     if params[:message_type] && params[:message_type] != ''
@@ -952,7 +968,11 @@ class Api::V1::MessagesController < Api::V1::BaseController
       ).perform
 
       if messages.length > 0 || message.user_id = current_user.id
-         non_custom_lines = message.non_custom_lines 
+         non_custom_lines = message.non_custom_lines
+
+         non_custom_line_ids = non_custom_lines.map(&:id)
+         non_custom_lines = Message.by_ids(non_custom_line_ids)
+                                .where.not('(public = false and locked = false)')
       else
         # Only get followed custom lines
         followed_messages = FollowedMessage.where(user_id: current_user)
@@ -965,6 +985,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
         final_message_ids = followed_message_ids & custom_line_ids
 
         non_custom_lines = Message.by_ids(final_message_ids)
+                               .where.not('(public = false and locked = false)')
       end  
     else
        non_custom_lines = message.non_custom_lines 
@@ -975,6 +996,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
           methods: %i[
             avatar_url image_urls video_urls like_by_user legendary_by_user user
             text_with_links post_url expire_at has_expired is_synced
+            locked_by_user is_followed is_connected line_locked_by_user
           ],
           include: [
               :custom_line,:non_custom_lines
