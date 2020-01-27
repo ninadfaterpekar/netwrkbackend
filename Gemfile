@@ -100,5 +100,7 @@ gem 'oj'
 
 gem 'active_model_serializers', '~> 0.10.0'
 
+gem 'thin'
+
 gem 'rack-cors', :require => 'rack/cors'
 gem 'bcrypt', '3.1.11', platforms: [:ruby, :x64_mingw]
