@@ -205,6 +205,19 @@ class Api::V1::MessagesController < Api::V1::BaseController
                                   .where("messageable_type = 'Network' AND message_type = 'LOCAL_MESSAGE'")
                                   .count
 
+    primary_community = Message.by_user(current_user.id)
+                                  .where("public = true  OR (public = false AND locked = true)")
+                                  .where("messageable_type = 'Network' AND (message_type is null or message_type = 'CUSTOM_LOCATION' or message_type = 'NONCUSTOM_LOCATION')")
+                                  .order(id: :asc)
+                                  .offset(0)
+                                  .limit(1)
+
+    if primary_community.count > 0
+      primary_community_id = primary_community[0].id
+    else
+      primary_community_id = nil
+    end
+
     render json: {
       messages: messages.as_json(
         methods: %i[
@@ -215,7 +228,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
       metadata: [
           local_messages_count: own_local_messages_count,
           communities_count: own_communities_count,
-          user_points_count: user.points_count
+          user_points_count: user.points_count,
+          primary_community_id: primary_community_id
       ]
     }
   end
