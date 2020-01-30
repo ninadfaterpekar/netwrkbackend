@@ -99,6 +99,10 @@ class Message < ApplicationRecord
     joins(:room).merge(Room.where(message_id: message_id))
   end
 
+  scope :exclude_private_groups, ->() do
+    where.not('public = false and locked = false')
+  end
+
   scope :sort_by_last_messages, ->(limit, offset) {
     sort_by_newest.limit(limit).offset(offset)
   }

@@ -21,7 +21,16 @@ class Undercover::CheckNear
     messages_in_radius = []
 
     if nearby_messages.empty?
-      messages = Message.undercover_is(true).with_users
+      if @post_code.nil?
+        messages = Message.undercover_is(true)
+                       .by_not_deleted
+                       .with_users
+      else
+        messages = Message.undercover_is(true)
+                       .by_post_code(@post_code)
+                       .by_not_deleted
+                       .with_users
+      end
     else
       messages = nearby_messages
     end  

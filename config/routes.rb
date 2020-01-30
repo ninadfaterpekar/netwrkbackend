@@ -78,6 +78,7 @@ Rails.application.routes.draw do
           post 'send_notifications', to: 'messages#send_notifications'
           get 'non_custom_lines', to: 'messages#get_non_custom_lines'
           post 'conversation_update'
+          get 'map_feed'
         end
       end
       resources :networks_users, only: %i[index create]

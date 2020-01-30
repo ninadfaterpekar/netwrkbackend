@@ -1074,6 +1074,77 @@ class Api::V1::MessagesController < Api::V1::BaseController
     end
   end
 
+  # Fetch Owned communities + Connected communities + Connected Somvos + Owned somvos + All 15 miles Public Community + All 15miles Somvo
+  def map_feed
+    near_by_communities_and_somvos = []
+
+    near_by_communities_and_somvos = Undercover::CheckNear.new(
+        params[:post_code],
+        params[:lng],
+        params[:lat],
+        current_user,
+        []
+    ).perform
+
+    near_by_communities_and_somvo_ids = near_by_communities_and_somvos.map(&:id)
+
+    #p "near_by_communities_and_somvo_ids #{near_by_communities_and_somvo_ids}"
+
+    followed_messages = FollowedMessage.where(user_id: current_user)
+    followed_message_ids = followed_messages.map(&:message_id)
+
+    #p "followed_message_ids #{followed_message_ids}"
+
+    own_communities_and_somvos = Message.where(user_id: current_user)
+                                     .by_messageable_type('Network')
+                                     .by_not_deleted
+
+    own_communities_and_somvo_ids = own_communities_and_somvos.map(&:id)
+
+    #p "own_communities_and_somvo_ids #{own_communities_and_somvo_ids}"
+
+    # Get joined lines ids
+    joined_lines_ids = []
+    joined_line_rooms = Room.includes(:rooms_users).where(:rooms_users => {:user_id => current_user.id})
+    joined_lines_ids = joined_line_rooms.map(&:message_id)
+
+    if joined_line_rooms.count > 0
+      all_joined_lines_ids = "(#{joined_lines_ids.join(',')})"
+    else
+      # prevented sql error
+      all_joined_lines_ids = "(0)"
+    end
+
+    #p "all_joined_lines_ids #{all_joined_lines_ids}"
+
+    messageIds = near_by_communities_and_somvo_ids + own_communities_and_somvo_ids + joined_lines_ids
+    messageIds = messageIds.uniq
+
+    messages = Message.include_room
+                   .by_ids(messageIds)
+                   .by_messageable_type('Network')
+                   .by_not_deleted
+                   .exclude_private_groups
+                   .without_blacklist(current_user)
+                   .without_deleted(current_user)
+                   .with_images
+                   .with_videos
+
+    messages.each { |message|
+      message.current_user = current_user
+    }
+
+    render json: {
+        messages: messages.as_json(
+            methods: %i[
+            avatar_url image_urls video_urls user is_synced text_with_links post_url expire_at has_expired
+            conversation_status users_count room_id line_message_type
+            like_by_user legendary_by_user is_connected locked_by_user line_locked_by_user
+          ]
+        )
+    }
+  end
+
   private
 
   def set_room
