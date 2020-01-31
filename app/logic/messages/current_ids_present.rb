@@ -148,6 +148,21 @@ class Messages::CurrentIdsPresent
           ],
           include: [
             :non_custom_lines,
+            messageable: {
+              only: [
+                :id,
+                :message_id,
+                :users_count
+              ],
+              include:[
+                message: {
+                  only: [
+                    :id,
+                    :title
+                  ]
+                }
+              ]
+            },
             room: {
               only: [
                 :id,
