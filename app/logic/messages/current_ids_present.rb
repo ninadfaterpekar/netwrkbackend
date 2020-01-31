@@ -148,9 +148,6 @@ class Messages::CurrentIdsPresent
           ],
           include: [
             :non_custom_lines,
-            messageable: {
-              
-            },
             room: {
               only: [
                 :id,
