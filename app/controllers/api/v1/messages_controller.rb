@@ -165,6 +165,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
                               .with_images
                               .with_videos
                               .with_non_custom_lines
+                              .with_messageble
                               .by_messageable_type('Network')
                               .where("(message_type = 'CUSTOM_LOCATION' OR message_type IS NULL)")
                               .where(undercover: true)
@@ -1295,7 +1296,6 @@ class Api::V1::MessagesController < Api::V1::BaseController
                      .by_not_deleted
                      .without_blacklist(current_user)
                      .without_deleted(current_user)
-                     .with_non_custom_lines
                      .sort_by_newest
 
       near_by_messages = Undercover::CheckNear.new(
@@ -1308,11 +1308,13 @@ class Api::V1::MessagesController < Api::V1::BaseController
 
       near_by_message_ids = near_by_messages.map(&:id).uniq
 
-      messages = Message.left_joins(:room)
-                     .select('Rooms.id as room_id, Messages.*')
+      messages = Message
                      .by_ids(near_by_message_ids)
                      .with_images
                      .with_videos
+                     .with_non_custom_lines
+                     .include_room
+                     .with_messageble
                      .sort_by_last_messages(params[:limit], params[:offset])
 
       messages, _ids_to_remove =
@@ -1355,16 +1357,17 @@ class Api::V1::MessagesController < Api::V1::BaseController
                      .by_not_deleted
                      .without_blacklist(current_user)
                      .without_deleted(current_user)
-                     .with_non_custom_lines
                      .sort_by_newest
 
       world_message_ids = messages.map(&:id).uniq
 
-      messages = Message.left_joins(:room)
-                     .select('Rooms.id as room_id, Messages.*')
+      messages = Message
                      .by_ids(world_message_ids)
                      .with_images
                      .with_videos
+                     .with_non_custom_lines
+                     .include_room
+                     .with_messageble
                      .sort_by_last_messages(params[:limit], params[:offset])
 
       messages, _ids_to_remove =
@@ -1380,232 +1383,6 @@ class Api::V1::MessagesController < Api::V1::BaseController
           messages: messages, ids_to_remove: _ids_to_remove
       }
     end
-  end
-
-  # Area page api
-  # fetch area feed. Whats happening in that area. Local messages and messages in the world and around you.
-  # Display criteria on area page
-  # Dont show Lines on area (messageble_type = Network and message_type in [NULL, 'CUSTOM_LOCATION', 'NONCUSTOM_LOCATION']) But show Local Messages (Lines on area page)
-  # Private - Private Lines (Own/Followed) + Private Lines messages (Get line messages on own and followed lines only)
-  # Semi Public - Semi public Lines (Own/Followed) + Semi public Lines messages (Get line messages on own and followed lines only)
-  # Display legendary messages which are within 15 miles of any users as a feed on area page
-  # If distance check is true then show messages withing that postcode / area else show all
-  # Display user likes messages
-  def get_area_page_feeds(network, current_ids)
-    near_by_messages = []
-
-    if params[:is_distance_check] == 'true'
-
-      near_by_messages = Undercover::CheckNear.new(
-          params[:post_code],
-          params[:lng],
-          params[:lat],
-          current_user,
-          []
-      ).perform
-
-      # Get public legendary message within 15 miles
-      legendary_near_by_messages = Message.legendary_messages(near_by_messages.map(&:id))
-
-      if legendary_near_by_messages.count > 0
-        legendary_near_by_message_ids = "(#{legendary_near_by_messages.map(&:id).join(',')})"
-      else
-        # prevented sql error
-        legendary_near_by_message_ids = "(0)"
-      end
-
-      followed_messages = FollowedMessage.where(user_id: current_user)
-      followed_message_ids = followed_messages.map(&:message_id)
-
-      own_messages = Message.where(user_id: current_user)
-                         .by_messageable_type('Network')
-                         .undercover_is(true)
-                         .by_not_deleted
-
-      own_message_ids = own_messages.map(&:id)
-
-      # Get joined lines ids
-      joined_lines_ids = []
-      joined_line_rooms = Room.includes(:rooms_users).where(:rooms_users => {:user_id => current_user.id})
-      joined_lines_ids = joined_line_rooms.map(&:message_id)
-
-      if joined_line_rooms.count > 0
-        all_joined_lines_ids = "(#{joined_lines_ids.join(',')})"
-      else
-        # prevented sql error
-        all_joined_lines_ids = "(0)"
-      end
-
-      user_like_messages = UserLike.where(user_id: current_user)
-      user_like_message_ids = user_like_messages.map(&:message_id)
-
-      user_likes_lines = Message.where("messageable_type = 'Network'")
-                                   .by_ids(user_like_message_ids)
-
-      user_likes_lines_ids = user_likes_lines.map(&:id)
-
-      nearby_public_lines = Message.where("messageable_type = 'Network' and public = true")
-                                .by_ids(near_by_messages.map(&:id))
-
-      nearby_public_lines_ids = nearby_public_lines.map(&:id)
-
-      total_line_ids = followed_message_ids + own_message_ids + joined_lines_ids + user_likes_lines_ids + nearby_public_lines_ids
-      total_line_ids = total_line_ids.uniq
-
-      rooms = Room.where(message_id: total_line_ids)
-      if rooms.count > 0
-        rooms_ids = "(#{rooms.map(&:id).join(',')})"
-      else
-        # prevented sql error
-        rooms_ids = "(0)"
-      end
-
-      # if filter distance is on then messages f      rom that postcode
-      # Dont display CONV_REQUEST and CONV_ACCEPTED messages
-      # Display messages on Lines/Communities
-      # Removed following conditon which displays on coversation messages on area page. Now all message on lines of that area will be displayed
-      # .where("((messageable_type = 'Network' and message_type is not null and message_type != 'CUSTOM_LOCATION' AND message_type != 'NONCUSTOM_LOCATION')
-      #                                 OR (messageable_type = 'Room' and undercover = true and (message_type is null OR (message_type != 'CONV_REQUEST' AND message_type != 'CONV_ACCEPTED' AND message_type != 'CONV_REJECTED'))
-      #                               ))")
-
-      messages = Message.left_joins(:room)
-                     .left_joins(:followed_messages)
-                     .select('Rooms.id as room_id, followed_messages.id as followed_messages_id, Messages.*')
-                     .where("((messageable_type = 'Network' and message_type is not null and message_type != 'CUSTOM_LOCATION' AND message_type != 'NONCUSTOM_LOCATION')
-                                OR (messageable_type = 'Room' and (message_type is null OR (message_type != 'CONV_REQUEST' AND message_type != 'CONV_ACCEPTED' AND message_type != 'CONV_REJECTED'))
-                              ))")
-                     .where("
-                          messages.public = true
-                          or (followed_messages.id is not null and followed_messages.user_id = #{current_user.id})
-                          or (messages.public = false and messages.user_id = #{current_user.id})
-                          or (messages.public = false and messageable_type = 'Room' and messages.messageable_id in #{rooms_ids})
-                          or (messages.public = false and messageable_type = 'Network' and message_type = 'LOCAL_MESSAGE' and messages.id in #{all_joined_lines_ids})
-                          or (messages.id in #{legendary_near_by_message_ids})
-                      ")
-                     .by_not_deleted
-                     .without_blacklist(current_user)
-                     .without_deleted(current_user)
-                     .with_non_custom_lines
-                     .sort_by_last_messages(params[:limit], params[:offset])
-
-      messages = Undercover::CheckNear.new(
-          params[:post_code],
-          params[:lng],
-          params[:lat],
-          current_user,
-          messages
-      ).perform
-    else
-
-      # Get private / semi public legendary message within 15 miles
-      legendary_near_by_messages = LegendaryLike.all
-
-      if legendary_near_by_messages.count > 0
-        legendary_near_by_message_ids = "(#{legendary_near_by_messages.map(&:id).join(',')})"
-      else
-        # prevented sql error
-        legendary_near_by_message_ids = "(0)"
-      end
-
-      followed_messages = FollowedMessage.where(user_id: current_user)
-      followed_message_ids = followed_messages.map(&:message_id)
-
-      own_messages = Message.where(user_id: current_user)
-                         .by_messageable_type('Network')
-                         .undercover_is(true)
-                         .by_not_deleted
-
-      own_message_ids = own_messages.map(&:id)
-
-      # Get joined lines ids
-      joined_lines_ids = []
-      joined_line_rooms = Room.includes(:rooms_users).where(:rooms_users => {:user_id => current_user.id})
-      joined_lines_ids = joined_line_rooms.map(&:message_id)
-
-      if joined_line_rooms.count > 0
-        all_joined_lines_ids = "(#{joined_lines_ids.join(',')})"
-      else
-        # prevented sql error
-        all_joined_lines_ids = "(0)"
-      end
-
-      user_like_messages = UserLike.where(user_id: current_user)
-      user_like_message_ids = user_like_messages.map(&:message_id)
-
-      user_likes_lines = Message.where("messageable_type = 'Network'")
-                             .by_ids(user_like_message_ids)
-
-      user_likes_lines_ids = user_likes_lines.map(&:id)
-
-      nearby_public_lines = Message.where("messageable_type = 'Network' and public = true")
-                                .by_ids(near_by_messages.map(&:id))
-
-      nearby_public_lines_ids = nearby_public_lines.map(&:id)
-
-      total_line_ids = followed_message_ids + own_message_ids + joined_lines_ids + user_likes_lines_ids + nearby_public_lines_ids
-      total_line_ids = total_line_ids.uniq
-
-      rooms = Room.where(message_id: total_line_ids)
-      if rooms.count > 0
-        rooms_ids = "(#{rooms.map(&:id).join(',')})"
-      else
-        # prevented sql error
-        rooms_ids = "(0)"
-      end
-      # fetch all messages if distance check if off
-      #
-      messages = Message.left_joins(:room)
-                     .left_joins(:followed_messages)
-                     .select('Rooms.id as room_id, followed_messages.id as followed_messages_id, Messages.*')
-                     .where("((messageable_type = 'Network' and message_type is not null and message_type != 'CUSTOM_LOCATION' AND message_type != 'NONCUSTOM_LOCATION')
-                                OR (messageable_type = 'Room' and (message_type is null OR (message_type != 'CONV_REQUEST' AND message_type != 'CONV_ACCEPTED' AND message_type != 'CONV_REJECTED'))
-                              ))")
-                     .where("
-                          messages.public = true
-                          or (followed_messages.id is not null and followed_messages.user_id = #{current_user.id})
-                          or (messages.public = false and messages.user_id = #{current_user.id})
-                          or (messages.public = false and messageable_type = 'Room' and messages.messageable_id in #{rooms_ids})
-                          or (messages.public = false and messageable_type = 'Network' and message_type = 'LOCAL_MESSAGE' and messages.id in #{all_joined_lines_ids})
-                          or (messages.id in #{legendary_near_by_message_ids})
-                      ")
-                     .by_not_deleted
-                     .without_blacklist(current_user)
-                     .without_deleted(current_user)
-                     .with_non_custom_lines
-                     .sort_by_last_messages(params[:limit], params[:offset])
-    end
-
-    # if private / semi public then only shows own or followed
-    messages = messages.by_user(params[:user_id]) if params[:user_id].present?
-
-    final_messages_ids = messages.map(&:id).uniq
-    messages = Message.by_ids(final_messages_ids)
-                      .with_images
-                      .with_videos
-                      .sort_by_last_messages(params[:limit], params[:offset])
-
-    messages, _ids_to_remove =
-        Messages::CurrentIdsPresent.new(
-            current_ids: current_ids,
-            undercover_messages: messages,
-            with_network: network.present?,
-            user: current_user,
-            is_undercover: params[:undercover]
-        ).perform
-
-
-    # Delete the rejected conversation
-    messages.delete_if { |message|
-      if message['conversation_status'] == 'REJECTED'
-        true
-      else
-        false
-      end
-    }
-
-    render json: {
-        messages: messages, ids_to_remove: _ids_to_remove
-    }
   end
 
   def message_params
