@@ -62,6 +62,7 @@ class Message < ApplicationRecord
   scope :with_images, -> { includes(:images) }
   scope :with_videos, -> { includes(:videos) }
   scope :with_users, -> { includes(:users) }
+  scope :with_messageble, -> { includes(:messageable) }
   scope :with_non_custom_lines, -> { includes(:non_custom_lines) }
   scope :undercover_is, ->(bool) { where(undercover: bool) }
   scope :public_is, ->(bool) { where(public: bool) }
