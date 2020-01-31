@@ -358,6 +358,14 @@ class Message < ApplicationRecord
     end.join
   end
 
+  def parent_line
+    if messageable_type == 'Room'
+       messageable.message
+    else
+      nil
+    end
+  end
+
   def valid_url?(uri)
     uri = URI.parse(uri)
     !uri.host.nil?
