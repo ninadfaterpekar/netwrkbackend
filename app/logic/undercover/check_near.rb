@@ -27,7 +27,6 @@ class Undercover::CheckNear
                        .with_users
       else
         messages = Message.undercover_is(true)
-                       .by_post_code(@post_code)
                        .by_not_deleted
                        .with_users
       end
