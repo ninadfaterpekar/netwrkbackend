@@ -206,32 +206,23 @@ class Api::V1::MessagesController < Api::V1::BaseController
                                   .where("messageable_type = 'Network' AND message_type = 'LOCAL_MESSAGE'")
                                   .count
 
-    primary_community = Message.by_user(current_user.id)
-                                  .where("public = true  OR (public = false AND locked = true)")
-                                  .where("messageable_type = 'Network' AND (message_type is null or message_type = 'CUSTOM_LOCATION' or message_type = 'NONCUSTOM_LOCATION')")
-                                  .order(id: :asc)
-                                  .offset(0)
-                                  .limit(1)
-
-    if primary_community.count > 0
-      primary_community_id = primary_community[0].id
-    else
-      primary_community_id = nil
-    end
+    primary_community = current_user.community_identity.as_json(
+        methods: [:avatar_url]
+    )
 
     render json: {
+      metadata: [
+          local_messages_count: own_local_messages_count,
+          communities_count: own_communities_count,
+          user_points_count: user.points_count,
+          community_identity: primary_community
+      ],
       messages: messages.as_json(
         methods: %i[
           avatar_url image_urls video_urls like_by_user legendary_by_user user
           text_with_links post_url expire_at has_expired
         ]
-      ),
-      metadata: [
-          local_messages_count: own_local_messages_count,
-          communities_count: own_communities_count,
-          user_points_count: user.points_count,
-          primary_community_id: primary_community_id
-      ]
+      )
     }
   end
 
@@ -1407,7 +1398,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
       :avatar,
       :custom_line_id,
       :conversation_line_id,
-      :user_public_profile
+      :user_public_profile,
+      :community_identity_id
     )
   end
 end

@@ -16,7 +16,7 @@ class Api::V1::RegistrationsController < Api::V1::BaseController
 
   def update
 
-    p resource = User.find_by(id: params[:id])
+    resource = User.find_by(id: params[:id])
 
     if  params[:type] == 'login' && resource.sign_in_count == 1 ||
         params[:type] == 'update'
@@ -66,7 +66,8 @@ class Api::V1::RegistrationsController < Api::V1::BaseController
       :gender,
       :points_count,
       :terms_of_use_accepted,
-      :registration_id
+      :registration_id,
+      :community_identity_id
     )
   end
 end
