@@ -35,6 +35,8 @@ class Message < ApplicationRecord
   belongs_to :conversation_line, class_name: "Message", foreign_key: "conversation_line_id"
   has_many :conversation_line_messages, class_name: "Message", foreign_key: "conversation_line_id"
 
+  belongs_to :community_identity, class_name: "Message", foreign_key: "community_identity_id"
+
   has_attached_file :avatar, styles: {
     medium: '256x256#', thumb: '100x100>'
   }, default_url: '/images/missing.png'
@@ -360,7 +362,7 @@ class Message < ApplicationRecord
 
   def parent_line
     if messageable_type == 'Room'
-       messageable.message
+       messageable.message.attributes.slice('id', 'title')
     else
       nil
     end

@@ -39,6 +39,8 @@ class User < ApplicationRecord
   has_many :messages, dependent: :destroy
   has_many :providers, dependent: :destroy
 
+  belongs_to :community_identity, class_name: "Message", foreign_key: "community_identity_id"
+
   before_create :generate_authentication_token!
   after_create :send_welcome_email
 
