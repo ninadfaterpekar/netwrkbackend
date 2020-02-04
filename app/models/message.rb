@@ -89,6 +89,8 @@ class Message < ApplicationRecord
   scope :sort_by_points_highest, -> { order(points: :desc) }
   scope :by_post_code, ->(post_code) { where(post_code: post_code) }
   scope :by_messageable_type, ->(type) { where(messageable_type: type)}
+  scope :by_somvo_only, ->() { where(messageable_type: 'Network').where(message_type: 'LOCAL_MESSAGE') }
+  scope :by_communities_only, ->() { where(messageable_type: 'Network').where("message_type is null OR message_type = 'CUSTOM_LOCATION' OR message_type = 'NONCUSTOM_LOCATION'") }
   scope :by_messageable, ->(id, type = nil) do
     where(messageable_id: id, messageable_type: type)
   end
