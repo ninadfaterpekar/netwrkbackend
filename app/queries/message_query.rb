@@ -11,14 +11,21 @@ class MessageQuery
   end
 
   def profile(user, post_code, method, limit, offset)
-    Message.by_user(user.id)
-           .by_messageable_type(:Network)
-           .public_is(method)
-           .sort_by_last_messages(limit, offset)
-           .by_not_deleted
-           .without_blacklist(user)
-           #.with_unlocked(current_user.id)
-           #.by_post_code(post_code)
+    if method == true
+      # Fetch Own Somvos
+      Message.by_user(user.id)
+          .by_somvo_only
+          .by_not_deleted
+          .without_blacklist(user)
+          .sort_by_last_messages(limit, offset)
+    else
+      # Fetch Own Communities
+      Message.by_user(user.id)
+          .by_communities_only
+          .by_not_deleted
+          .without_blacklist(user)
+          .sort_by_last_messages(limit, offset)
+    end
   end
 
   def latest_message(user, post_code, method, limit, offset)
