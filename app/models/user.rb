@@ -82,7 +82,8 @@ class User < ApplicationRecord
   end
 
   def hero_avatar_url
-    hero_avatar.exists? ? ('https:' + hero_avatar.url(:medium)) : role_image_url
+    #hero_avatar.exists? ? ('https:' + hero_avatar.url(:medium)) : role_image_url
+    'assets/images/undercover/netwrk.png'
   end
 
   def able_to_post_legendary?
