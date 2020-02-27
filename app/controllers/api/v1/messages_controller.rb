@@ -1399,7 +1399,11 @@ class Api::V1::MessagesController < Api::V1::BaseController
       :custom_line_id,
       :conversation_line_id,
       :user_public_profile,
-      :community_identity_id
+      :community_identity_id,
+      :start_date,
+      :weekly_status,
+      :notification_status,
+      :extra
     )
   end
 end
