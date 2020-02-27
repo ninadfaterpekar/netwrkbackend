@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200203062901) do
+ActiveRecord::Schema.define(version: 20200227081241) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -162,6 +162,10 @@ ActiveRecord::Schema.define(version: 20200203062901) do
     t.integer  "conversation_line_id"
     t.boolean  "user_public_profile"
     t.integer  "community_identity_id"
+    t.datetime "start_date"
+    t.integer  "weekly_status",         default: 0,                  comment: "-1 for Turned off, 1 for Turned On, 0 for Inactive for weekly, 2 for expired"
+    t.integer  "notification_status",   default: 0,                  comment: "-1 for excluded, 0 for not sent, 1 for sent"
+    t.text     "extra"
     t.index ["community_identity_id"], name: "index_messages_on_community_identity_id", using: :btree
     t.index ["custom_line_id"], name: "index_messages_on_custom_line_id", using: :btree
     t.index ["messageable_type", "messageable_id"], name: "index_messages_on_messageable_type_and_messageable_id", using: :btree
@@ -297,6 +301,7 @@ ActiveRecord::Schema.define(version: 20200203062901) do
     t.boolean  "terms_of_use_accepted",    default: false
     t.string   "registration_id"
     t.integer  "community_identity_id"
+    t.string   "timezone"
     t.index ["community_identity_id"], name: "index_users_on_community_identity_id", using: :btree
     t.index ["email"], name: "index_users_on_email", using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
