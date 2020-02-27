@@ -67,7 +67,8 @@ class Api::V1::RegistrationsController < Api::V1::BaseController
       :points_count,
       :terms_of_use_accepted,
       :registration_id,
-      :community_identity_id
+      :community_identity_id,
+      :timezone
     )
   end
 end
