@@ -106,7 +106,13 @@ Rails.application.routes.draw do
       resources :legendary_likes, only: %i[create index]
       resources :invitations, only: [:create]
       resources :contacts, only: [:create]
+      resources :crons do
+        collection do
+          get 'todays_event_notifications'
+        end
+      end
       get '/sms', to: 'invitations#sms'
+
     end
   end
 end
