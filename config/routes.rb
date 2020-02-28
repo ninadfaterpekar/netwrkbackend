@@ -110,6 +110,7 @@ Rails.application.routes.draw do
         collection do
           get 'todays_event_notifications'
           get 'reset_weekly_somvos'
+          get 'remove_inactive_somvo'
         end
       end
       get '/sms', to: 'invitations#sms'

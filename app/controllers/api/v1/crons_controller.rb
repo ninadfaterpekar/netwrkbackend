@@ -96,4 +96,48 @@ class Api::V1::CronsController < ApplicationController
         message: somvos
     }
   end
+
+  # Remove inactive somvo
+  # 1. Example
+  # I create somvo
+  # A. No one says I can, deletes completely after a day.
+  # I can’t and no activity both delete. KEY: activity is someone saying they are in
+  # cron : 1 0 * * *
+  def remove_inactive_somvo
+    # get inactive somvo
+    # inactive : Somvo having rooms_users count <= 1 (Owner is default user of somvo)
+    # and having created_at date past 1 or more days
+    # Ignore the weekly recurring somvos
+
+    somvos = Message.joins(:room)
+                    .by_somvo_only
+                    .by_not_deleted
+                    .where.not(:weekly_status => 1)
+                    .where("rooms.users_count <= 1")
+                    .where("(message_type = 'LOCAL_MESSAGE' AND (messages.updated_at < :local_message_expiry_date and expire_date < :current_date))",
+                    {
+                        current_date: DateTime.now,
+                        local_message_expiry_date: DateTime.now - 1.days
+                    })
+
+    # Delete all somvo and its request and its messages
+    somvos.each do |somvo|
+      if somvo.extra.blank?
+        extra = {"delete_reason": 'NO_ACTIVITY', "deleted_on": DateTime.now}
+      else
+        extra = JSON.parse(somvo.extra)
+        extra["delete_reason"] = 'NO_ACTIVITY'
+        extra["deleted_on"] = DateTime.now
+      end
+      # Delete somvo with reason
+      somvoItem = somvo.update(deleted: true, extra: extra.to_json)
+
+      # Remove somvo messages and request
+      messages = somvo.conversation_line_messages.update_all(deleted: true)
+    end
+
+    render json: {
+        message: somvos
+    }
+  end
 end
