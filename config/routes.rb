@@ -109,6 +109,7 @@ Rails.application.routes.draw do
       resources :crons do
         collection do
           get 'todays_event_notifications'
+          get 'reset_weekly_somvos'
         end
       end
       get '/sms', to: 'invitations#sms'
