@@ -15,6 +15,11 @@ class Api::V1::RoomsController < Api::V1::BaseController
 
     if outcome.success?
       # if user joined then auto follow to Line/Community/LM
+
+      # Update the expiry date using + 3 days
+      message = Message.where(id: room.message_id)
+                    .update_all(updated_at: Time.now, expire_date: Time.now + 3.days)
+
       FollowedMessage.find_or_create_by(user_id: current_user.id, message_id: room.message_id)
       render json: { message: 'ok', privateLineCount: privateLineCount }, status: 200
     else
