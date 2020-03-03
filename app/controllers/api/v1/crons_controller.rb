@@ -23,6 +23,7 @@ class Api::V1::CronsController < ApplicationController
 
         owner = User.find(somvo.user_id)
         extra = JSON.parse(somvo.extra)
+        place_name = extra["place_name"] || somvo.place_name
         community_ids = extra['community_ids'].uniq
 
         next if community_ids.blank?
@@ -45,7 +46,10 @@ class Api::V1::CronsController < ApplicationController
           user_registration_ids = users.map(&:registration_id).compact
 
           notification_title = owner.name
-          notification_body = somvo.title #todo: on day of event nofication format : "Dinner at 7:00pm"
+          # notification_body = somvo.title #todo: on day of event nofication format : "Dinner at 7:00pm"
+
+          week_date = somvo.start_date
+          notification_body = extra["activity"] || 'Hang out' << ' at ' <<  place_name.to_s << ' ' << week_date.strftime("%k:%M %p")
 
           if user_registration_ids.length > 0
             notifications_result = Notifications::Push.new(
