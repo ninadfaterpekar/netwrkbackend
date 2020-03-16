@@ -4,6 +4,9 @@ Rails.application.configure do
   # Code is not reloaded between requests.
   config.cache_classes = true
 
+  config.action_cable.url = 'ws://192.168.1.77:3000/cable'
+  config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
+
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both threaded web servers
   # and those relying on copy on write to perform better.
@@ -83,9 +86,11 @@ Rails.application.configure do
   # require 'syslog/logger'
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
   config.paperclip_defaults = {
-    storage: :s3,
-    s3_host_name: 'REMOVE_THIS_LINE_IF_UNNECESSARY',
-    bucket: 'S3_BUCKET_NAME'
+      storage: :s3,
+      s3_region: 'us-west-2',
+      s3_host_name: 's3-us-west-2.amazonaws.com',
+      bucket: 'netwrk-assets',
+      s3_credentials: "#{Rails.root}/config/aws.yml"
   }
 
   if ENV['RAILS_LOG_TO_STDOUT'].present?
