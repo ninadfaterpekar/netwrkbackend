@@ -6,7 +6,7 @@ Rails.application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
-  config.action_cable.url = 'ws://192.168.1.77:3000/cable'
+  config.action_cable.url = 'ws://api.somvo.app/cable'
   # Do not eager load code on boot.
   config.eager_load = false
 

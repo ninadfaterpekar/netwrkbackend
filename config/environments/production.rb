@@ -4,7 +4,7 @@ Rails.application.configure do
   # Code is not reloaded between requests.
   config.cache_classes = true
 
-  config.action_cable.url = 'ws://192.168.1.77:3000/cable'
+  config.action_cable.url = 'ws://api.somvo.app/cable'
   config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
 
   # Eager load code on boot. This eager loads most of Rails and
