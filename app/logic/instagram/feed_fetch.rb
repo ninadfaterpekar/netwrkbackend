@@ -32,7 +32,7 @@ class Instagram::FeedFetch
           #config.client_ips = '<Comma separated list of IPs>'
         end
 
-        response = Instagram.get_access_token(params[:code], :redirect_uri => callback_url)
+        response = Instagram.get_access_token(provider.token, :redirect_uri => callback_url)
         provider.update_attributes(secret: response.access_token)
 
         client = Instagram.client(access_token: provider.secret)
