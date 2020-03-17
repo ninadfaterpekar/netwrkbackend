@@ -19,11 +19,38 @@ class Instagram::FeedFetch
     provider = Provider.find_by(user_id: user.id, name: 'instagram')
     return false if provider.nil?
     begin
-      client = Instagram.client(access_token: provider.token)
-      @feed = client.user_recent_media.first(amount_of_posts)
+      if provider.secret.nil?
+        # get access token
+        client_id = '177347736690442'
+        client_secret = 'e3f0665dd859c85dd94182ef11857d50'
+        callback_url = 'https://api.somvo.app/loader'
+
+        Instagram.configure do |config|
+          config.client_id = client_id
+          config.client_secret = client_secret
+          # For secured endpoints only
+          #config.client_ips = '<Comma separated list of IPs>'
+        end
+
+        response = Instagram.get_access_token(params[:code], :redirect_uri => callback_url)
+        provider.update_attributes(secret: response.access_token)
+
+        client = Instagram.client(access_token: provider.secret)
+        p "client ======> #{client}"
+        @feed = client.user_recent_media.first(amount_of_posts)
+        p "client ======> #{@feed}"
+      else
+        client = Instagram.client(access_token: provider.secret)
+        p "client ======> #{client}"
+        @feed = client.user_recent_media.first(amount_of_posts)
+        p "client ======> #{@feed}"
+      end
+
     rescue Instagram::BadRequest => e
       p '--------------------' * 5
       p e.message
+
+=begin
       if e.message =~ /access_token provided is invalid/
         provider.destroy
         Message.by_user(user.id)
@@ -31,6 +58,7 @@ class Instagram::FeedFetch
                .by_post_code(nil).by_network(nil)
                .destroy_all
       end
+=end
       false
     end
   end
