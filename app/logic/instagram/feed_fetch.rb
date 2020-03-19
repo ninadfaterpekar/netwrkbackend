@@ -8,7 +8,8 @@ class Instagram::FeedFetch
 
   def perform
     return unless fetch_feed
-    save_messages
+    save_instagram_feed
+    #save_messages
   end
 
   private
@@ -18,32 +19,68 @@ class Instagram::FeedFetch
   def fetch_feed
     provider = Provider.find_by(user_id: user.id, name: 'instagram')
     return false if provider.nil?
+
+    callback_url = 'https://api.somvo.app/loader'
     begin
       if provider.secret.nil?
-        # get access token
-        client_id = '177347736690442'
-        client_secret = 'e3f0665dd859c85dd94182ef11857d50'
-        callback_url = 'https://api.somvo.app/loader'
+        endpoint = 'https://api.instagram.com'
 
-        Instagram.configure do |config|
-          config.client_id = client_id
-          config.client_secret = client_secret
-          # For secured endpoints only
-          #config.client_ips = '<Comma separated list of IPs>'
+        # call zogata api to insert activity
+        conn = Faraday.new(url: endpoint) do |faraday|
+          faraday.request  :url_encoded             # form-encode POST params
+          faraday.response :logger                  # log requests to $stdout
+          faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
         end
 
-        response = Instagram.get_access_token(provider.token, :redirect_uri => callback_url)
-        provider.update_attributes(secret: response.access_token)
+        requestData = {
+          "client_id" => ENV['INSTAGRAM_CLIENT_ID'],
+          "client_secret" => ENV['INSTAGRAM_CLIENT_SECRET'],
+          "grant_type" => 'authorization_code',
+          "redirect_uri" => callback_url,
+          "code" => provider.token
+        }
 
-        client = Instagram.client(access_token: provider.secret)
-        p "client ======> #{client}"
-        @feed = client.user_recent_media.first(amount_of_posts)
-        p "client ======> #{@feed}"
+        codeApiResponse = conn.post do |req|
+          req.url endpoint + '/oauth/access_token'
+          req.body = requestData
+        end
+
+        # short lived access token
+        parsedCodeApiResponse = JSON.parse(codeApiResponse.body)
+        access_token = parsedCodeApiResponse['access_token']
+
+        # get long lived access token from short lived access token
+        instagram_endpoint = 'https://graph.instagram.com'
+
+        conn = Faraday.new(url: instagram_endpoint) do |faraday|
+          faraday.request  :url_encoded             # form-encode POST params
+          faraday.response :logger                  # log requests to $stdout
+          faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
+        end
+
+        apiResponse = conn.get do |req|
+          req.url instagram_endpoint + '/access_token?grant_type=ig_exchange_token&client_secret='+ENV['INSTAGRAM_CLIENT_SECRET']+'&access_token='+access_token
+        end
+
+        parsedApiResponse = JSON.parse(apiResponse.body)
+        long_lived_access_token = parsedApiResponse['access_token']
+
+        provider.update_attributes(secret: long_lived_access_token, provider_id: parsedCodeApiResponse['user_id'])
       else
-        client = Instagram.client(access_token: provider.secret)
-        p "client ======> #{client}"
-        @feed = client.user_recent_media.first(amount_of_posts)
-        p "client ======> #{@feed}"
+        endpoint = "https://graph.instagram.com"
+        # call zogata api to insert activity
+        conn = Faraday.new(url: endpoint) do |faraday|
+          faraday.request  :url_encoded             # form-encode POST params
+          faraday.response :logger                  # log requests to $stdout
+          faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
+        end
+        # long_lived_access_token = 'IGQVJYbVBrWHliSklULUd0YUdfclZAGRm9zV2dNeDRPV2hYUTdUWm5renVmX2lUMlpRdlpQVnlTM0szbWhxWkpqcGwyN0VzVmlpQUZAaa3l0U3NpN2V5QmpkNUMydlgzZAG1MM29fdC1B'
+        long_lived_access_token = provider.secret
+        apiResponse = conn.get do |req|
+          req.url '/me/media?fields=id,caption,media_type,media_url,permalink,thumbnail_url,timestamp,username&access_token='+ long_lived_access_token;
+        end
+
+        @feed = JSON.parse(apiResponse.body)
       end
 
     rescue Instagram::BadRequest => e
@@ -60,6 +97,42 @@ class Instagram::FeedFetch
       end
 =end
       false
+    end
+  end
+
+  def save_instagram_feed
+    if feed.present?
+      feed['data'].each do |post|
+        caption = post['caption'].present? ? post['caption'] : ''
+        created_time = post['timestamp']
+
+        old_message = Message.find_by(
+            user_id: user.id,
+            social: 'instagram',
+            social_id: post['id'].to_s,
+            created_at: DateTime.strptime(created_time, '%s'),
+            messageable: nil,
+            post_code: nil,
+            undercover: false
+        )
+
+        next if old_message.present?
+        new_message = Message.create(text: caption,
+                                     user_id: user.id,
+                                     social: 'instagram',
+                                     social_id: post['id'].to_s,
+                                     created_at: DateTime.strptime(created_time),
+                                     undercover: false,
+                                     post_permalink: post['permalink'])
+
+        if post['media_url'].present?
+          if post['media_type'] == 'CAROUSEL_ALBUM'
+            new_message.images << Image.create(url: post['media_url'])
+          elsif post.type == 'video'
+            new_message.videos << Video.create(url: post.videos.standard_resolution.url, thumbnail_url: post.images.standard_resolution.url)
+          end
+        end
+      end
     end
   end
 
